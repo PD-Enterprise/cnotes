@@ -8,7 +8,7 @@
 	let { children } = $props();
 
 	const isAdminRoute = derived(page, ($page) => {
-		return $page.url.pathname.startsWith('/admin-dashboard');
+		return $page.url.pathname.startsWith('/home');
 	});
 </script>
 
@@ -16,7 +16,9 @@
 	<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
 		<Navbar />
 	</div>
-	{@render children()}
+	<div class="content">
+		{@render children()}
+	</div>
 	<div class="footer">
 		<Footer />
 	</div>

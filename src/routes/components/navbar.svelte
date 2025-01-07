@@ -97,7 +97,7 @@
 			<ul class="menu dropdown-content menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
 				<li><a href="#home">Home</a></li>
 				<li>
-					<a href="#about-us">About Us</a>
+					<a href="#features">Features</a>
 				</li>
 				<li>
 					<a href="#contact-us">Contact</a>
@@ -170,13 +170,13 @@
 			</ul>
 		</div>
 		<img src={logo} alt="logo" id="navbar-logo" class="filter" />
-		<a href="/" class="btn btn-ghost text-2xl"> PD Enterprise </a>
+		<a href="/" class="btn btn-ghost text-2xl"> Cnotes </a>
 	</div>
 	<div class="navbar-center hidden lg:flex">
 		<ul class="menu menu-horizontal text-xl">
 			<li><a href="#home">Home</a></li>
 			<li>
-				<a href="#about-us">About Us</a>
+				<a href="#features">Features</a>
 			</li>
 			<li>
 				<a href="#contact-us">Contact Us</a>

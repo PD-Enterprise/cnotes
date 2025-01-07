@@ -6,6 +6,7 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { showModal } from '$lib/stores/showLoginForm';
 	import { onMount } from 'svelte';
+	import { sql } from '../../db.server';
 
 	// Variables
 	let username: string = '';
@@ -30,6 +31,7 @@
 	});
 	async function login() {
 		if (email && password) {
+			console.log(email, password);
 			try {
 				const response = await fetch('/api/login', {
 					method: 'POST',

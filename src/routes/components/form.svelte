@@ -6,12 +6,11 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { showModal } from '$lib/stores/showLoginForm';
 	import { onMount } from 'svelte';
-	import { sql } from '../../db.server';
 
 	// Variables
 	let username: string = '';
-	let email: string;
-	let password: string;
+	let email: string = '';
+	let password: string = '';
 	let type = $props();
 	let sign: string = '';
 	let cookieValue: string;
@@ -26,7 +25,7 @@
 		if (result.message == 'success') {
 			cookieValue = result.cookieValue;
 		} else {
-			// console.error('Failed to fetch cookie.', result.message);
+			console.error('Failed to fetch cookie.', result.message);
 		}
 	});
 	async function login() {
@@ -52,7 +51,7 @@
 				} else if (result.message == 'success') {
 					sessionStorage.setItem('Email', email);
 					showToast('Success', 'Successfully logged in.', 5000, 'success');
-					goto('/admin-dashboard');
+					goto('/home');
 				}
 			} catch (error) {
 				console.error(error);
@@ -79,7 +78,7 @@
 				} else if (result.message == 'New user created.') {
 					sessionStorage.setItem('Email', email);
 					showToast('Success', 'User created successfully.', 5000, 'success');
-					goto('/admin-dashboard');
+					goto('/home');
 				}
 			} catch (error) {
 				console.error(error);
@@ -98,7 +97,7 @@
 	}
 </script>
 
-<SvelteToast />
+<!-- <SvelteToast /> -->
 
 <form class="card-body">
 	<div class="cart-title inline-flex">

@@ -165,7 +165,7 @@
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
-					<a class="btn btn-accent" href="/admin-dashboard">Dashboard</a>
+					<a class="btn btn-accent" href="/home">Go to App</a>
 				</div>
 			</ul>
 		</div>
@@ -241,7 +241,7 @@
 		>
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
-		<a class="btn btn-accent" href="/admin-dashboard">Dashboard</a>
+		<a class="btn btn-accent" href="/home">Go to App</a>
 	</div>
 </div>
 

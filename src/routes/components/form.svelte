@@ -8,12 +8,12 @@
 	import { onMount } from 'svelte';
 
 	// Variables
-	let username: string = '';
-	let email: string = '';
-	let password: string = '';
 	let type = $props();
-	let sign: string = '';
-	let cookieValue: string;
+	let username = $state('');
+	let email = $state('');
+	let password = $state('');
+	let sign = $state('');
+	let cookieValue = $state('');
 
 	// Functions
 	onMount(async () => {
@@ -30,31 +30,29 @@
 	});
 	async function login() {
 		if (email && password) {
-			console.log(email, password);
-			try {
-				const response = await fetch('/api/login', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						email: email,
-						password: password,
-						session_id: cookieValue
-					})
-				});
-				const result = await response.json();
-				if (result.message == 'user not found.') {
-					showToast('Error', 'User not found. Please register.', 5000, 'error');
-				} else if (result.message == 'invalid credentials.') {
-					showToast('Error', 'Invalid credentials.', 5000, 'error');
-				} else if (result.message == 'success') {
-					sessionStorage.setItem('Email', email);
-					showToast('Success', 'Successfully logged in.', 5000, 'success');
-					goto('/home');
-				}
-			} catch (error) {
-				console.error(error);
+			const response = await fetch('/api/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email: email,
+					password: password,
+					session_id: cookieValue
+				})
+			});
+			const result = await response.json();
+			console.log(result);
+			if (result.message == 'user not found.') {
+				showToast('Error', 'User not found. Please register.', 5000, 'error');
+			} else if (result.message == 'invalid credentials.') {
+				showToast('Error', 'Invalid credentials.', 5000, 'error');
+			} else if (result.message == 'success') {
+				sessionStorage.setItem('Email', email);
+				showToast('Success', 'Successfully logged in.', 2000, 'success');
+				goto('/home');
+			} else if (result.status == 'error') {
+				showToast('Error', 'There was an error', 5000, 'error');
 			}
 		}
 	}
@@ -77,8 +75,10 @@
 					showToast('Error', 'User already exists. Please login.', 5000, 'error');
 				} else if (result.message == 'New user created.') {
 					sessionStorage.setItem('Email', email);
-					showToast('Success', 'User created successfully.', 5000, 'success');
+					showToast('Success', 'User created successfully.', 2000, 'success');
 					goto('/home');
+				} else if ((result.status = 'error')) {
+					showToast('Error', 'There was an error', 5000, 'error');
 				}
 			} catch (error) {
 				console.error(error);
@@ -97,7 +97,7 @@
 	}
 </script>
 
-<!-- <SvelteToast /> -->
+<SvelteToast />
 
 <form class="card-body">
 	<div class="cart-title inline-flex">

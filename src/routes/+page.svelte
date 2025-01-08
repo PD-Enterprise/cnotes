@@ -14,18 +14,24 @@
 					Your personal notes, organized and accessible anywhere. Start your journey now by logging
 					in or creating an account.
 				</p>
-				<div class="buttons">
+				<!-- <div class="buttons">
 					<a
 						class="loginButton btn btn-outline btn-primary"
 						href="#form"
-						data-sveltekit-preload-data>Login</a
+						on:click={() => {
+							formMode = 'login';
+							showModal.set(true);
+						}}>Login</a
 					>
 					<a
 						class="registerButton btn btn-outline btn-primary"
 						href="#form"
-						data-sveltekit-preload-data>Register</a
+						on:click={() => {
+							formMode = 'register';
+							showModal.set(true);
+						}}>Register</a
 					>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</div>

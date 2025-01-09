@@ -38,6 +38,12 @@
 			showToast('error', 'Please login to view your notes.', 2000, 'error');
 		}
 	}
+	async function deleteNote(note: note) {
+		console.log(note);
+	}
+	async function addNewNote() {
+		console.log('New note data');
+	}
 	onMount(() => {
 		const userEmail = sessionStorage.getItem('Email');
 		getNotes(userEmail);
@@ -122,7 +128,62 @@
 			{/if}
 		</div>
 		<div class="add-note">
-			<button class="addNoteButton btn bg-accent">New Note</button>
+			<button
+				class="addNoteButton btn bg-accent"
+				on:click={() => {
+					my_modal_3.showModal();
+				}}>New Note</button
+			>
+			<dialog id="my_modal_3" class="modal">
+				<div class="modal-box">
+					<form method="dialog">
+						<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+					</form>
+					<div class="header-box">
+						<h2 class="mb-2 text-3xl">Add a New Note</h2>
+						<div class="new-note-data">
+							<h1>Coming Soon...</h1>
+							<!-- 
+							<label>
+								Title:<br />
+								<input
+									type="text"
+									placeholder="Title"
+									class="edit-title text-lg font-bold"
+									bind:value={newNote.title}
+								/>
+							</label><br />
+							<label>
+								Board:<br />
+								<input type="text" placeholder="Board" bind:value={newNote.board} />
+							</label><br />
+							<label>
+								Date Created:<br />
+								<input type="date" bind:value={newNote.date_created} />
+							</label><br />
+							<label>
+								Grade:<br />
+								<input type="text" placeholder="Grade" bind:value={newNote.grade} />
+							</label><br />
+							<label>
+								School:<br />
+								<input type="text" placeholder="School" bind:value={newNote.school} />
+							</label><br />
+							<label>
+								Subject:<br />
+								<input type="text" placeholder="Subject" bind:value={newNote.subject} />
+							</label><br />
+							<label>
+								Content:<br />
+								<textarea placeholder="Content" bind:value={newNote.note_content}></textarea>
+							</label>
+							-->
+						</div>
+						<br /><br />
+					</div>
+					<button class="btn btn-outline btn-primary" on:click={addNewNote}>Add Note</button>
+				</div>
+			</dialog>
 		</div>
 	</div>
 	<div class="notes p-5">
@@ -137,6 +198,82 @@
 						class="note card flex w-96 bg-base-200 shadow-xl"
 						id={note.slug}
 					>
+						<div class="card-options">
+							<details class="dropdown dropdown-end">
+								<summary class="btn btn-circle btn-ghost m-1">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										stroke-width="1.5"
+										stroke="currentColor"
+										class="size-6"
+										type="button"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+										/>
+									</svg>
+								</summary>
+								<ul
+									class="options menu dropdown-content z-[1] w-20 rounded-box bg-base-100 p-2 shadow"
+								>
+									<li>
+										<button
+											class="btn btn-error"
+											on:click={() => {
+												delete_modal.showModal();
+											}}
+											>Delete
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke-width="1.5"
+												stroke="currentColor"
+												class="size-6"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+												/>
+											</svg>
+										</button>
+									</li>
+								</ul>
+							</details>
+							<dialog id="delete_modal" class="modal">
+								<div class="modal-box">
+									<form method="dialog">
+										<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button
+										>
+									</form>
+									<h1 class="text-2xl">Delete Note</h1>
+									<p class="py-4">Are you sure you want to delete this note?</p>
+									<div class="modal-action">
+										<button
+											class="btn btn-info"
+											on:click={() => {
+												delete_modal.close();
+											}}>Cancel</button
+										>
+										<button
+											class="btn btn-error"
+											on:click={() => {
+												deleteNote(note);
+											}}
+											on:click={() => {
+												delete_modal.close();
+											}}
+											>Delete
+										</button>
+									</div>
+								</div>
+							</dialog>
+						</div>
 						<div class="card-body">
 							<a class="note-title card-title" href="/home/{note.slug}">{note.title}</a>
 							<div class="note-meta card-actions justify-end">
@@ -162,7 +299,7 @@
 				{/each}
 			</div>
 		{:else}
-			<p>Loading your Notes...</p>
+			<p class="loadingNotes">Loading your Notes...</p>
 		{/if}
 	</div>
 </div>
@@ -210,6 +347,13 @@
 		font-size: 0.9rem;
 		color: #a0a0a0;
 	}
+	.card-options {
+		margin-left: auto;
+	}
+	.card-body {
+		margin-top: -85px;
+	}
+	.loadingNotes,
 	.error {
 		text-align: center;
 	}

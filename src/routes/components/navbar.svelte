@@ -71,6 +71,7 @@
 		const result = await response.json();
 		if (result.message == 'success') {
 			loggedIn = true;
+			sessionStorage.setItem('Email', result.data.email);
 		}
 	}
 </script>

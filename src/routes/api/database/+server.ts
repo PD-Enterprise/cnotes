@@ -26,7 +26,10 @@ export const POST: RequestHandler = async ({ request }) => {
 			await sql`update users set session_id = ${cookieID} where session_id = ${body.session_id}`;
 
 		// Return success response with new cookie headers
-		return json({ status: 200, data: headers, message: 'success' }, { headers: headers });
+		return json(
+			{ status: 200, data: { ...headers, email: query[0].email }, message: 'success' },
+			{ headers: headers }
+		);
 	} else {
 		// Return error if user not found
 		return json({ status: 500, data: query, message: 'error' });

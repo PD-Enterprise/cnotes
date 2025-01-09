@@ -1,10 +1,20 @@
-type Post = {
-    post_id: number
-    title: string;
-    slug: string;
-    content: string;
-    author_id: string; 
-    created_at: string;
-}
+type note = {
+	note_id: number;
+	title: string;
+	slug: string;
+	note_content: string;
+	subject: string;
+	grade: number;
+	email: string;
+	board: string;
+	school: string;
+	date_created: string;
+	date_updated: string;
+};
 
-export type {Post};
+type searchResult = {
+	title: string;
+	slug: string;
+};
+
+export type { note, searchResult };

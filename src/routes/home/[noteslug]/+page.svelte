@@ -4,6 +4,7 @@
 	import SvelteToast from '../../components/svelteToast.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Editor from '../../components/editor.svelte';
+	import editorRef from '../../components/editor.svelte';
 	import { isChanged } from '$lib/stores/ischanged';
 	import Input from '../../components/input.svelte';
 
@@ -12,6 +13,45 @@
 	let slug: string = '';
 	let error: string = '';
 	let originalData: note[] = []; // Store original data for comparison
+	let conf = {
+		height: 700,
+		menubar: false,
+		shortcuts: false,
+		skin: 'oxide-dark',
+		content_css: 'dark',
+		plugins: [
+			'advlist',
+			'autolink',
+			'lists',
+			'link',
+			'image',
+			'charmap',
+			'anchor',
+			'searchreplace',
+			'visualblocks',
+			'code',
+			'fullscreen',
+			'insertdatetime',
+			'media',
+			'table',
+			'preview',
+			'help',
+			'wordcount'
+		],
+		toolbar:
+			'undo redo | blocks | ' +
+			'bold italic forecolor underline | alignleft aligncenter alignright alignjustify | bullist numlist | ' +
+			'table tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol' +
+			'bullist numlist outdent indent | ' +
+			' help',
+		setup: (editor) => {
+			editor.addShortcut('ctrl+s', 'Save', () => {
+				updateNote();
+			});
+		},
+		a11y_advanced_options: true,
+		file_picker_types: 'image'
+	};
 
 	// Functions
 	async function getNote(slug: string, email: string) {
@@ -22,24 +62,22 @@
 			},
 			body: JSON.stringify({
 				slug: slug,
-				UserEmail: email
+				email: email
 			})
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 		if (result.status == 'success') {
 			if (result.response.length > 0) {
 				data = result.response;
 				originalData = JSON.parse(JSON.stringify(result.response)); // Deep copy original data
+				localStorage.setItem('notes', JSON.stringify(result.response));
+				return true;
 			}
 		} else {
 			error = 'Error getting note from database.';
+			return false;
 		}
-	}
-	function checkForChanges() {
-		// Compare current data with original data
-		const hasChanges = JSON.stringify(data) !== JSON.stringify(originalData);
-		isChanged.set(hasChanges);
 	}
 	function updateNote() {
 		showToast('Saving...', 'Saving your note...', 2500, 'info');
@@ -48,52 +86,31 @@
 			syncWithBackend();
 		}
 	}
+	function checkForChanges() {
+		// Compare current data with original data
+		const hasChanges = JSON.stringify(data) !== JSON.stringify(originalData);
+		isChanged.set(hasChanges);
+	}
 	async function syncWithBackend() {
 		console.log('Syncing with backend...');
-		const response = await fetch('/api/notes/note', {
+		const response = await fetch('/api/notes/note/update-note', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({})
+			body: JSON.stringify({
+				data: data,
+				email: sessionStorage.getItem('Email')
+			})
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 		if (result.status === 'success') {
 			showToast('Success', 'Note saved successfully', 2500, 'success');
 			isChanged.set(false);
 		} else {
 			showToast('Error', 'Failed to save note', 2500, 'error');
 		}
-	}
-	// const handleSave = (event: KeyboardEvent) => {
-	// 	// Check if Ctrl/Cmd + S is pressed
-	// 	if ((event.ctrlKey || event.metaKey) && event.key === 's') {
-	// 		// Extremely aggressive prevention of default
-	// 		event.preventDefault();
-	// 		event.stopImmediatePropagation();
-
-	// 		const isEditorFocused =
-	// 			editorRef &&
-	// 			document.activeElement?.closest('.tox-tinymce')?.contains(event.target as Node);
-
-	// 		if (isEditorFocused) {
-	// 			updateNote();
-
-	// 			// Additional browser-specific prevention techniques
-	// 			if (event.originalEvent) {
-	// 				event.originalEvent.preventDefault();
-	// 			}
-
-	// 			window.removeEventListener('keydown', handleKeyDown, true);
-	// 			document.removeEventListener('keydown', handleKeyDown, true);
-
-	// 			return false;
-	// 		}
-	// 	}
-	// };
-	function handleKeyDown(event: any) {
-		event.originalEvent.preventDefault();
 	}
 	onMount(async () => {
 		const userEmail = sessionStorage.getItem('Email');
@@ -102,20 +119,24 @@
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
 		if (userEmail) {
-			if (localNotes) {
-				const allNotes = JSON.parse(localNotes);
-				// Filter notes to find the one matching the current slug
-				data = allNotes.filter((note: note) => note.slug === slug);
-				originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
-				if (data.length === 0) {
+			const noteExists = await getNote(slug, userEmail);
+			if (!noteExists && localNotes) {
+				if (localNotes.length > 0) {
+					const allNotes = JSON.parse(localNotes);
+					// Filter notes to find the one matching the current slug
+					data = allNotes.filter((note: note) => note.slug === slug);
+					originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
+				} else {
 					error = 'Note not found';
 				}
+			} else if (!localNotes) {
+				showToast('error', 'Note not found.', 2500, 'error');
 			}
-			await getNote(slug, userEmail);
 		} else {
 			error = 'You mussed be logged in to view your notes';
 		}
 	});
+	export { updateNote };
 </script>
 
 <SvelteToast />
@@ -141,7 +162,7 @@
 
 			<Input {data} title="Subject" tag="subject" {originalData} />
 		</div>
-		<div class="button mt-2">
+		<div class="buttons mt-2">
 			{#if $isChanged}
 				<button class="btn btn-outline btn-accent" on:click={updateNote}>Save</button>
 			{:else}
@@ -168,7 +189,7 @@
 			>
 		</div>
 		<br />
-		<Editor {data} />
+		<Editor {data} {conf} />
 	</div>
 	<dialog id="my_modal_4" class="modal">
 		<div class="modal-box">

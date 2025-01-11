@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Editor from '@tinymce/tinymce-svelte';
 	import type { Editor as TinyMCEEditor } from 'tinymce';
-	import conf from '$lib/utils/tinymceEditorConfig';
 	import { isChanged } from '$lib/stores/ischanged';
 
 	// Variables
-	let editorRef: TinyMCEEditor | null = null;
+	export let editorRef: TinyMCEEditor | null = null;
 	export let data: any;
+	export let conf: any;
 </script>
 
 <Editor

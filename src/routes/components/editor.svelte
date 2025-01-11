@@ -9,13 +9,17 @@
 	export let conf: any;
 </script>
 
-<Editor
-	bind:this={editorRef}
-	bind:value={data[0].note_content}
-	apiKey="vy0yfom8b74patlx3pqq3fsgzs7yo91br84xiy2o6744slrf"
-	channel="7"
-	{conf}
-	on:input={() => {
-		isChanged.set(true);
-	}}
-/>
+{#if Editor}
+	<Editor
+		bind:this={editorRef}
+		bind:value={data[0].note_content}
+		apiKey="vy0yfom8b74patlx3pqq3fsgzs7yo91br84xiy2o6744slrf"
+		channel="7"
+		{conf}
+		on:input={() => {
+			isChanged.set(true);
+		}}
+	/>
+{:else}
+	<div class="loading">Loading Editor...</div>
+{/if}

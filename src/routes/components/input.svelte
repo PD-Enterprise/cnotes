@@ -12,6 +12,7 @@
 	export let data: any;
 	export let title: string;
 	export let tag: string;
+	export let type: string = 'text';
 </script>
 
 <label class="form-control w-full max-w-xs">
@@ -19,7 +20,7 @@
 		<span class="label-text">{title}:</span>
 	</div>
 	<input
-		type="text"
+		{type}
 		class="input input-bordered w-full max-w-xs"
 		bind:value={data[0][tag]}
 		on:input={checkForChanges}

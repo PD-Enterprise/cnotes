@@ -70,6 +70,7 @@
 		if (result.status == 'success') {
 			if (result.response.length > 0) {
 				data = result.response;
+				data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
 				originalData = JSON.parse(JSON.stringify(result.response)); // Deep copy original data
 				localStorage.setItem('notes', JSON.stringify(result.response));
 				return true;
@@ -154,8 +155,7 @@
 		<div class="meta-data">
 			<Input {data} title="Board" tag="board" {originalData} />
 
-			<Input {data} title="Created Date" tag="date_created" {originalData} />
-
+			<Input {data} title="Created Date" tag="date_created" {originalData} type="date" />
 			<Input {data} title="Grade" tag="grade" {originalData} />
 
 			<Input {data} title="School" tag="school" {originalData} />
@@ -171,6 +171,7 @@
 			<button
 				class="btn btn-success"
 				on:click={() => {
+					const my_modal_4 = document.getElementById('my_modal_4') as HTMLDialogElement;
 					my_modal_4.showModal();
 				}}
 				>Share<svg

@@ -11,7 +11,44 @@
 	let searchQuery: string = '';
 	let searchResults: searchResult[];
 	let shouldShowSearchResults: boolean = false;
+	// @ts-expect-error
+	let newNote: note[] = [{}];
+	let conf = {
+		height: 700,
+		menubar: false,
+		shortcuts: false,
+		skin: 'oxide-dark',
+		content_css: 'dark',
+		plugins: [
+			'advlist',
+			'autolink',
+			'lists',
+			'link',
+			'image',
+			'charmap',
+			'anchor',
+			'searchreplace',
+			'visualblocks',
+			'code',
+			'fullscreen',
+			'insertdatetime',
+			'media',
+			'table',
+			'preview',
+			'help',
+			'wordcount'
+		],
+		toolbar:
+			'undo redo | blocks | ' +
+			'bold italic forecolor underline | alignleft aligncenter alignright alignjustify | bullist numlist | ' +
+			'table tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol' +
+			'bullist numlist outdent indent | ' +
+			' help',
+		a11y_advanced_options: true,
+		file_picker_types: 'image'
+	};
 
+	// Functions
 	async function getNotes(userEmail: string) {
 		if (userEmail) {
 			try {
@@ -41,9 +78,11 @@
 	}
 	async function deleteNote(note: note) {
 		console.log(note);
+		showToast('Deleting...', 'Deleting feature coming soon...', 2500, 'info');
 	}
 	async function addNewNote() {
-		console.log('New note data');
+		console.log(newNote);
+		showToast('Saving...', 'Saving feature coming soon...', 2500, 'info');
 	}
 	onMount(() => {
 		const userEmail = sessionStorage.getItem('Email');
@@ -132,6 +171,7 @@
 			<button
 				class="addNoteButton btn bg-accent"
 				on:click={() => {
+					const my_modal_3 = document.getElementById('my_modal_3') as HTMLDialogElement;
 					my_modal_3.showModal();
 				}}>New Note</button
 			>
@@ -143,42 +183,75 @@
 					<div class="header-box">
 						<h2 class="mb-2 text-3xl">Add a New Note</h2>
 						<div class="new-note-data">
-							<h1>Coming Soon...</h1>
-							<!-- 
-							<label>
-								Title:<br />
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Title:</span>
+								</div>
 								<input
 									type="text"
-									placeholder="Title"
-									class="edit-title text-lg font-bold"
-									bind:value={newNote.title}
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].title}
 								/>
-							</label><br />
-							<label>
-								Board:<br />
-								<input type="text" placeholder="Board" bind:value={newNote.board} />
-							</label><br />
-							<label>
-								Date Created:<br />
-								<input type="date" bind:value={newNote.date_created} />
-							</label><br />
-							<label>
-								Grade:<br />
-								<input type="text" placeholder="Grade" bind:value={newNote.grade} />
-							</label><br />
-							<label>
-								School:<br />
-								<input type="text" placeholder="School" bind:value={newNote.school} />
-							</label><br />
-							<label>
-								Subject:<br />
-								<input type="text" placeholder="Subject" bind:value={newNote.subject} />
-							</label><br />
-							<label>
-								Content:<br />
-								<textarea placeholder="Content" bind:value={newNote.note_content}></textarea>
 							</label>
-							-->
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Board:</span>
+								</div>
+								<input
+									type="text"
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].board}
+								/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Date Created:</span>
+								</div>
+								<input
+									type="date"
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].date_created}
+								/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Grade:</span>
+								</div>
+								<input
+									type="text"
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].grade}
+								/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">School:</span>
+								</div>
+								<input
+									type="text"
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].school}
+								/>
+							</label>
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">Subject:</span>
+								</div>
+								<input
+									type="text"
+									class="input input-bordered w-full max-w-xs"
+									bind:value={newNote[0].subject}
+								/>
+							</label>
+							<label class="form-control">
+								<div class="label">
+									<span class="label-text">Note Content</span>
+								</div>
+								<textarea
+									class="textarea textarea-bordered h-24"
+									bind:value={newNote[0].note_content}
+								></textarea>
+							</label>
 						</div>
 						<br /><br />
 					</div>

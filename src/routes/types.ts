@@ -18,11 +18,3 @@ type searchResult = {
 };
 
 export type { note, searchResult };
-
-// note?.title &&
-// note?.note_content &&
-// note?.subject &&
-// note?.grade &&
-// note?.board &&
-// note?.school &&
-// note?.date_created

@@ -86,79 +86,93 @@
 <SvelteToast />
 
 <div class="main">
-	<div class="header-box">
-		<h2 class="mb-2 text-3xl">Add a New Note</h2>
-		<div class="new-note-data">
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">Title:</span>
-				</div>
-				<input
-					type="text"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].title}
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">Board:</span>
-				</div>
-				<input
-					type="text"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].board}
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">Date Created:</span>
-				</div>
-				<input
-					type="date"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].date_created}
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">Grade:</span>
-				</div>
-				<input
-					type="text"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].grade}
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">School:</span>
-				</div>
-				<input
-					type="text"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].school}
-				/>
-			</label>
-			<label class="form-control w-full max-w-xs">
-				<div class="label">
-					<span class="label-text">Subject:</span>
-				</div>
-				<input
-					type="text"
-					class="input input-bordered w-full max-w-xs"
-					bind:value={newNote[0].subject}
-				/>
-			</label>
-			<label class="form-control">
-				<div class="label">
-					<span class="label-text">Note Content</span>
-				</div>
-				<Editor data={newNote} {conf} />
-			</label>
+	<form>
+		<div class="header-box">
+			<h2 class="mb-2 text-3xl">Add a New Note</h2>
+			<div class="new-note-data">
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Title:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].title}
+						required
+						placeholder="Title"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Board:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].board}
+						required
+						placeholder="Board"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Date Created:</span>
+					</div>
+					<input
+						type="date"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].date_created}
+						required
+						placeholder="Date Created"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Grade:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].grade}
+						required
+						placeholder="Grade"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">School:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].school}
+						required
+						placeholder="School"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Subject:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote[0].subject}
+						required
+						placeholder="Subject"
+					/>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Note Content</span>
+					</div>
+					<Editor data={newNote} {conf} />
+				</label>
+			</div>
+			<br /><br />
 		</div>
-		<br /><br />
-	</div>
-	<button class="btn btn-outline btn-primary" on:click={addNewNote}>Add Note</button>
+		<button class="btn btn-outline btn-primary" on:click={addNewNote}>Add Note</button>
+	</form>
 </div>
 
 <style>

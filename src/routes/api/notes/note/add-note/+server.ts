@@ -53,6 +53,18 @@ function generateSlug(noteTitle) {
  * @returns {object|boolean} - The inserted note if successful, otherwise false.
  */
 async function uploadNote(note, email) {
+	if (
+		!note[0].title ||
+		!note[0].note_content ||
+		!note[0].subject ||
+		!note[0].grade ||
+		!note[0].board ||
+		!note[0].school ||
+		!note[0].date_created
+	) {
+		return returnJson('error', 'Missing required fields for note upload.', note);
+	}
+
 	const slug = generateSlug(note[0].title);
 	const query =
 		await notesSql`insert into notes (title, slug, note_content, subject, grade, board, school, date_created, email) values (${note[0].title}, ${slug}, ${note[0].note_content}, ${note[0].subject}, ${note[0].grade}, ${note[0].board}, ${note[0].school}, ${note[0].date_created}, ${email}) returning *`;

@@ -11,8 +11,6 @@
 	let searchQuery: string = '';
 	let searchResults: searchResult[];
 	let shouldShowSearchResults: boolean = false;
-	// @ts-expect-error
-	let newNote: note[] = [{}];
 	let conf = {
 		height: 700,
 		menubar: false,
@@ -79,10 +77,6 @@
 	async function deleteNote(note: note) {
 		console.log(note);
 		showToast('Deleting...', 'Deleting feature coming soon...', 2500, 'info');
-	}
-	async function addNewNote() {
-		console.log(newNote);
-		showToast('Saving...', 'Saving feature coming soon...', 2500, 'info');
 	}
 	onMount(() => {
 		const userEmail = sessionStorage.getItem('Email');
@@ -168,96 +162,7 @@
 			{/if}
 		</div>
 		<div class="add-note">
-			<button
-				class="addNoteButton btn bg-accent"
-				on:click={() => {
-					const my_modal_3 = document.getElementById('my_modal_3') as HTMLDialogElement;
-					my_modal_3.showModal();
-				}}>New Note</button
-			>
-			<dialog id="my_modal_3" class="modal">
-				<div class="modal-box">
-					<form method="dialog">
-						<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-					</form>
-					<div class="header-box">
-						<h2 class="mb-2 text-3xl">Add a New Note</h2>
-						<div class="new-note-data">
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">Title:</span>
-								</div>
-								<input
-									type="text"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].title}
-								/>
-							</label>
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">Board:</span>
-								</div>
-								<input
-									type="text"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].board}
-								/>
-							</label>
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">Date Created:</span>
-								</div>
-								<input
-									type="date"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].date_created}
-								/>
-							</label>
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">Grade:</span>
-								</div>
-								<input
-									type="text"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].grade}
-								/>
-							</label>
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">School:</span>
-								</div>
-								<input
-									type="text"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].school}
-								/>
-							</label>
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">Subject:</span>
-								</div>
-								<input
-									type="text"
-									class="input input-bordered w-full max-w-xs"
-									bind:value={newNote[0].subject}
-								/>
-							</label>
-							<label class="form-control">
-								<div class="label">
-									<span class="label-text">Note Content</span>
-								</div>
-								<textarea
-									class="textarea textarea-bordered h-24"
-									bind:value={newNote[0].note_content}
-								></textarea>
-							</label>
-						</div>
-						<br /><br />
-					</div>
-					<button class="btn btn-outline btn-primary" on:click={addNewNote}>Add Note</button>
-				</div>
-			</dialog>
+			<a class="addNoteButton btn bg-accent" href="/home/add-new-note">New Note</a>
 		</div>
 	</div>
 	<div class="notes p-5">

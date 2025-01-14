@@ -4,6 +4,7 @@
 	import SvelteToast from '../components/svelteToast.svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
+	import { notesStore } from '$lib/stores/noteStore'; // Import the store
 
 	// Variables
 	let error: string = '';
@@ -46,6 +47,11 @@
 		file_picker_types: 'image'
 	};
 
+	// Subscribe to the store
+	notesStore.subscribe((value) => {
+		notes = value; // Update local notes variable when store changes
+	});
+
 	// Functions
 	async function getNotes(userEmail: string) {
 		if (userEmail) {
@@ -62,8 +68,8 @@
 				const result = await request.json();
 				// console.log('Result:', result);
 				if (result.status === 'success') {
-					notes = result.response;
-					localStorage.setItem('notes', JSON.stringify(notes));
+					notesStore.set(result.response); // Set the store with fetched notes
+					localStorage.setItem('notes', JSON.stringify(result.response));
 				} else {
 					error = result.message;
 				}
@@ -73,10 +79,6 @@
 		} else {
 			showToast('error', 'Please login to view your notes.', 2000, 'error');
 		}
-	}
-	async function deleteNote(note: note) {
-		console.log(note);
-		showToast('Deleting...', 'Deleting feature coming soon...', 2500, 'info');
 	}
 	onMount(() => {
 		const userEmail = sessionStorage.getItem('Email');

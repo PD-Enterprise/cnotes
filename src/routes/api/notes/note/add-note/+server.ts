@@ -40,7 +40,7 @@ export const POST: RequestHandler = async ({ request }) => {
  * @returns {string} - The generated slug.
  */
 function generateSlug(noteTitle) {
-	return noteTitle.toLowerCase().replace(/\s+/g, '-');
+	return noteTitle.toLowerCase().replace(/\s+/g, '-') + Math.random().toString(36).substr(2, 9);
 }
 
 /**

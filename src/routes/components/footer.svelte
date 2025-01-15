@@ -1,5 +1,5 @@
 <script lang="ts">
-	import logo from '../images/logo.png'; //imports logo image from images
+	import icon from '../images/icon.png'; //imports logo image from images
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
 
@@ -21,7 +21,7 @@
 
 <footer class="footer bg-base-300 p-10 text-base-content">
 	<aside>
-		<img src={logo} alt="logo" id="footer-logo" class="filter" />
+		<img src={icon} alt="logo" id="footer-logo" class="filter" />
 		<p>
 			PD Enterprise
 			<br />
@@ -41,19 +41,10 @@
 </footer>
 
 <style>
-	:root {
-		--image-size: 70px;
-	}
 	#footer-logo {
-		width: var(--image-size);
+		width: 70px;
 		border-radius: 100px;
 		cursor: pointer;
 		margin-bottom: 10px;
-	}
-	.filter {
-		filter: brightness(0) invert(1);
-	}
-	.no-filter {
-		filter: none;
 	}
 </style>

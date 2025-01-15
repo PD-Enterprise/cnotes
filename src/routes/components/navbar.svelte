@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import logo from '../images/logo.png';
+	import icon from '../images/icon.png';
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
 	import Form from './form.svelte';
@@ -170,7 +170,7 @@
 				</div>
 			</ul>
 		</div>
-		<img src={logo} alt="logo" id="navbar-logo" class="filter" />
+		<img src={icon} alt="logo" id="navbar-logo" class="filter" />
 		<a href="/" class="btn btn-ghost text-2xl"> Cnotes </a>
 	</div>
 	<div class="navbar-center hidden lg:flex">
@@ -255,20 +255,11 @@
 {/if}
 
 <style>
-	:root {
-		--image-size: 70px;
-	}
 	#navbar-logo {
-		width: var(--image-size);
+		width: 70px;
 		border-radius: 100px;
 		cursor: pointer;
 		margin-bottom: 10px;
-	}
-	.filter {
-		filter: brightness(0) invert(1);
-	}
-	.no-filter {
-		filter: none;
 	}
 	.navbar {
 		cursor: default;

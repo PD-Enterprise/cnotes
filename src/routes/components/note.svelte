@@ -1,12 +1,31 @@
 <script lang="ts">
 	import type { note } from '../types';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import SvelteToast from './svelteToast.svelte';
+	import { notesStore } from '$lib/stores/noteStore';
 
 	let notes = $props();
 
 	async function deleteNote(note: note) {
-		console.log(note);
+		showToast('Deleting...', 'Deleting fyour note...', 2500, 'info');
+		const response = await fetch(`/api/notes/note/delete-note`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ noteSlug: note.slug })
+		});
+		const result = await response.json();
+		if (result.status === 'success') {
+			showToast('Success', 'Note deleted successfully', 2500, 'success');
+			notesStore.update((currentNotes) => currentNotes.filter((n) => n.slug !== note.slug));
+		} else {
+			showToast('Error', 'Error deleting note', 2500, 'error');
+		}
 	}
 </script>
+
+<SvelteToast />
 
 <div
 	role="button"
@@ -38,6 +57,7 @@
 					<button
 						class="btn btn-error"
 						on:click={() => {
+							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 							delete_modal.showModal();
 						}}
 						>Delete

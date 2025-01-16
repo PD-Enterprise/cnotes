@@ -1,0 +1,15 @@
+{
+    "name": "Cnotes",
+    "description": "Cloud based Note Taking solution for students",
+    "short_name": "Cnotes",
+    "display": "standalone",
+    "start_url": "/",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

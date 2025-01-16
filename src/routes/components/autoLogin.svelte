@@ -15,6 +15,14 @@
 		loggedIn.subscribe((value) => {
 			if (value) {
 				autoLoginElement.classList.remove('hidden');
+				autoLogin.subscribe((value) => {
+					localStorage.setItem('AutoLogin', value.toString());
+					if (whichNav.type == 'nav') {
+						if (value) {
+							goto('/home');
+						}
+					}
+				});
 			}
 		});
 		autoLoginLocal = localStorage.getItem('AutoLogin');
@@ -23,24 +31,16 @@
 		} else {
 			autoLogin.set(false);
 		}
-		autoLogin.subscribe((value) => {
-			localStorage.setItem('AutoLogin', value);
-			if (whichNav.type == 'nav') {
-				if (value) {
-					goto('/home');
-				}
-			}
-		});
 	});
 </script>
 
-<li id="auto-login" class="hidden">
+<li id="auto-login" class="">
 	<label class="flex cursor-pointer gap-2">
 		Auto Login
 		<input
 			type="checkbox"
 			class="toggle"
-			value={autoLogin}
+			checked={$autoLogin}
 			onclick={() => {
 				autoLogin.set(!$autoLogin);
 			}}

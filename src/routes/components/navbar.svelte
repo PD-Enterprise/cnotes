@@ -60,6 +60,7 @@
 		const result = await response.json();
 		if (result.message == 'success') {
 			loggedIn.set(true);
+			localStorage.setItem('LoggedIn', "true");
 			sessionStorage.setItem('Email', result.data.email);
 		}
 	}

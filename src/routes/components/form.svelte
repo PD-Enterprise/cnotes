@@ -6,6 +6,7 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { showModal } from '$lib/stores/showLoginForm';
 	import { onMount } from 'svelte';
+	import { loggedIn } from '$lib/stores/loggedIn';
 
 	// Variables
 	let type = $props();
@@ -48,6 +49,8 @@
 			} else if (result.message == 'invalid credentials.') {
 				showToast('Error', 'Invalid credentials.', 5000, 'error');
 			} else if (result.message == 'success') {
+				loggedIn.set(true);
+				localStorage.setItem('LoggedIn', 'true');
 				sessionStorage.setItem('Email', email);
 				showToast('Success', 'Successfully logged in.', 2000, 'success');
 				goto('/home');

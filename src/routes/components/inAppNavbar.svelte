@@ -2,16 +2,11 @@
 	// Imports
 	import { theme } from '$lib/stores/theme';
 	import { onMount } from 'svelte';
-	import Form from './form.svelte';
-	import { goto } from '$app/navigation';
-	import { showModal } from '$lib/stores/showLoginForm';
-	import { autoLogin } from '$lib/stores/autoLogin';
 	import { loggedIn } from '$lib/stores/loggedIn';
 	import AutoLogin from './autoLogin.svelte';
 
 	// Variables
 	let cookieValue: string;
-	let formMode: 'register' | 'login' = 'register';
 
 	// Functions
 	onMount(async () => {
@@ -19,30 +14,7 @@
 			method: 'GET',
 			credentials: 'include'
 		});
-		const result = await response.json();
-		if (result.message == 'success') {
-			cookieValue = result.cookieValue;
-			if (cookieValue) {
-				await renewCookie();
-			}
-		}
 	});
-	async function renewCookie() {
-		const response = await fetch('/api/database', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				session_id: cookieValue
-			})
-		});
-		const result = await response.json();
-		if (result.message == 'success') {
-			loggedIn.set(true);
-			sessionStorage.setItem('Email', result.data.email);
-		}
-	}
 </script>
 
 <div class="navbar bg-base-300">
@@ -105,7 +77,7 @@
 						</svg>
 					</label>
 				</li>
-				<!-- <AutoLogin /> -->
+				<AutoLogin type="inapp" />
 				<!-- <div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
                     <li class="mb-2">
 						<a
@@ -124,21 +96,7 @@
 	</div>
 </div>
 
-{#if $showModal}
-	<div class="modal modal-bottom sm:modal-middle" role="dialog" id="form">
-		<div class="modal-box">
-			<Form type={formMode} />
-		</div>
-	</div>
-{/if}
-
 <style>
-	#navbar-logo {
-		width: 70px;
-		border-radius: 100px;
-		cursor: pointer;
-		margin-bottom: 10px;
-	}
 	.navbar {
 		cursor: default;
 		position: fixed;

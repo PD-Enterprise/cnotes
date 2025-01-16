@@ -7,10 +7,11 @@
 	import { goto } from '$app/navigation';
 	import { showModal } from '$lib/stores/showLoginForm';
 	import { autoLogin } from '$lib/stores/autoLogin';
+	import { loggedIn } from '$lib/stores/loggedIn';
+	import AutoLogin from './autoLogin.svelte';
 
 	// Variables
 	let cookieValue: string;
-	let loggedIn: boolean = false;
 	let formMode: 'register' | 'login' = 'register';
 
 	// Functions
@@ -25,20 +26,6 @@
 		const menuDashboardButtonsElement = document.getElementById(
 			'menu-button-dashboard'
 		) as HTMLElement;
-		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
-
-		theme.subscribe((value) => {
-			const logo = document.getElementById('navbar-logo');
-			if (logo != null) {
-				if (value) {
-					logo.classList.remove('filter');
-					logo.classList.add('no-filter');
-				} else {
-					logo.classList.remove('no-filter');
-					logo.classList.add('filter');
-				}
-			}
-		});
 
 		const response = await fetch('/api/cookie', {
 			method: 'GET',
@@ -53,18 +40,12 @@
 		} else {
 			// console.error('Failed to fetch cookie.', result.message);
 		}
-		if (loggedIn) {
+		if ($loggedIn) {
 			navbarLoginButtonsElement.classList.add('hidden');
 			menuLoginButtonsElement.classList.add('hidden');
 			navbarDashboardButtonsElement.classList.remove('hidden');
 			menuDashboardButtonsElement.classList.remove('hidden');
-			autoLoginElement.classList.remove('hidden');
 		}
-		autoLogin.subscribe((value) => {
-			if (value && loggedIn) {
-				goto('/home');
-			}
-		});
 	});
 	async function renewCookie() {
 		const response = await fetch('/api/database', {
@@ -78,7 +59,7 @@
 		});
 		const result = await response.json();
 		if (result.message == 'success') {
-			loggedIn = true;
+			loggedIn.set(true);
 			sessionStorage.setItem('Email', result.data.email);
 		}
 	}
@@ -150,17 +131,7 @@
 						</svg>
 					</label>
 				</li>
-				<li class="hidden" id="auto-login">
-					<label class="flex cursor-pointer gap-2">
-						Auto Login
-						<input
-							type="checkbox"
-							bind:this={$autoLogin}
-							class="toggle"
-							bind:checked={$autoLogin}
-						/>
-					</label>
-				</li>
+				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
 						<a

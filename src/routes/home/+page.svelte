@@ -66,7 +66,6 @@
 					})
 				});
 				const result = await request.json();
-				// console.log('Result:', result);
 				if (result.status === 'success') {
 					notesStore.set(result.response); // Set the store with fetched notes
 					localStorage.setItem('notes', JSON.stringify(result.response));
@@ -125,13 +124,13 @@
 			<label class="input input-bordered flex items-center gap-2">
 				<input
 					type="text"
-					class="grow"
+					class="grow search-input"
 					placeholder="Search for a note"
 					on:keydown={handleKeyDown}
 					bind:value={searchQuery}
 				/>
 
-				<button on:click={search} class="btn btn-circle btn-ghost" aria-label="Search">
+				<button on:click={search} class="btn btn-circle btn-ghost search-button" aria-label="Search">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -187,29 +186,98 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 15px;
 	}
-	.search-results {
-		display: flex;
-		flex-direction: column;
-		gap: 1px;
-		background-color: color-mix(in srgb, currentColor 10%, transparent);
-		border-radius: 5px;
+
+	/* Search bar styles with gradient and smooth animations */
+	.search-bar {
+		background: linear-gradient(90deg, #4a90e2, #007bff);
+		border-radius: 12px;
+		padding: 12px;
+		box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+		transition: box-shadow 0.4s ease, transform 0.4s ease;
 	}
-	.addNoteButton {
-		color: #000;
-		transform: all 0.3s ease;
+
+	.search-bar:hover {
+		box-shadow: 0 6px 15px rgba(0, 123, 255, 0.5);
+		transform: translateY(-3px);
 	}
-	.addNoteButton:hover {
+
+	/* Input styles */
+	.search-input {
+		width: 100%;
+		padding: 10px;
+		border: none;
+		border-radius: 8px;
+		font-size: 16px;
+		color: #fff;
+		background: rgba(255, 255, 255, 0.2);
+		outline: none;
+		transition: background 0.3s ease;
+	}
+
+	.search-input::placeholder {
+		color: rgba(255, 255, 255, 0.7);
+	}
+
+	.search-input:focus {
+		background: rgba(255, 255, 255, 0.4);
+	}
+
+	/* Button styles with simpler gradient and animations */
+	.search-button {
+		background: linear-gradient(90deg, #007bff, #0056b3);
+		color: white;
+		border: none;
+		border-radius: 8px;
+		padding: 10px 20px;
+		font-size: 16px;
+		cursor: pointer;
+		transition: transform 0.4s ease, background-color 0.4s ease;
+	}
+
+	.search-button:hover {
 		transform: scale(1.05);
-		background-color: var(--fallback-a, oklch(var(--a) / var(--tw-bg-opacity, 1)));
+		background: linear-gradient(90deg, #0056b3, #003d80);
 	}
-	.notes-grid {
-		display: inline-flex;
-		flex-wrap: wrap;
-		gap: 20px;
+
+	/* Add Note button styles moved to the left for cleaner layout */
+	.addNoteButton {
+		background: linear-gradient(90deg, #4a90e2, #007bff);
+		color: white;
+		border: none;
+		border-radius: 8px;
+		padding: 12px 24px;
+		font-size: 16px;
+		cursor: pointer;
+		transition: transform 0.4s ease, background 0.4s ease;
+		margin-left: 20px;
 	}
-	.loadingNotes,
-	.error {
-		text-align: center;
+
+	.addNoteButton:hover {
+		transform: translateY(-3px);
+		background: linear-gradient(90deg, #007bff, #0056b3);
+	}
+
+	/* Search results container with smoother animations */
+	.search-results {
+		background: #f0f4f8;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		padding: 10px;
+		margin-top: 10px;
+		transition: opacity 0.4s ease, transform 0.4s ease;
+		transform: translateY(-5px);
+		opacity: 0;
+	}
+
+	.search-results.fade-in {
+		transform: translateY(0);
+		opacity: 1;
+	}
+
+	.search-results.fade-out {
+		transform: translateY(-5px);
+		opacity: 0;
 	}
 </style>

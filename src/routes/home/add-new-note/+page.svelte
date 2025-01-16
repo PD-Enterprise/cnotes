@@ -176,7 +176,122 @@
 </div>
 
 <style>
-	.main {
-		padding: 10px;
-	}
+  /* General layout styles */
+  .main {
+    padding: 20px;
+    background-color: #000000; /* Black theme */
+    color: #ffffff; /* White text */
+    animation: fadeInDown 0.8s ease-in-out;
+  }
+
+  .header-box {
+    text-align: center;
+    margin-bottom: 20px;
+    animation: fadeInDown 0.6s ease-in-out;
+  }
+
+  .header-box h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #4caf50; /* Green for header text */
+    animation: fadeInDown 0.8s ease-in-out;
+  }
+
+  /* Form container */
+  .new-note-data {
+    display: flex;
+    flex-direction: column; /* Align fields vertically */
+    gap: 20px; /* Space between fields */
+    animation: fadeInDown 1s ease-in-out;
+  }
+
+  /* Label styling */
+  .form-control {
+    width: 100%; /* Full width for inputs */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-control .label-text {
+    font-weight: 600;
+    color: #cccccc; /* Light gray for labels */
+    margin-bottom: 5px;
+    transition: color 0.3s ease-in-out;
+  }
+
+  .form-control .label-text:hover {
+    color: #4caf50; /* Green on hover */
+  }
+
+  /* Input styling */
+  .form-control input {
+    padding: 10px;
+    border: 2px solid #333333;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #111111; /* Darker background for inputs */
+    color: #ffffff;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .form-control input:focus {
+    outline: none;
+    border-color: #4caf50;
+    background-color: #222222; /* Slightly lighter on focus */
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+  }
+
+  /* Button styling */
+  .btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid #4caf50;
+    border-radius: 8px;
+    background-color: #4caf50;
+    color: #000000; /* Black text for contrast */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    align-self: center; /* Center align the button */
+  }
+
+  .btn:hover {
+    background-color: #333333; /* Dark hover effect */
+    color: #4caf50;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(76, 175, 80, 0.5);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Ensure responsiveness for both desktop and mobile */
+  @media (max-width: 768px) {
+    .main {
+      padding: 10px;
+    }
+    .new-note-data {
+      gap: 15px;
+    }
+    .header-box h2 {
+      font-size: 2rem;
+    }
+    .btn {
+      width: 100%; /* Full-width button on smaller screens */
+    }
+  }
 </style>

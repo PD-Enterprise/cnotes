@@ -6,6 +6,7 @@
 	import Form from './form.svelte';
 	import { goto } from '$app/navigation';
 	import { showModal } from '$lib/stores/showLoginForm';
+	import { autoLogin } from '$lib/stores/autoLogin';
 
 	// Variables
 	let cookieValue: string;
@@ -24,6 +25,7 @@
 		const menuDashboardButtonsElement = document.getElementById(
 			'menu-button-dashboard'
 		) as HTMLElement;
+		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
 
 		theme.subscribe((value) => {
 			const logo = document.getElementById('navbar-logo');
@@ -56,7 +58,13 @@
 			menuLoginButtonsElement.classList.add('hidden');
 			navbarDashboardButtonsElement.classList.remove('hidden');
 			menuDashboardButtonsElement.classList.remove('hidden');
+			autoLoginElement.classList.remove('hidden');
 		}
+		autoLogin.subscribe((value) => {
+			if (value && loggedIn) {
+				goto('/home');
+			}
+		});
 	});
 	async function renewCookie() {
 		const response = await fetch('/api/database', {
@@ -142,7 +150,17 @@
 						</svg>
 					</label>
 				</li>
-
+				<li class="hidden" id="auto-login">
+					<label class="flex cursor-pointer gap-2">
+						Auto Login
+						<input
+							type="checkbox"
+							bind:this={$autoLogin}
+							class="toggle"
+							bind:checked={$autoLogin}
+						/>
+					</label>
+				</li>
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
 						<a

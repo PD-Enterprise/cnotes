@@ -192,7 +192,6 @@
 		align-items: center;
 		gap: 15px;
 	}
-
 	/* Search bar styles with gradient and smooth animations */
 	.search-bar {
 		border-radius: 12px;
@@ -201,12 +200,10 @@
 			box-shadow 0.4s ease,
 			transform 0.4s ease;
 	}
-
 	.search-bar:hover {
 		box-shadow: 0 6px 15px rgba(77, 96, 116, 0.5);
 		transform: translateY(-2px);
 	}
-
 	/* Input styles */
 	.search-input {
 		width: 100%;
@@ -218,11 +215,9 @@
 		outline: none;
 		transition: background 0.3s ease;
 	}
-
 	.search-input::placeholder {
 		color: rgba(255, 255, 255, 0.7);
 	}
-
 	/* Button styles with simpler gradient and animations */
 	.search-button {
 		color: white;
@@ -234,11 +229,15 @@
 			transform 0.4s ease,
 			background-color 0.4s ease;
 	}
-
 	.search-button:hover {
 		transform: scale(1.05);
 	}
-
+	.notes-grid {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 20px;
+	}
 	/* Add Note button styles moved to the left for cleaner layout */
 	.addNoteButton {
 		color: white;

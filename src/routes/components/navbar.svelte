@@ -1,21 +1,22 @@
 <script lang="ts">
 	// Imports
-	import icon from '../images/icon.png';
-	import { theme } from '$lib/stores/theme';
-	import { onMount } from 'svelte';
-	import Form from './form.svelte';
-	import { goto } from '$app/navigation';
-	import { showModal } from '$lib/stores/showLoginForm';
-	import { autoLogin } from '$lib/stores/autoLogin';
-	import { loggedIn } from '$lib/stores/loggedIn';
-	import AutoLogin from './autoLogin.svelte';
+	import icon from '../images/icon.png'; // Importing the icon image for the navbar
+	import { theme } from '$lib/stores/theme'; // Importing the theme store for theme management
+	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
+	import Form from './form.svelte'; // Importing the Form component for login/register functionality
+	import { showModal } from '$lib/stores/showLoginForm'; // Importing the showModal store to manage the login form visibility
+	import { loggedIn } from '$lib/stores/loggedIn'; // Importing the loggedIn store to manage the user's login state
+	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
+	import renewCookie from '$lib/utils/renewCookie'; // Importing the renewCookie utility function for cookie management
+	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
 
 	// Variables
-	let cookieValue: string;
-	let formMode: 'register' | 'login' = 'register';
+	let cookieValue: string; // Variable to hold the cookie value
+	let formMode: 'register' | 'login' = 'register'; // Variable to manage the form mode (register or login)
 
 	// Functions
 	onMount(async () => {
+		// Selecting elements for navbar and menu login and dashboard buttons
 		const navbarLoginButtonsElement = document.getElementById(
 			'navbar-login-buttons'
 		) as HTMLElement;
@@ -27,43 +28,18 @@
 			'menu-button-dashboard'
 		) as HTMLElement;
 
-		const response = await fetch('/api/cookie', {
-			method: 'GET',
-			credentials: 'include'
-		});
-		const result = await response.json();
-		if (result.message == 'success') {
-			cookieValue = result.cookieValue;
-			if (cookieValue) {
-				await renewCookie();
-			}
-		} else {
-			// console.error('Failed to fetch cookie.', result.message);
-		}
-		if ($loggedIn) {
+		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
+		if (localStorage.getItem('LoggedIn') == 'true') {
 			navbarLoginButtonsElement.classList.add('hidden');
 			menuLoginButtonsElement.classList.add('hidden');
 			navbarDashboardButtonsElement.classList.remove('hidden');
 			menuDashboardButtonsElement.classList.remove('hidden');
 		}
-	});
-	async function renewCookie() {
-		const response = await fetch('/api/database', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				session_id: cookieValue
-			})
-		});
-		const result = await response.json();
-		if (result.message == 'success') {
-			loggedIn.set(true);
-			localStorage.setItem('LoggedIn', "true");
-			sessionStorage.setItem('Email', result.data.email);
+		// Checking if auto-login is enabled and redirecting to the home page if true
+		if (localStorage.getItem('AutoLogin') == 'true') {
+			goto('/home');
 		}
-	}
+	});
 </script>
 
 <div class="navbar bg-base-300">

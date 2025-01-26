@@ -7,7 +7,6 @@
 	import { showModal } from '$lib/stores/showLoginForm'; // Importing the showModal store to manage the login form visibility
 	import { loggedIn } from '$lib/stores/loggedIn'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import renewCookie from '$lib/utils/renewCookie'; // Importing the renewCookie utility function for cookie management
 	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
 
 	// Variables
@@ -36,7 +35,7 @@
 			menuDashboardButtonsElement.classList.remove('hidden');
 		}
 		// Checking if auto-login is enabled and redirecting to the home page if true
-		if (localStorage.getItem('AutoLogin') == 'true') {
+		if (localStorage.getItem('AutoLogin') == 'true' && $loggedIn) {
 			goto('/home');
 		}
 	});

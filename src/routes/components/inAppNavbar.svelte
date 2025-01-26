@@ -4,18 +4,23 @@
 	import { onMount } from 'svelte';
 	import { loggedIn } from '$lib/stores/loggedIn';
 	import AutoLogin from './autoLogin.svelte';
-
-	// Variables
-	let cookieValue: string;
+	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import { goto } from '$app/navigation';
+	import SvelteToast from './svelteToast.svelte';
 
 	// Functions
-	onMount(async () => {
-		const response = await fetch('/api/cookie', {
-			method: 'GET',
-			credentials: 'include'
-		});
-	});
+	function logout() {
+		loggedIn.set(false);
+		sessionStorage.removeItem('Email');
+		localStorage.removeItem('LoggedIn');
+		showToast('Success', 'Logged out successfully', 2500, 'success');
+		setTimeout(() => {
+			goto('/');
+		}, 2500);
+	}
 </script>
+
+<SvelteToast />
 
 <div class="navbar bg-base-300">
 	<div class="navbar-start">
@@ -78,18 +83,42 @@
 					</label>
 				</li>
 				<AutoLogin type="inapp" />
-				<!-- <div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
-                    <li class="mb-2">
+				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
+					<li class="mb-2">
 						<a
 							class="btn btn-accent"
 							href="#form"
 							on:click={() => {
-								formMode = 'login';
-								showModal.set(true);
+								delete_modal.showModal();
 							}}>Log Out</a
 						>
-					</li> 
-				</div>-->
+					</li>
+				</div>
+				<dialog id="delete_modal" class="modal">
+					<div class="modal-box">
+						<form method="dialog">
+							<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+						</form>
+						<h1 class="text-2xl">Log out</h1>
+						<p class="py-4">Are you sure you want to log out?</p>
+						<div class="modal-action">
+							<button
+								class="btn btn-info"
+								on:click={() => {
+									delete_modal.close();
+								}}>Cancel</button
+							>
+							<button
+								class="btn btn-error"
+								on:click={() => {
+									logout();
+									delete_modal.close();
+								}}
+								>Log Out
+							</button>
+						</div>
+					</div>
+				</dialog>
 			</ul>
 		</div>
 		<div class="btn btn-ghost text-2xl">Home</div>

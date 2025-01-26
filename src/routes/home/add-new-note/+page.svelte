@@ -147,19 +147,15 @@
 		padding: 20px;
 		animation: fadeInDown 0.8s ease-in-out;
 	}
-
 	.header-box {
 		text-align: center;
-		margin-bottom: 20px;
 		animation: fadeInDown 0.6s ease-in-out;
 	}
-
 	.header-box h2 {
 		font-size: 2.5rem;
 		font-weight: bold;
 		animation: fadeInDown 0.8s ease-in-out;
 	}
-
 	/* Form container */
 	.new-note-data {
 		display: flex;
@@ -168,14 +164,12 @@
 		gap: 20px; /* Space between fields */
 		animation: fadeInDown 1s ease-in-out;
 	}
-
 	/* Label styling */
 	.form-control {
 		width: 100%; /* Full width for inputs */
 		display: flex;
 		flex-direction: column;
 	}
-
 	.form-control .label-text {
 		font-weight: 600;
 		margin-bottom: 5px;
@@ -189,12 +183,10 @@
 		font-size: 1rem;
 		transition: all 0.3s ease-in-out;
 	}
-
 	.form-control input:focus {
 		outline: none;
 		box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
 	}
-
 	/* Button styling */
 	.btn {
 		padding: 10px 20px;
@@ -205,12 +197,10 @@
 		transition: all 0.3s ease-in-out;
 		align-self: center; /* Center align the button */
 	}
-
 	.btn:active {
 		transform: translateY(0);
 		box-shadow: none;
 	}
-
 	/* Animations */
 	@keyframes fadeInDown {
 		from {
@@ -222,7 +212,6 @@
 			transform: translateY(0);
 		}
 	}
-
 	/* Ensure responsiveness for both desktop and mobile */
 	@media (max-width: 768px) {
 		.main {

@@ -8,5 +8,8 @@ export default defineConfig({
 			targets: [{ src: 'node_modules/tinymce/*', dest: 'tinymce' }]
 		}),
 		sveltekit()
-	]
+	],
+	define: {
+		'process.env.IS_PREACT': JSON.stringify('true')
+	}
 });

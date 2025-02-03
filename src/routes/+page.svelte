@@ -1,6 +1,13 @@
 <script lang="ts">
 	import Form from './components/form.svelte';
 	import { showModal } from '$lib/stores/showLoginForm';
+	import { onMount } from 'svelte';
+
+	onMount(async () => {
+		// const response = await fetch('/api/database/prisma/users');
+		// const result = await response.json();
+		// console.log(result);
+	});
 
 	let formMode: 'register' | 'login' = 'register';
 </script>
@@ -115,10 +122,10 @@
 		font-weight: 700;
 		margin-bottom: 20px;
 	}
-	.buttons {
+	/* .buttons {
 		display: flex;
 		gap: 20px;
-	}
+	} */
 	.hero {
 		box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
 	}

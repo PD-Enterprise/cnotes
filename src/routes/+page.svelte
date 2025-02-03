@@ -4,9 +4,9 @@
 	import { onMount } from 'svelte';
 
 	onMount(async () => {
-		// const response = await fetch('/api/database/prisma/users');
-		// const result = await response.json();
-		// console.log(result);
+		const response = await fetch('/api/database/prisma/users');
+		const result = await response.json();
+		console.log(result);
 	});
 
 	let formMode: 'register' | 'login' = 'register';

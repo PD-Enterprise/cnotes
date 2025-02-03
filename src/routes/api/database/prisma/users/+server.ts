@@ -7,12 +7,7 @@ export const GET: RequestHandler = async ({ url }) => {
         return json({ users });
     } catch (error) {
         return new Response(JSON.stringify({
-            error: 'Failed to connect to database',
-            fullError: error,
-            name: error.name,
-            message: error.message,
-            code: error.code,
-            meta: error.meta
+            error: 'Failed to connect to database'
         }), { status: 500 });
     }
 }

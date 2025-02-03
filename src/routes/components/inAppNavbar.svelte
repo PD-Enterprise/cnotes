@@ -121,7 +121,7 @@
 				</dialog>
 			</ul>
 		</div>
-		<div class="btn btn-ghost text-2xl">Home</div>
+		<a class="btn btn-ghost text-2xl" href="/home">Home</a>
 	</div>
 </div>
 

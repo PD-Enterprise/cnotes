@@ -1,14 +1,6 @@
 <script lang="ts">
 	import Form from './components/form.svelte';
 	import { showModal } from '$lib/stores/showLoginForm';
-	import { onMount } from 'svelte';
-
-	onMount(async () => {
-		console.log('Database URL:', import.meta.env.VITE_DATABASE_URL);
-		const response = await fetch('/api/database/prisma/users');
-		const result = await response.json();
-		console.log(result);
-	});
 
 	let formMode: 'register' | 'login' = 'register';
 </script>

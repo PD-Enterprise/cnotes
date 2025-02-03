@@ -5,9 +5,9 @@
 
 	onMount(async () => {
 		console.log('Database URL:', import.meta.env.VITE_DATABASE_URL);
-		// const response = await fetch('/api/database/prisma/users');
-		// const result = await response.json();
-		// console.log(result);
+		const response = await fetch('/api/database/prisma/users');
+		const result = await response.json();
+		console.log(result);
 	});
 
 	let formMode: 'register' | 'login' = 'register';

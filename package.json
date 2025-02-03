@@ -1,5 +1,5 @@
 {
-	"name": "pd-enterprise",
+	"name": "cnotes",
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
@@ -24,7 +24,7 @@
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
 		"prettier-plugin-tailwindcss": "^0.6.5",
-		"prisma": "^6.3.0",
+		"prisma": "^5.8.0",
 		"svelte": "^5.16.0",
 		"svelte-check": "^4.0.0",
 		"tailwindcss": "^3.4.9",
@@ -35,7 +35,7 @@
 	"dependencies": {
 		"@excalidraw/excalidraw": "^0.17.6",
 		"@neondatabase/serverless": "^0.10.4",
-		"@prisma/client": "^6.3.0",
+		"@prisma/client": "^5.8.0",
 		"@tinymce/tinymce-svelte": "^3.0.0",
 		"cookie": "^1.0.2",
 		"react": "^18.2.0",
@@ -44,5 +44,8 @@
 		"svelte-toasts": "^1.1.2",
 		"tinymce": "^7",
 		"uuid": "^11.0.3"
+	},
+	"engines": {
+		"node": "18.17.1"
 	}
 }

@@ -25,7 +25,7 @@ export async function GET({ request }) {
 			);
 
 			// Retrieve the value of the 'Session_id' cookie.
-			const cookieValue = parsedCookies.Session_id;
+			const cookieValue = parsedCookies.session_id;
 
 			// If the 'Session_id' cookie is found, return a success response with its value.
 			if (cookieValue) {

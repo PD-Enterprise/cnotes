@@ -28,7 +28,7 @@
 		) as HTMLElement;
 
 		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
-		if (localStorage.getItem('LoggedIn') == 'true') {
+		if ($loggedIn || localStorage.getItem('LoggedIn') == 'true') {
 			navbarLoginButtonsElement.classList.add('hidden');
 			menuLoginButtonsElement.classList.add('hidden');
 			navbarDashboardButtonsElement.classList.remove('hidden');

@@ -1,4 +1,5 @@
 import { loggedIn } from "$lib/stores/loggedIn";
+import config from "./apiConfig";
 
 /**
      * Function to renew the cookie.
@@ -6,22 +7,24 @@ import { loggedIn } from "$lib/stores/loggedIn";
      * If the response is successful, it sets the loggedIn store to true, sets the 'LoggedIn' item in localStorage to "true",
      * and sets the 'Email' item in sessionStorage to the email from the response data.
      */
-async function renewCookie(cookieValue: string) {
-    const response = await fetch('/api/database', {
+export async function renewCookie(cookieValue: string) {
+    const response = await fetch(`${config.apiUrl}users/renew_session`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            session_id: cookieValue
+            sessionId: cookieValue
         })
     });
     const result = await response.json();
-    if (result.message == 'success') {
+    if (result.status == 200) {
+        const cookie = result.headers['Set-cookie'].split(';')[0];
+		document.cookie = cookie;
         loggedIn.set(true);
-        localStorage.setItem('LoggedIn', "true");
-        sessionStorage.setItem('Email', result.data.email);
+        sessionStorage.setItem("LoggedIn", true);
+        sessionStorage.setItem("Email", result.data.email);
+    } else {
+        loggedIn.set(false);
     }
 }
-
-export default renewCookie;

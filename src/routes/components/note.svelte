@@ -56,7 +56,7 @@
 				<li>
 					<button
 						class="btn btn-error"
-						on:click={() => {
+						onclick={() => {
 							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 							delete_modal.showModal();
 						}}
@@ -89,16 +89,16 @@
 				<div class="modal-action">
 					<button
 						class="btn btn-info"
-						on:click={() => {
+						onclick={() => {
+							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 							delete_modal.close();
 						}}>Cancel</button
 					>
 					<button
 						class="btn btn-error"
-						on:click={() => {
+						onclick={() => {
 							deleteNote(notes.note);
-						}}
-						on:click={() => {
+							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 							delete_modal.close();
 						}}
 						>Delete
@@ -142,6 +142,9 @@
 	}
 	.note:hover {
 		border: 2px solid #4a90e2;
+	}
+	.note:focus {
+		border: 2px solid #007bff;
 	}
 	.note-meta {
 		margin-top: 10px;

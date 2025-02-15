@@ -14,6 +14,8 @@
 	let conf = {
 		editable_root: false
 	};
+	let isEditorLoading: boolean = true;
+
 	// Functions
 	async function getNote(slug: string, email: string) {
 		const response = await fetch('/api/notes/note/sharing', {
@@ -41,6 +43,8 @@
 		}
 	}
 	onMount(async () => {
+		isEditorLoading = false;
+
 		const userEmail = sessionStorage.getItem('Email');
 		const localNotes = localStorage.getItem('notes');
 
@@ -111,7 +115,11 @@
 		</div>
 		<br />
 		<div class="editor">
-			<Editor {data} {...conf} />
+			{#if isEditorLoading}
+				<div>Loading editor...</div>
+			{:else}
+				<Editor {data} {...conf} />
+			{/if}
 		</div>
 	</div>
 	<dialog id="my_modal_4" class="modal">

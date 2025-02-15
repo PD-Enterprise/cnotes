@@ -130,7 +130,14 @@
 				<div class="search-results mt-2 p-2">
 					{#if searchResults.length > 0}
 						{#each searchResults as searchResult}
-							<a href={`#${searchResult.slug}`}>
+							<a
+								href={`#${searchResult.slug}`}
+								tabindex="0"
+								on:click={() => {
+									event.preventDefault();
+									document.getElementById(searchResult.slug).focus();
+								}}
+							>
 								<p class="text-lg font-bold">
 									{searchResult.title}
 								</p>
@@ -234,12 +241,10 @@
 	}
 	/* Search results container with smoother animations */
 	.search-results {
-		background: #f0f4f8;
 		border-radius: 8px;
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		padding: 10px;
 		margin-top: 10px;
-		opacity: 0;
 		transform: translateY(-5px);
 	}
 </style>

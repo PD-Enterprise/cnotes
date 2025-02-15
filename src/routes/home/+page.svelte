@@ -5,6 +5,7 @@
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
 	import { notesStore } from '$lib/stores/noteStore'; // Import the store
+	import { onDestroy } from 'svelte';
 
 	// Variables
 	let error: string = '';
@@ -12,6 +13,7 @@
 	let searchQuery: string = '';
 	let searchResults: searchResult[];
 	let shouldShowSearchResults: boolean = false;
+	let loadingTimeout;
 
 	// Subscribe to the store
 	notesStore.subscribe((value) => {
@@ -56,6 +58,15 @@
 				shouldShowSearchResults = false;
 			}
 		});
+
+		loadingTimeout = setTimeout(() => {
+			if (notes.length === 0) {
+				error = 'No notes found.';
+			}
+		}, 5000);
+	});
+	onDestroy(() => {
+		clearTimeout(loadingTimeout);
 	});
 	function search() {
 		if (searchQuery.length > 0) {
@@ -127,7 +138,7 @@
 							<hr />
 						{/each}
 					{:else}
-						<p>No note found.</p>
+						<p>No notes found.</p>
 					{/if}
 				</div>
 			{/if}

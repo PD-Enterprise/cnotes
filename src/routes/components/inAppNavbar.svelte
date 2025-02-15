@@ -89,6 +89,7 @@
 							class="btn btn-accent"
 							href="#form"
 							on:click={() => {
+								const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 								delete_modal.showModal();
 							}}>Log Out</a
 						>
@@ -105,6 +106,7 @@
 							<button
 								class="btn btn-info"
 								on:click={() => {
+									const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 									delete_modal.close();
 								}}>Cancel</button
 							>
@@ -112,6 +114,7 @@
 								class="btn btn-error"
 								on:click={() => {
 									logout();
+									const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
 									delete_modal.close();
 								}}
 								>Log Out

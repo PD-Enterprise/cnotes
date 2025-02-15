@@ -22,7 +22,7 @@
 		// Checking if the response is successful
 		if (response.ok) {
 			const result = await response.json();
-			console.log(result);
+			// console.log(result);
 			// Setting the cookie value
 			cookieValue = result.cookieValue;
 			// Checking if the cookie value exists
@@ -42,3 +42,9 @@
 		{@render children()}
 	</div>
 </div>
+
+<style>
+	.navbar {
+		margin: 0;
+	}
+</style>

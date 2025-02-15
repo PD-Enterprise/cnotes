@@ -32,7 +32,7 @@
 					})
 				});
 				const result = await response.json();
-				// console.log(result);
+				console.log(result);
 				switch (result.status) {
 					case 200:
 						loggedIn.set(true);

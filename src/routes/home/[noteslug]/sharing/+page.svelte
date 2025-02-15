@@ -110,7 +110,9 @@
 			>
 		</div>
 		<br />
-		<Editor {data} {...conf} />
+		<div class="editor">
+			<Editor {data} {...conf} />
+		</div>
 	</div>
 	<dialog id="my_modal_4" class="modal">
 		<div class="modal-box">
@@ -140,5 +142,8 @@
 	}
 	.note {
 		padding: 5px;
+	}
+	.editor {
+		height: 120vh;
 	}
 </style>

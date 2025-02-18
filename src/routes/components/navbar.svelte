@@ -28,14 +28,17 @@
 		) as HTMLElement;
 
 		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
-		if ($loggedIn || localStorage.getItem('LoggedIn') == 'true') {
+		if ($loggedIn || sessionStorage.getItem('LoggedIn') == 'true') {
 			navbarLoginButtonsElement.classList.add('hidden');
 			menuLoginButtonsElement.classList.add('hidden');
 			navbarDashboardButtonsElement.classList.remove('hidden');
 			menuDashboardButtonsElement.classList.remove('hidden');
 		}
 		// Checking if auto-login is enabled and redirecting to the home page if true
-		if (localStorage.getItem('AutoLogin') == 'true' && $loggedIn) {
+		if (
+			(localStorage.getItem('AutoLogin') == 'true' && sessionStorage.getItem('LoggedIn')) ||
+			$loggedIn
+		) {
 			goto('/home');
 		}
 	});

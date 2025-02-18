@@ -37,6 +37,7 @@
 				if (result.status === 'success') {
 					notesStore.set(result.response); // Set the store with fetched notes
 					localStorage.setItem('notes', JSON.stringify(result.response));
+					notes = result.response;
 				} else {
 					error = result.message;
 				}
@@ -49,6 +50,11 @@
 	}
 	onMount(() => {
 		const userEmail = sessionStorage.getItem('Email');
+
+		const localNotes = localStorage.getItem('notes');
+		if (localNotes) {
+			notes = JSON.parse(localNotes);
+		}
 		getNotes(userEmail);
 
 		// Add click event listener to document to hide search results when clicking outside

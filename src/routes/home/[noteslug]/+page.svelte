@@ -90,18 +90,17 @@
 
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
+		if (localNotes && localNotes.length > 0) {
+			const allNotes = JSON.parse(localNotes);
+			// Filter notes to find the one matching the current slug
+			data = allNotes.filter((note: note) => note.slug === slug);
+			originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
+		} else {
+			error = 'Note not found';
+		}
 		if (userEmail) {
 			const noteExists = await getNote(slug, userEmail);
-			if (!noteExists && localNotes) {
-				if (localNotes.length > 0) {
-					const allNotes = JSON.parse(localNotes);
-					// Filter notes to find the one matching the current slug
-					data = allNotes.filter((note: note) => note.slug === slug);
-					originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
-				} else {
-					error = 'Note not found';
-				}
-			} else if (!localNotes) {
+			if (!noteExists) {
 				showToast('error', 'Note not found.', 2500, 'error');
 			}
 		} else {
@@ -199,6 +198,6 @@
 		padding: 5px;
 	}
 	.editor {
-		height: 120vh;
+		height: 750px;
 	}
 </style>

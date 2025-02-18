@@ -152,6 +152,6 @@
 		padding: 5px;
 	}
 	.editor {
-		height: 120vh;
+		height: 750px;
 	}
 </style>

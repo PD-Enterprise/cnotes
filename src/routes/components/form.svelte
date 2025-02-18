@@ -36,7 +36,7 @@
 				switch (result.status) {
 					case 200:
 						loggedIn.set(true);
-						localStorage.setItem('LoggedIn', 'true');
+						sessionStorage.setItem('LoggedIn', 'true');
 						sessionStorage.setItem('Email', email);
 						const cookie = result.headers['Set-cookie'].split(';')[0];
 						document.cookie = cookie;
@@ -78,6 +78,8 @@
 						showToast('Error', 'User already exists. Please login.', 5000, 'error');
 						break;
 					case 201:
+						loggedIn.set(true);
+						sessionStorage.setItem('LoggedIn', 'true');
 						sessionStorage.setItem('Email', email);
 						const cookie = result.headers['Set-cookie'].split(';')[0];
 						document.cookie = cookie;

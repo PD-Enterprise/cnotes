@@ -25,15 +25,22 @@
 		</div>
 	</div>
 {:else}
-	<label class="form-control w-full max-w-xs">
+	<label class="form-control w-full">
 		<div class="label">
 			<span class="label-text">{title}:</span>
 		</div>
 		<input
 			{type}
-			class="input input-bordered w-full max-w-xs"
+			class="input input-bordered w-full"
 			bind:value={data[0][tag]}
 			on:input={checkForChanges}
 		/>
 	</label>
 {/if}
+
+<style>
+	input,
+	label {
+		max-width: 10rem;
+	}
+</style>

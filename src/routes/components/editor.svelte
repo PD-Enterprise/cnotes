@@ -9,7 +9,7 @@
 	export let editorRef: TinyMCEEditor | null = null;
 	export let data: any;
 	export let conf: any = {
-		height: 800,
+		height: 750,
 		menubar: false,
 		shortcuts: false,
 		skin: 'oxide-dark',

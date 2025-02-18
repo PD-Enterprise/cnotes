@@ -20,7 +20,7 @@ export async function renewCookie(cookieValue: string) {
     const result = await response.json();
     if (result.status == 200) {
         const cookie = result.headers['Set-cookie'].split(';')[0];
-		document.cookie = cookie;
+		document.cookie = `${cookie}; path=/`;
         loggedIn.set(true);
         sessionStorage.setItem("LoggedIn", true);
         sessionStorage.setItem("Email", result.data.email);

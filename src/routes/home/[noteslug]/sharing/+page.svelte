@@ -18,6 +18,18 @@
 
 	// Functions
 	async function getNote(slug: string, email: string) {
+		// First try to get note from localStorage using specific key
+		const localNote = localStorage.getItem(`note_${slug}`);
+		if (localNote) {
+			const parsedNote = JSON.parse(localNote);
+			data = [parsedNote];
+			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			originalData = JSON.parse(JSON.stringify(data));
+			console.log('Loaded shared note from localStorage:', data);
+			return true;
+		}
+
+		// Then fetch from server
 		const response = await fetch('/api/notes/note/sharing', {
 			method: 'POST',
 			headers: {
@@ -28,39 +40,30 @@
 			})
 		});
 		const result = await response.json();
-		// console.log(result);
-		if (result.status == 'success') {
-			if (result.response.length > 0) {
-				data = result.response;
-				data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
-				originalData = JSON.parse(JSON.stringify(result.response)); // Deep copy original data
-				localStorage.setItem('notes', JSON.stringify(result.response));
-				return true;
-			}
+
+		if (result.status == 'success' && result.response.length > 0) {
+			data = result.response;
+			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			originalData = JSON.parse(JSON.stringify(result.response));
+
+			// Cache the note
+			localStorage.setItem(`note_${slug}`, JSON.stringify(result.response[0]));
+
+			return true;
 		} else {
 			error = 'Error getting note from database.';
 			return false;
 		}
 	}
+
 	onMount(async () => {
 		isEditorLoading = false;
 
 		const userEmail = sessionStorage.getItem('Email');
-		const localNotes = localStorage.getItem('notes');
-
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
 		const noteExists = await getNote(slug, userEmail);
-		if (!noteExists && localNotes) {
-			if (localNotes.length > 0) {
-				const allNotes = JSON.parse(localNotes);
-				// Filter notes to find the one matching the current slug
-				data = allNotes.filter((note: note) => note.slug === slug);
-				originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
-			} else {
-				error = 'Note not found';
-			}
-		} else if (!localNotes) {
+		if (!noteExists) {
 			showToast('error', 'Note not found.', 2500, 'error');
 		}
 	});
@@ -127,10 +130,35 @@
 			<form method="dialog">
 				<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
 			</form>
-			<label>Link:</label>
-			<a href="/home/{data[0].slug}/sharing" class="share-link"
-				>https://cnotes.pages.dev/{data[0].slug}/sharing</a
-			>
+			<label for="share-link">Link:</label>
+			<div class="share-container">
+				<a id="share-link" href="/home/{data[0].slug}/sharing" class="share-link"
+					>https://cnotes.pages.dev/{data[0].slug}/sharing</a
+				>
+				<button
+					class="btn btn-square btn-sm"
+					aria-label="Copy share link to clipboard"
+					on:click={() => {
+						navigator.clipboard.writeText(`https://cnotes.pages.dev/${data[0].slug}/sharing`);
+						showToast('success', 'Link copied to clipboard!', 2500);
+					}}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke-width="1.5"
+						stroke="currentColor"
+						class="size-4"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184"
+						/>
+					</svg>
+				</button>
+			</div>
 		</div>
 	</dialog>
 {:else}
@@ -153,5 +181,10 @@
 	}
 	.editor {
 		height: 750px;
+	}
+	.share-container {
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 </style>

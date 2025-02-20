@@ -24,6 +24,17 @@
 
 	// Functions
 	async function getNote(slug: string, email: string) {
+		// First try to get note from localStorage using specific key
+		const localNote = localStorage.getItem(`note_${slug}`);
+		if (localNote) {
+			const parsedNote = JSON.parse(localNote);
+			data = [parsedNote]; // Wrap in array to maintain existing structure
+			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			originalData = JSON.parse(JSON.stringify(data));
+			console.log('Loaded from localStorage:', data);
+		}
+
+		// Then fetch from server to check for updates
 		const response = await fetch('/api/notes/note', {
 			method: 'POST',
 			headers: {
@@ -35,19 +46,35 @@
 			})
 		});
 		const result = await response.json();
-		// console.log(result);
-		if (result.status == 'success') {
-			if (result.response.length > 0) {
-				data = result.response;
+
+		if (result.status == 'success' && result.response.length > 0) {
+			// Only update if server data is different from local data
+			const serverNote = result.response;
+			if (JSON.stringify(serverNote) !== JSON.stringify(data)) {
+				console.log('Updating with server data:', serverNote);
+				data = serverNote;
 				data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
-				originalData = JSON.parse(JSON.stringify(result.response)); // Deep copy original data
-				localStorage.setItem('notes', JSON.stringify(result.response));
-				return true;
+				originalData = JSON.parse(JSON.stringify(serverNote));
+
+				// Update the specific note in localStorage
+				localStorage.setItem(`note_${slug}`, JSON.stringify(serverNote[0]));
+
+				// Update the note in the index if it exists
+				const notesIndex = localStorage.getItem('notesIndex');
+				if (notesIndex) {
+					const allNotes = JSON.parse(notesIndex);
+					const updatedNotes = allNotes.map((note: note) =>
+						note.slug === slug ? serverNote[0] : note
+					);
+					localStorage.setItem('notesIndex', JSON.stringify(updatedNotes));
+				}
 			}
-		} else {
+			return true;
+		} else if (!data.length) {
 			error = 'Error getting note from database.';
 			return false;
 		}
+		return true;
 	}
 	function updateNote() {
 		showToast('Saving...', 'Saving your note...', 2500, 'info');
@@ -70,12 +97,24 @@
 			},
 			body: JSON.stringify({
 				data: data,
-				email: sessionStorage.getItem('Email')
+				email: localStorage.getItem('Email')
 			})
 		});
 		const result = await response.json();
-		// console.log(result);
 		if (result.status === 'success') {
+			// Update local cache
+			localStorage.setItem(`note_${data[0].slug}`, JSON.stringify(data[0]));
+
+			// Update the index if it exists
+			const notesIndex = localStorage.getItem('notesIndex');
+			if (notesIndex) {
+				const allNotes = JSON.parse(notesIndex);
+				const updatedNotes = allNotes.map((note: note) =>
+					note.slug === data[0].slug ? data[0] : note
+				);
+				localStorage.setItem('notesIndex', JSON.stringify(updatedNotes));
+			}
+
 			showToast('Success', 'Note saved successfully', 2500, 'success');
 			isChanged.set(false);
 		} else {
@@ -84,27 +123,17 @@
 	}
 	onMount(async () => {
 		isEditorLoading = false;
-
-		const userEmail = sessionStorage.getItem('Email');
-		const localNotes = localStorage.getItem('notes');
+		const userEmail = localStorage.getItem('Email');
 
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		if (localNotes && localNotes.length > 0) {
-			const allNotes = JSON.parse(localNotes);
-			// Filter notes to find the one matching the current slug
-			data = allNotes.filter((note: note) => note.slug === slug);
-			originalData = JSON.parse(JSON.stringify(data)); // Deep copy original data
-		} else {
-			error = 'Note not found';
-		}
 		if (userEmail) {
 			const noteExists = await getNote(slug, userEmail);
-			if (!noteExists) {
+			if (!noteExists && !data.length) {
 				showToast('error', 'Note not found.', 2500, 'error');
 			}
 		} else {
-			error = 'You mussed be logged in to view your notes';
+			error = 'You must be logged in to view your notes';
 		}
 	});
 	export { updateNote };

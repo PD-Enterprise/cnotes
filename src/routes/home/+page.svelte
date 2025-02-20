@@ -24,6 +24,22 @@
 	async function getNotes(userEmail: string) {
 		if (userEmail) {
 			try {
+				// First check and use local storage for the notes list
+				const localNotesIndex = localStorage.getItem('notesIndex');
+				if (localNotesIndex) {
+					const parsedNotes = JSON.parse(localNotesIndex);
+					// Load each note from its individual cache
+					const loadedNotes = parsedNotes.map((note) => {
+						const cachedNote = localStorage.getItem(`note_${note.slug}`);
+						return cachedNote ? JSON.parse(cachedNote) : note;
+					});
+					notesStore.set(loadedNotes);
+					notes = loadedNotes;
+					console.log('Set notes from localStorage:', loadedNotes);
+				}
+
+				// Then fetch from server
+				console.log('Fetching from server...');
 				const request = await fetch('/api/notes', {
 					method: 'POST',
 					headers: {
@@ -34,15 +50,45 @@
 					})
 				});
 				const result = await request.json();
+				console.log('Server response:', result);
+
 				if (result.status === 'success') {
-					notesStore.set(result.response); // Set the store with fetched notes
-					localStorage.setItem('notes', JSON.stringify(result.response));
-					notes = result.response;
+					const serverNotes = result.response;
+					// Only update if server notes is not empty and different from local
+					if (
+						serverNotes.length > 0 &&
+						JSON.stringify(serverNotes) !== localStorage.getItem('notesIndex')
+					) {
+						console.log('Updating with server notes:', serverNotes);
+
+						// Update individual note caches
+						serverNotes.forEach((note) => {
+							localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
+						});
+
+						// Update the index
+						localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
+
+						notesStore.set(serverNotes);
+						notes = serverNotes;
+					}
 				} else {
 					error = result.message;
+					console.error('Server error:', result.message);
 				}
 			} catch (error) {
 				console.error('Error:', error);
+				// Fallback to local index
+				const localNotesIndex = localStorage.getItem('notesIndex');
+				if (localNotesIndex) {
+					const parsedNotes = JSON.parse(localNotesIndex);
+					const loadedNotes = parsedNotes.map((note) => {
+						const cachedNote = localStorage.getItem(`note_${note.slug}`);
+						return cachedNote ? JSON.parse(cachedNote) : note;
+					});
+					notesStore.set(loadedNotes);
+					notes = loadedNotes;
+				}
 			}
 		} else {
 			showToast('error', 'Please login to view your notes.', 2000, 'error');
@@ -51,10 +97,15 @@
 	onMount(() => {
 		const userEmail = localStorage.getItem('Email');
 
+		// Immediately load from localStorage
 		const localNotes = localStorage.getItem('notes');
 		if (localNotes) {
-			notes = JSON.parse(localNotes);
+			const parsedNotes = JSON.parse(localNotes);
+			notesStore.set(parsedNotes);
+			notes = parsedNotes;
 		}
+
+		// Then fetch updates from server
 		getNotes(userEmail);
 
 		// Add click event listener to document to hide search results when clicking outside

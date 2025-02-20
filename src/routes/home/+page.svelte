@@ -35,11 +35,11 @@
 					});
 					notesStore.set(loadedNotes);
 					notes = loadedNotes;
-					console.log('Set notes from localStorage:', loadedNotes);
+					// console.log('Set notes from localStorage:', loadedNotes);
 				}
 
 				// Then fetch from server
-				console.log('Fetching from server...');
+				// console.log('Fetching from server...');
 				const request = await fetch('/api/notes', {
 					method: 'POST',
 					headers: {
@@ -50,7 +50,7 @@
 					})
 				});
 				const result = await request.json();
-				console.log('Server response:', result);
+				// console.log('Server response:', result);
 
 				if (result.status === 'success') {
 					const serverNotes = result.response;
@@ -59,7 +59,7 @@
 						serverNotes.length > 0 &&
 						JSON.stringify(serverNotes) !== localStorage.getItem('notesIndex')
 					) {
-						console.log('Updating with server notes:', serverNotes);
+						// console.log('Updating with server notes:', serverNotes);
 
 						// Update individual note caches
 						serverNotes.forEach((note) => {

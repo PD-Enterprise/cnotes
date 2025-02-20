@@ -56,15 +56,21 @@
 		}
 	}
 
+	export let slugData; // Add this line to receive server data
+
 	onMount(async () => {
 		isEditorLoading = false;
-
 		const userEmail = sessionStorage.getItem('Email');
-		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		const noteExists = await getNote(slug, userEmail);
-		if (!noteExists) {
-			showToast('error', 'Note not found.', 2500, 'error');
+		// Check if data exists and has a slug property
+		if (slugData && slugData.slug) {
+			slug = slugData.slug;
+			const noteExists = await getNote(slug, userEmail);
+			if (!noteExists) {
+				showToast('error', 'Note not found.', 2500, 'error');
+			}
+		} else {
+			error = 'Invalid note URL';
 		}
 	});
 </script>
@@ -140,7 +146,7 @@
 					aria-label="Copy share link to clipboard"
 					on:click={() => {
 						navigator.clipboard.writeText(`https://cnotes.pages.dev/${data[0].slug}/sharing`);
-						showToast('success', 'Link copied to clipboard!', 2500);
+						showToast('success', 'Link copied to clipboard!', 2500, 'success');
 					}}
 				>
 					<svg

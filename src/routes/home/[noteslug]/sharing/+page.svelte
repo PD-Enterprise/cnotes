@@ -17,7 +17,7 @@
 	let isEditorLoading: boolean = true;
 
 	// Functions
-	async function getNote(slug: string, email: string) {
+	async function getNote(slug: string) {
 		// First try to get note from localStorage using specific key
 		const localNote = localStorage.getItem(`note_${slug}`);
 		if (localNote) {
@@ -58,10 +58,9 @@
 
 	onMount(async () => {
 		isEditorLoading = false;
-		const userEmail = localStorage.getItem('Email');
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		const noteExists = await getNote(slug, userEmail);
+		const noteExists = await getNote(slug);
 	});
 </script>
 

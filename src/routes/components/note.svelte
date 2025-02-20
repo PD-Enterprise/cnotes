@@ -134,11 +134,12 @@
 	.note {
 		flex-direction: column;
 		gap: 10px;
-		border: 0.1em solid #ccc;
+		border: 1px solid #ccc;
 		width: 20em;
 		height: 15em;
 		overflow-y: hidden;
 		cursor: pointer;
+		box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
 	}
 	.note:hover {
 		border: 2px solid #4a90e2;

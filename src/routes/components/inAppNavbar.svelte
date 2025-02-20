@@ -11,7 +11,7 @@
 	// Functions
 	function logout() {
 		loggedIn.set(false);
-		sessionStorage.removeItem('Email');
+		localStorage.removeItem('Email');
 		localStorage.removeItem('LoggedIn');
 		showToast('Success', 'Logged out successfully', 2500, 'success');
 		setTimeout(() => {
@@ -89,13 +89,13 @@
 							class="btn btn-accent"
 							href="#form"
 							on:click={() => {
-								const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
-								delete_modal.showModal();
+								const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+								logout_modal.showModal();
 							}}>Log Out</a
 						>
 					</li>
 				</div>
-				<dialog id="delete_modal" class="modal">
+				<dialog id="logout_modal" class="modal">
 					<div class="modal-box">
 						<form method="dialog">
 							<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
@@ -106,16 +106,16 @@
 							<button
 								class="btn btn-info"
 								on:click={() => {
-									const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
-									delete_modal.close();
+									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+									logout_modal.close();
 								}}>Cancel</button
 							>
 							<button
 								class="btn btn-error"
 								on:click={() => {
 									logout();
-									const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
-									delete_modal.close();
+									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+									logout_modal.close();
 								}}
 								>Log Out
 							</button>

@@ -139,11 +139,14 @@
 
 <style>
 	.note {
+		--note-width: 20em;
+		--note-height: 15em;
+		width: var(--note-width);
+		height: var(--note-height);
+		font-size: 1rem; /* Base font size */
 		flex-direction: column;
 		gap: 10px;
 		border: 1px solid #ccc;
-		width: 20em;
-		height: 15em;
 		overflow-y: hidden;
 		cursor: pointer;
 		box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
@@ -164,5 +167,63 @@
 	}
 	.card-body {
 		margin-top: -85px;
+	}
+	@media (max-width: 768px) {
+		.note {
+			--note-width: 18em;
+			--note-height: 12em;
+			font-size: 0.95rem;
+		}
+	}
+	@media (max-width: 635px) {
+		.note {
+			--note-width: 14em;
+			--note-height: 11em;
+			font-size: 0.9rem;
+		}
+		.card-body {
+			padding-left: 18px;
+		}
+	}
+	@media (max-width: 475px) {
+		.note {
+			--note-width: clamp(8em, 5vw + 6em, 13em);
+			--note-height: 10em;
+			font-size: 0.85rem;
+		}
+		.card-body {
+			padding-left: 15px;
+		}
+	}
+	@media (max-width: 445px) {
+		.note {
+			width: 11em;
+			height: 10em;
+			font-size: 0.8rem;
+		}
+	}
+	@media (max-width: 411px) {
+		.note {
+			width: 10em;
+			font-size: 0.75rem;
+		}
+	}
+	@media (max-width: 380px) {
+		.note {
+			width: 9em;
+			font-size: 0.7rem;
+		}
+	}
+	@media (max-width: 345px) {
+		.note {
+			width: 8em;
+			font-size: 0.65rem;
+		}
+	}
+	@media (max-width: 315px) {
+		.note {
+			width: 7em;
+			font-size: 0.6rem;
+		}
 	}
 </style>

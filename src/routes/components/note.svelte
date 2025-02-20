@@ -7,7 +7,7 @@
 	let notes = $props();
 
 	async function deleteNote(note: note) {
-		showToast('Deleting...', 'Deleting fyour note...', 2500, 'info');
+		showToast('Deleting...', 'Deleting your note...', 2500, 'info');
 		const response = await fetch(`/api/notes/note/delete-note`, {
 			method: 'POST',
 			headers: {
@@ -57,10 +57,13 @@
 					<button
 						class="btn btn-error"
 						onclick={() => {
-							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
+							const delete_modal = document.getElementById(
+								`delete_modal_${notes.note.slug}`
+							) as HTMLDialogElement;
 							delete_modal.showModal();
 						}}
-						>Delete
+					>
+						Delete
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -79,7 +82,7 @@
 				</li>
 			</ul>
 		</details>
-		<dialog id="delete_modal" class="modal">
+		<dialog id="delete_modal_{notes.note.slug}" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
 					<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
@@ -90,7 +93,9 @@
 					<button
 						class="btn btn-info"
 						onclick={() => {
-							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
+							const delete_modal = document.getElementById(
+								`delete_modal_${notes.note.slug}`
+							) as HTMLDialogElement;
 							delete_modal.close();
 						}}>Cancel</button
 					>
@@ -98,7 +103,9 @@
 						class="btn btn-error"
 						onclick={() => {
 							deleteNote(notes.note);
-							const delete_modal = document.getElementById('delete_modal') as HTMLDialogElement;
+							const delete_modal = document.getElementById(
+								`delete_modal_${notes.note.slug}`
+							) as HTMLDialogElement;
 							delete_modal.close();
 						}}
 						>Delete

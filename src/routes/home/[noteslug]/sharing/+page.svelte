@@ -140,7 +140,7 @@
 					aria-label="Copy share link to clipboard"
 					on:click={() => {
 						navigator.clipboard.writeText(`https://cnotes.pages.dev/${data[0].slug}/sharing`);
-						showToast('success', 'Link copied to clipboard!', 2500);
+						showToast('success', 'Link copied to clipboard!', 2500, 'success');
 					}}
 				>
 					<svg

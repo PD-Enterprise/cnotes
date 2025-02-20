@@ -36,8 +36,8 @@
 				switch (result.status) {
 					case 200:
 						loggedIn.set(true);
-						sessionStorage.setItem('LoggedIn', 'true');
-						sessionStorage.setItem('Email', email);
+						localStorage.setItem('LoggedIn', 'true');
+						localStorage.setItem('Email', email);
 						const cookie = result.headers['Set-cookie'].split(';')[0];
 						document.cookie = cookie;
 						showToast('Success', 'Successfully logged in.', 5000, 'success');
@@ -79,8 +79,8 @@
 						break;
 					case 201:
 						loggedIn.set(true);
-						sessionStorage.setItem('LoggedIn', 'true');
-						sessionStorage.setItem('Email', email);
+						localStorage.setItem('LoggedIn', 'true');
+						localStorage.setItem('Email', email);
 						const cookie = result.headers['Set-cookie'].split(';')[0];
 						document.cookie = cookie;
 						showToast('Success', 'User created successfully.', 5000, 'success');

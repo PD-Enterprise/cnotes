@@ -49,7 +49,7 @@
 		}
 	}
 	onMount(() => {
-		const userEmail = sessionStorage.getItem('Email');
+		const userEmail = localStorage.getItem('Email');
 
 		const localNotes = localStorage.getItem('notes');
 		if (localNotes) {

@@ -18,6 +18,18 @@
 			goto('/');
 		}, 2500);
 	}
+	onMount(() => {
+		const storedTheme = localStorage.getItem('theme');
+		console.log(storedTheme);
+		if (storedTheme == 'light') {
+			theme.set(true);
+		} else if (storedTheme == 'dark') {
+			theme.set(false);
+		}
+		theme.subscribe((value) => {
+			localStorage.setItem('theme', value ? 'light' : 'dark');
+		});
+	});
 </script>
 
 <SvelteToast />
@@ -137,9 +149,6 @@
 		backdrop-filter: blur(30px);
 	}
 	@media (max-width: 466px) {
-		.navbar-buttons {
-			display: none;
-		}
 		.menu-buttons {
 			display: block;
 		}

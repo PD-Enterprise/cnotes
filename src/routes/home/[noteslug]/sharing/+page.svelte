@@ -60,7 +60,7 @@
 		isEditorLoading = false;
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		const noteExists = await getNote(slug);
+		await getNote(slug);
 	});
 </script>
 

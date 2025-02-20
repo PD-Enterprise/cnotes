@@ -56,22 +56,12 @@
 		}
 	}
 
-	export let slugData; // Add this line to receive server data
-
 	onMount(async () => {
 		isEditorLoading = false;
-		const userEmail = sessionStorage.getItem('Email');
+		const userEmail = localStorage.getItem('Email');
+		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		// Check if data exists and has a slug property
-		if (slugData && slugData.slug) {
-			slug = slugData.slug;
-			const noteExists = await getNote(slug, userEmail);
-			if (!noteExists) {
-				showToast('error', 'Note not found.', 2500, 'error');
-			}
-		} else {
-			error = 'Invalid note URL';
-		}
+		const noteExists = await getNote(slug, userEmail);
 	});
 </script>
 

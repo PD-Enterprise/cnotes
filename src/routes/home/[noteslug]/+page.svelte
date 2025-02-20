@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { PageServerData } from './$types';
 	import type { note } from '../../types';
 	import SvelteToast from '../../components/svelteToast.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
@@ -8,7 +7,6 @@
 	import editorRef from '../../components/editor.svelte';
 	import { isChanged } from '$lib/stores/ischanged';
 	import Input from '../../components/input.svelte';
-	import { canApplyRoundnessTypeToElement } from '@excalidraw/excalidraw/types/element/typeChecks';
 
 	// Variables
 	let data: note[] = [];
@@ -33,7 +31,7 @@
 			data = [parsedNote]; // Wrap in array to maintain existing structure
 			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
 			originalData = JSON.parse(JSON.stringify(data));
-			// console.log('Loaded from localStorage:', data);
+			console.log('Loaded from localStorage:', data);
 		}
 
 		// Then fetch from server to check for updates
@@ -53,7 +51,7 @@
 			// Only update if server data is different from local data
 			const serverNote = result.response;
 			if (JSON.stringify(serverNote) !== JSON.stringify(data)) {
-				// console.log('Updating with server data:', serverNote);
+				console.log('Updating with server data:', serverNote);
 				data = serverNote;
 				data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
 				originalData = JSON.parse(JSON.stringify(serverNote));
@@ -91,7 +89,7 @@
 		isChanged.set(hasChanges);
 	}
 	async function syncWithBackend() {
-		// console.log('Syncing with backend...');
+		console.log('Syncing with backend...');
 		const response = await fetch('/api/notes/note/update-note', {
 			method: 'POST',
 			headers: {
@@ -123,26 +121,19 @@
 			showToast('Error', 'Failed to save note', 2500, 'error');
 		}
 	}
-
-	export let slugData: PageServerData;
-
 	onMount(async () => {
 		isEditorLoading = false;
 		const userEmail = localStorage.getItem('Email');
 
-		// Check if data exists and has a slug property
-		if (slugData && slugData.slug) {
-			slug = slugData.slug;
-			if (userEmail) {
-				const noteExists = await getNote(slug, userEmail);
-				if (!noteExists && !slugData.length) {
-					showToast('error', 'Note not found.', 2500, 'error');
-				}
-			} else {
-				error = 'You must be logged in to view your notes';
+		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
+
+		if (userEmail) {
+			const noteExists = await getNote(slug, userEmail);
+			if (!noteExists && !data.length) {
+				showToast('error', 'Note not found.', 2500, 'error');
 			}
 		} else {
-			error = 'Invalid note URL';
+			error = 'You must be logged in to view your notes';
 		}
 	});
 	export { updateNote };

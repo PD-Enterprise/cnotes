@@ -187,43 +187,45 @@
 	}
 	@media (max-width: 475px) {
 		.note {
-			--note-width: clamp(8em, 5vw + 6em, 13em);
+			/* This sets the width of the note to be between 8em and 13em, 
+			adjusting dynamically based on the viewport width (5vw + 6em). 
+			This ensures the note width is responsive and scales with the viewport. */
+			--note-width: clamp(13em, 5vw + 6em, 13em);
 			--note-height: 10em;
-			font-size: 0.85rem;
 		}
 		.card-body {
 			padding-left: 15px;
 		}
+		.note-meta {
+			display: none;
+		}
+		.note-content {
+			display: none;
+		}
 	}
 	@media (max-width: 445px) {
 		.note {
-			width: 11em;
-			height: 10em;
-			font-size: 0.8rem;
+			width: 12em;
 		}
 	}
 	@media (max-width: 411px) {
 		.note {
-			width: 10em;
-			font-size: 0.75rem;
+			width: 11em;
 		}
 	}
 	@media (max-width: 380px) {
 		.note {
+			width: 10em;
+		}
+	}
+	@media (max-width: 349px) {
+		.note {
 			width: 9em;
-			font-size: 0.7rem;
 		}
 	}
-	@media (max-width: 345px) {
+	@media (max-width: 318px) {
 		.note {
-			width: 8em;
-			font-size: 0.65rem;
-		}
-	}
-	@media (max-width: 315px) {
-		.note {
-			width: 7em;
-			font-size: 0.6rem;
+			width: 8.9em;
 		}
 	}
 </style>

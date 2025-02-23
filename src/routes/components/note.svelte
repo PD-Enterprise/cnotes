@@ -120,7 +120,7 @@
 			<div class="badge badge-outline">{notes.note.grade}th grade</div>
 			<div class="badge badge-outline">{notes.note.subject}</div>
 			<div class="badge badge-outline">
-				{new Date(notes.note.date_created)
+				{new Date(notes.note.dateCreated)
 					.toLocaleDateString('en-US', {
 						day: 'numeric',
 						month: 'numeric',
@@ -132,7 +132,7 @@
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.note_content}
+			{@html notes.note.noteContent}
 		</p>
 	</div>
 </div>

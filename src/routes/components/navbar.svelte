@@ -41,6 +41,17 @@
 		) {
 			goto('/home');
 		}
+
+		const storedTheme = localStorage.getItem('theme');
+		// console.log(storedTheme);
+		if (storedTheme == 'light') {
+			theme.set(true);
+		} else if (storedTheme == 'dark') {
+			theme.set(false);
+		}
+		theme.subscribe((value) => {
+			localStorage.setItem('theme', value ? 'light' : 'dark');
+		});
 	});
 </script>
 

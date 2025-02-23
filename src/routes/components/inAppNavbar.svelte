@@ -13,6 +13,8 @@
 		loggedIn.set(false);
 		localStorage.removeItem('Email');
 		localStorage.removeItem('LoggedIn');
+		localStorage.removeItem('notes');
+		localStorage.removeItem('notesIndex');
 		showToast('Success', 'Logged out successfully', 2500, 'success');
 		setTimeout(() => {
 			goto('/');
@@ -20,7 +22,7 @@
 	}
 	onMount(() => {
 		const storedTheme = localStorage.getItem('theme');
-		console.log(storedTheme);
+		// console.log(storedTheme);
 		if (storedTheme == 'light') {
 			theme.set(true);
 		} else if (storedTheme == 'dark') {

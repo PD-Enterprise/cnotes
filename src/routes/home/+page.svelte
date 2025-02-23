@@ -6,6 +6,7 @@
 	import Note from '../components/note.svelte';
 	import { notesStore } from '$lib/stores/noteStore'; // Import the store
 	import { onDestroy } from 'svelte';
+	import config from '$lib/utils/apiConfig';
 
 	// Variables
 	let error: string = '';
@@ -40,20 +41,20 @@
 
 				// Then fetch from server
 				// console.log('Fetching from server...');
-				const request = await fetch('/api/notes', {
+				const request = await fetch(`${config.apiUrl}notes/notes`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
 					body: JSON.stringify({
-						Email: userEmail
+						email: userEmail
 					})
 				});
 				const result = await request.json();
 				// console.log('Server response:', result);
 
-				if (result.status === 'success') {
-					const serverNotes = result.response;
+				if (result.status == 200) {
+					const serverNotes = result.data;
 					// Only update if server notes is not empty and different from local
 					if (
 						serverNotes.length > 0 &&

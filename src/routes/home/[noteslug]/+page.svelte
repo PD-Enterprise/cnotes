@@ -46,7 +46,6 @@
 			})
 		});
 		const result = await response.json();
-
 		if (result.status == 'success' && result.response.length > 0) {
 			// Only update if server data is different from local data
 			const serverNote = result.response;

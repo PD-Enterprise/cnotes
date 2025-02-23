@@ -18,6 +18,7 @@ export async function renewCookie(cookieValue: string) {
         })
     });
     const result = await response.json();
+    console.log(result)
     if (result.status == 200) {
         const cookie = result.headers['Set-cookie'].split(';')[0];
         document.cookie = `${cookie}; path=/`;

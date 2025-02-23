@@ -2,7 +2,7 @@ type note = {
 	note_id: number;
 	title: string;
 	slug: string;
-	note_content: string;
+	notescontent: string;
 	subject: string;
 	grade: number;
 	email: string;

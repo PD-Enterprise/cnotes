@@ -55,7 +55,7 @@ function generateSlug(noteTitle) {
 async function uploadNote(note, email) {
 	const requiredFields = [
 		'title',
-		'note_content',
+		'notescontent',
 		'subject',
 		'grade',
 		'board',

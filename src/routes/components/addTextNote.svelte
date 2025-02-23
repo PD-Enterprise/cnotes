@@ -14,7 +14,7 @@
 	const quickValidate = (note) => {
 		return (
 			(note?.title &&
-				note?.note_content &&
+				note?.notescontent &&
 				note?.subject &&
 				note?.grade &&
 				note?.board &&

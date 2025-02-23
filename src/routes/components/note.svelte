@@ -132,7 +132,7 @@
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.noteContent}
+			{@html notes.note.notescontent}
 		</p>
 	</div>
 </div>

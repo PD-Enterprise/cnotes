@@ -57,7 +57,7 @@
 {#if Editor}
 	<Editor
 		bind:this={editorRef}
-		bind:value={data[0].note_content}
+		bind:value={data[0].notescontent}
 		apiKey="vy0yfom8b74patlx3pqq3fsgzs7yo91br84xiy2o6744slrf"
 		channel="7"
 		{conf}

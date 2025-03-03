@@ -36,12 +36,15 @@
 </div>
 
 <style>
+	.navbar {
+		margin: 0;
+		padding: 0;
+	}
 	.main {
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
 	}
-
 	.footer {
 		margin-top: auto;
 	}

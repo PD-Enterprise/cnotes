@@ -33,7 +33,7 @@
 				},
 				body: JSON.stringify({
 					note: newNote,
-					email: sessionStorage.getItem('Email')
+					email: localStorage.getItem('Email')
 				})
 			});
 			const result = await response.json();

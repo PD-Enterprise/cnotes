@@ -10,16 +10,13 @@
 
 	// Variables
 	let error: string = '';
-	let notes: note[] = [];
 	let searchQuery: string = '';
 	let searchResults: searchResult[];
 	let shouldShowSearchResults: boolean = false;
 	let loadingTimeout;
 
 	// Subscribe to the store
-	notesStore.subscribe((value) => {
-		notes = value; // Update local notes variable when store changes
-	});
+	$: notes = $notesStore; // Replace the manual subscription with reactive statement
 
 	// Functions
 	async function getNotes(userEmail: string) {
@@ -35,7 +32,6 @@
 						return cachedNote ? JSON.parse(cachedNote) : note;
 					});
 					notesStore.set(loadedNotes);
-					notes = loadedNotes;
 					// console.log('Set notes from localStorage:', loadedNotes);
 				}
 
@@ -56,11 +52,8 @@
 				if (result.status == 200) {
 					const serverNotes = result.data;
 					// Only update if server notes is not empty and different from local
-					if (
-						serverNotes.length > 0 &&
-						JSON.stringify(serverNotes) !== localStorage.getItem('notesIndex')
-					) {
-						// console.log('Updating with server notes:', serverNotes);
+					if (serverNotes.length > 0) {
+						console.log('Updating with server notes:', serverNotes);
 
 						// Update individual note caches
 						serverNotes.forEach((note) => {
@@ -71,7 +64,6 @@
 						localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
 
 						notesStore.set(serverNotes);
-						notes = serverNotes;
 					}
 				} else {
 					error = result.message;
@@ -88,7 +80,6 @@
 						return cachedNote ? JSON.parse(cachedNote) : note;
 					});
 					notesStore.set(loadedNotes);
-					notes = loadedNotes;
 				}
 			}
 		} else {
@@ -103,7 +94,6 @@
 		if (localNotes) {
 			const parsedNotes = JSON.parse(localNotes);
 			notesStore.set(parsedNotes);
-			notes = parsedNotes;
 		}
 
 		// Then fetch updates from server

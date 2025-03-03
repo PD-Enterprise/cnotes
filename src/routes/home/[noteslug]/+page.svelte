@@ -4,13 +4,13 @@
 	import SvelteToast from '../../components/svelteToast.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Editor from '../../components/editor.svelte';
-	import editorRef from '../../components/editor.svelte';
 	import { isChanged } from '$lib/stores/ischanged';
 	import Input from '../../components/input.svelte';
+	import config from '$lib/utils/apiConfig';
 
 	// Variables
 	let data: note[] = [];
-	let slug: string = '';
+	export let slug: string = '';
 	let error: string = '';
 	let originalData: note[] = []; // Store original data for comparison
 	let conf = {
@@ -29,13 +29,13 @@
 		if (localNote) {
 			const parsedNote = JSON.parse(localNote);
 			data = [parsedNote]; // Wrap in array to maintain existing structure
-			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			data[0].dateCreated = new Date(data[0].dateCreated).toISOString().split('T')[0];
 			originalData = JSON.parse(JSON.stringify(data));
-			console.log('Loaded from localStorage:', data);
+			// console.log('Loaded from localStorage:', data);
 		}
 
 		// Then fetch from server to check for updates
-		const response = await fetch('/api/notes/note', {
+		const response = await fetch(`${config.apiUrl}notes/note/text/${slug}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -46,14 +46,13 @@
 			})
 		});
 		const result = await response.json();
-		console.log(result);
-		if (result.status == 'success' && result.response.length > 0) {
+		if (result.status == 200) {
 			// Only update if server data is different from local data
-			const serverNote = result.response;
-			if (JSON.stringify(serverNote) !== JSON.stringify(data)) {
-				console.log('Updating with server data:', serverNote);
+			const serverNote = result.data;
+			if (serverNote.length > 0) {
+				// console.log('Updating with server data:', serverNote);
 				data = serverNote;
-				data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+				// data[0].dateCreated = new Date(data[0].dateCreated).toISOString().split('T')[0];
 				originalData = JSON.parse(JSON.stringify(serverNote));
 
 				// Update the specific note in localStorage
@@ -124,16 +123,16 @@
 	onMount(async () => {
 		isEditorLoading = false;
 		const userEmail = localStorage.getItem('Email');
-
+		// console.log(userEmail);
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		if (userEmail) {
+		if (!userEmail) {
+			error = 'You must be logged in to view your notes';
+		} else {
 			const noteExists = await getNote(slug, userEmail);
 			if (!noteExists && !data.length) {
 				showToast('error', 'Note not found.', 2500, 'error');
 			}
-		} else {
-			error = 'You must be logged in to view your notes';
 		}
 	});
 	export { updateNote };
@@ -153,12 +152,9 @@
 		/><br /><br />
 		<div class="meta-data">
 			<Input {data} title="Board" tag="board" {originalData} />
-
-			<Input {data} title="Created Date" tag="date_created" {originalData} type="date" />
+			<Input {data} title="Created Date" tag="dateCreated" {originalData} type="date" />
 			<Input {data} title="Grade" tag="grade" {originalData} />
-
 			<Input {data} title="School" tag="school" {originalData} />
-
 			<Input {data} title="Subject" tag="subject" {originalData} />
 		</div>
 		<div class="buttons mt-2">

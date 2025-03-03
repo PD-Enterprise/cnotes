@@ -2,18 +2,17 @@
 	import { isChanged } from '$lib/stores/ischanged';
 
 	export let originalData: any;
+	export let data: any;
+	export let title: string;
+	export let tag: string;
+	export let type: string = 'text';
+	export let isDisabled: string = 'false';
 
 	function checkForChanges() {
 		// Compare current data with original data
 		const hasChanges = JSON.stringify(data) !== JSON.stringify(originalData);
 		isChanged.set(hasChanges);
 	}
-
-	export let data: any;
-	export let title: string;
-	export let tag: string;
-	export let type: string = 'text';
-	export let isDisabled: string = 'false';
 </script>
 
 {#if isDisabled == 'true'}

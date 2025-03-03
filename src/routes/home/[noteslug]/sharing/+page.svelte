@@ -5,6 +5,7 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Editor from '../../../components/editor.svelte';
 	import Input from '../../../components/input.svelte';
+	import config from '$lib/utils/apiConfig';
 
 	// Variables
 	let data: note[] = [];
@@ -23,14 +24,14 @@
 		if (localNote) {
 			const parsedNote = JSON.parse(localNote);
 			data = [parsedNote];
-			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			data[0].dateCreated = new Date(data[0].dateCreated).toISOString().split('T')[0];
 			originalData = JSON.parse(JSON.stringify(data));
 			console.log('Loaded shared note from localStorage:', data);
 			return true;
 		}
 
 		// Then fetch from server
-		const response = await fetch('/api/notes/note/sharing', {
+		const response = await fetch(`${config.apiUrl}notes/note/text/${slug}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -43,7 +44,7 @@
 
 		if (result.status == 'success' && result.response.length > 0) {
 			data = result.response;
-			data[0].date_created = new Date(data[0].date_created).toISOString().split('T')[0];
+			data[0].dateCreated = new Date(data[0].dateCreated).toISOString().split('T')[0];
 			originalData = JSON.parse(JSON.stringify(result.response));
 
 			// Cache the note

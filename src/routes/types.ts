@@ -8,8 +8,8 @@ type note = {
 	email: string;
 	board: string;
 	school: string;
-	date_created: string;
-	date_updated: string;
+	dateCreated: string;
+	dateUpdated: string;
 };
 
 type searchResult = {

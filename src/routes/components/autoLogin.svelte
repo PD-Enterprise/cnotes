@@ -1,8 +1,8 @@
 <script lang="ts">
 	// Imports
 	import { goto } from '$app/navigation';
-	import { autoLogin } from '$lib/stores/autoLogin';
-	import { loggedIn } from '$lib/stores/loggedIn';
+	import { autoLogin } from '$lib/stores/store';
+	import { isAuthenticated } from '$lib/stores/store';
 	import { onMount } from 'svelte';
 
 	// Variables
@@ -15,7 +15,7 @@
 		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
 
 		// Subscribing to the loggedIn store
-		loggedIn.subscribe((value) => {
+		isAuthenticated.subscribe((value) => {
 			// If the user is logged in
 			if (value) {
 				// Remove the 'hidden' class from the auto-login element

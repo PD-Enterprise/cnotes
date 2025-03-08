@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Editor from '@tinymce/tinymce-svelte';
 	import type { Editor as TinyMCEEditor } from 'tinymce';
-	import { isChanged } from '$lib/stores/ischanged';
-	import { theme } from '$lib/stores/theme';
+	import { isChanged } from '$lib/stores/store';
+	import { theme } from '$lib/stores/store';
 	import { onMount } from 'svelte';
 
 	// Variables
@@ -56,7 +56,7 @@
 
 {#if Editor}
 	<Editor
-		bind:this={editorRef}
+		bind:this={editorRef as any}
 		bind:value={data[0].notescontent}
 		apiKey="vy0yfom8b74patlx3pqq3fsgzs7yo91br84xiy2o6744slrf"
 		channel="7"

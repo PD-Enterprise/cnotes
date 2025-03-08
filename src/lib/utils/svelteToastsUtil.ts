@@ -4,7 +4,7 @@ import {
     ToastContainer as ToastContainerAny,
     FlatToast as FlatToastAny
 } from 'svelte-toasts';
-import { theme } from "$lib/stores/theme"
+import { theme } from "$lib/stores/store"
 
 // Functions
 const showToast = (title: string, body: string, duration: number, type: string) => {

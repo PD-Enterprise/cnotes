@@ -2,8 +2,8 @@
 	// Importing necessary modules and components
 	import { onMount } from 'svelte';
 	import InAppNavbar from '../components/inAppNavbar.svelte';
-	import { renewCookie } from '$lib/utils/renewCookie';
-	import { loggedIn } from '$lib/stores/loggedIn';
+	import auth from '$lib/utils/authService';
+	import { isAuthenticated, user, auth0Client, autoLogin } from '$lib/stores/store';
 
 	// Destructuring children from props
 	let { children } = $props();
@@ -11,25 +11,12 @@
 	// Variable to hold the cookie value
 	let cookieValue: string;
 
-	// Function to fetch and renew the cookie
 	onMount(async () => {
-		// Fetching the cookie from the server
-		const response = await fetch('/api/cookie', {
-			method: 'GET',
-			credentials: 'include'
-		});
-		// Parsing the response
-		// Checking if the response is successful
-		if (response.ok) {
-			const result = await response.json();
-			// console.log(result);
-			// Setting the cookie value
-			cookieValue = result.cookieValue;
-			// Checking if the cookie value exists
-			if (cookieValue) {
-				// Renewing the cookie
-				renewCookie(cookieValue);
-			}
+		if ($autoLogin) {
+			const client = await auth.createClient();
+			auth0Client.set(client);
+			isAuthenticated.set(await $auth0Client.isAuthenticated());
+			user.set(await $auth0Client.getUser());
 		}
 	});
 </script>

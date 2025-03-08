@@ -4,9 +4,10 @@
 	import SvelteToast from '../components/svelteToast.svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
-	import { notesStore } from '$lib/stores/noteStore'; // Import the store
+	import { isAuthenticated, notesStore } from '$lib/stores/store'; // Import the store
 	import { onDestroy } from 'svelte';
 	import config from '$lib/utils/apiConfig';
+	import { user } from '$lib/stores/store';
 
 	// Variables
 	let error: string = '';
@@ -14,13 +15,14 @@
 	let searchResults: searchResult[];
 	let shouldShowSearchResults: boolean = false;
 	let loadingTimeout;
+	let userEmail: string;
 
 	// Subscribe to the store
 	$: notes = $notesStore; // Replace the manual subscription with reactive statement
 
 	// Functions
 	async function getNotes(userEmail: string) {
-		if (userEmail) {
+		if ($isAuthenticated) {
 			try {
 				// First check and use local storage for the notes list
 				const localNotesIndex = localStorage.getItem('notesIndex');
@@ -87,7 +89,12 @@
 		}
 	}
 	onMount(() => {
-		const userEmail = localStorage.getItem('Email');
+		user.subscribe((value) => {
+			if (value) {
+				// @ts-expect-error
+				userEmail = value.email;
+			}
+		});
 
 		// Immediately load from localStorage
 		const localNotes = localStorage.getItem('notes');

@@ -2,7 +2,7 @@
 	import type { note } from '../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import SvelteToast from './svelteToast.svelte';
-	import { notesStore } from '$lib/stores/noteStore';
+	import { notesStore } from '$lib/stores/store';
 
 	let notes = $props();
 

@@ -1,17 +1,13 @@
 <script lang="ts">
 	// Imports
 	import icon from '../images/icon.png'; // Importing the icon image for the navbar
-	import { theme } from '$lib/stores/theme'; // Importing the theme store for theme management
+	import { autoLogin, theme } from '$lib/stores/store'; // Importing the theme store for theme management
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
-	import Form from './form.svelte'; // Importing the Form component for login/register functionality
-	import { showModal } from '$lib/stores/showLoginForm'; // Importing the showModal store to manage the login form visibility
-	import { loggedIn } from '$lib/stores/loggedIn'; // Importing the loggedIn store to manage the user's login state
+	import { showModal } from '$lib/stores/store'; // Importing the showModal store to manage the login form visibility
+	import { isAuthenticated, auth0Client } from '$lib/stores/store'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
 	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
-
-	// Variables
-	let cookieValue: string; // Variable to hold the cookie value
-	let formMode: 'register' | 'login' = 'register'; // Variable to manage the form mode (register or login)
+	import auth from '$lib/utils/authService';
 
 	// Functions
 	onMount(async () => {
@@ -28,19 +24,17 @@
 		) as HTMLElement;
 
 		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
-		if ($loggedIn || localStorage.getItem('LoggedIn') == 'true') {
-			navbarLoginButtonsElement.classList.add('hidden');
-			menuLoginButtonsElement.classList.add('hidden');
-			navbarDashboardButtonsElement.classList.remove('hidden');
-			menuDashboardButtonsElement.classList.remove('hidden');
-		}
-		// Checking if auto-login is enabled and redirecting to the home page if true
-		if (
-			(localStorage.getItem('AutoLogin') == 'true' && localStorage.getItem('LoggedIn')) ||
-			$loggedIn
-		) {
-			goto('/home');
-		}
+		isAuthenticated.subscribe((value) => {
+			if (value) {
+				navbarLoginButtonsElement.classList.add('hidden');
+				menuLoginButtonsElement.classList.add('hidden');
+				navbarDashboardButtonsElement.classList.remove('hidden');
+				menuDashboardButtonsElement.classList.remove('hidden');
+			}
+			if (value && $autoLogin) {
+				goto('/home');
+			}
+		});
 
 		const storedTheme = localStorage.getItem('theme');
 		// console.log(storedTheme);
@@ -53,6 +47,9 @@
 			localStorage.setItem('theme', value ? 'light' : 'dark');
 		});
 	});
+	function login() {
+		auth.loginWithPopup($auth0Client, {});
+	}
 </script>
 
 <div class="navbar bg-base-300">
@@ -124,24 +121,10 @@
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
-						<a
-							class="btn btn-accent"
-							href="#form"
-							on:click={() => {
-								formMode = 'login';
-								showModal.set(true);
-							}}>Login</a
-						>
+						<button class="btn btn-accent" on:click={login}>Login</button>
 					</li>
 					<li>
-						<a
-							class="btn"
-							href="#form"
-							on:click={() => {
-								formMode = 'register';
-								showModal.set(true);
-							}}>Sign up</a
-						>
+						<button class="btn" on:click={login}>Sign up</button>
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
@@ -203,35 +186,13 @@
 		</ul>
 	</div>
 	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-2" id="navbar-login-buttons">
-		<a
-			class="btn btn-accent"
-			href="#form"
-			on:click={() => {
-				formMode = 'login';
-				showModal.set(true);
-			}}>Login</a
-		>
-		<a
-			href="#form"
-			class="btn"
-			on:click={() => {
-				formMode = 'register';
-				showModal.set(true);
-			}}>Sign up</a
-		>
+		<button class="btn btn-accent" on:click={login}>Login</button>
+		<button class="btn" on:click={login}>Sign up</button>
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
 		<a class="btn btn-accent" href="/home">Go to App</a>
 	</div>
 </div>
-
-{#if $showModal}
-	<div class="modal modal-bottom sm:modal-middle" role="dialog" id="form">
-		<div class="modal-box">
-			<Form type={formMode} />
-		</div>
-	</div>
-{/if}
 
 <style>
 	#navbar-logo {

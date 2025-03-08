@@ -4,7 +4,7 @@
 	import SvelteToast from '../../components/svelteToast.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Editor from '../../components/editor.svelte';
-	import { isChanged } from '$lib/stores/ischanged';
+	import { isAuthenticated, isChanged, user } from '$lib/stores/store';
 	import Input from '../../components/input.svelte';
 	import config from '$lib/utils/apiConfig';
 
@@ -21,6 +21,7 @@
 		}
 	};
 	let isEditorLoading: boolean = true;
+	let userEmail: string;
 
 	// Functions
 	async function getNote(slug: string, email: string) {
@@ -122,11 +123,16 @@
 	}
 	onMount(async () => {
 		isEditorLoading = false;
-		const userEmail = localStorage.getItem('Email');
+		user.subscribe((value) => {
+			if (value) {
+				// @ts-expect-error
+				userEmail = value.email;
+			}
+		});
 		// console.log(userEmail);
 		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
 
-		if (!userEmail) {
+		if (!$isAuthenticated) {
 			error = 'You must be logged in to view your notes';
 		} else {
 			const noteExists = await getNote(slug, userEmail);

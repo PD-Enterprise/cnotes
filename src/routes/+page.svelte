@@ -1,6 +1,5 @@
 <script lang="ts">
-	import Form from './components/form.svelte';
-	import { showModal } from '$lib/stores/showLoginForm';
+	import { showModal } from '$lib/stores/store';
 
 	let formMode: 'register' | 'login' = 'register';
 </script>
@@ -94,14 +93,6 @@
 	</div>
 	<hr />
 </div>
-
-{#if $showModal}
-	<div class="modal modal-bottom sm:modal-middle" role="dialog" id="form">
-		<div class="modal-box">
-			<Form type={formMode} />
-		</div>
-	</div>
-{/if}
 
 <style>
 	a:hover {

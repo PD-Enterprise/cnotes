@@ -1,25 +1,14 @@
 <script lang="ts">
 	// Imports
-	import { theme } from '$lib/stores/theme';
+	import { theme } from '$lib/stores/store';
 	import { onMount } from 'svelte';
-	import { loggedIn } from '$lib/stores/loggedIn';
+	import auth from '$lib/utils/authService';
+	import { auth0Client } from '$lib/stores/store';
 	import AutoLogin from './autoLogin.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { goto } from '$app/navigation';
 	import SvelteToast from './svelteToast.svelte';
 
-	// Functions
-	function logout() {
-		loggedIn.set(false);
-		localStorage.removeItem('Email');
-		localStorage.removeItem('LoggedIn');
-		localStorage.removeItem('notes');
-		localStorage.removeItem('notesIndex');
-		showToast('Success', 'Logged out successfully', 2500, 'success');
-		setTimeout(() => {
-			goto('/');
-		}, 2500);
-	}
 	onMount(() => {
 		const storedTheme = localStorage.getItem('theme');
 		// console.log(storedTheme);
@@ -32,6 +21,10 @@
 			localStorage.setItem('theme', value ? 'light' : 'dark');
 		});
 	});
+	function logout() {
+		auth.logout($auth0Client);
+		goto('/');
+	}
 </script>
 
 <SvelteToast />

@@ -3,7 +3,9 @@
 	import { derived } from 'svelte/store';
 	import Navbar from './components/navbar.svelte';
 	import Footer from './components/footer.svelte';
-	import { theme } from '$lib/stores/theme';
+	import { theme } from '$lib/stores/store';
+	import auth from '$lib/utils/authService';
+	import { isAuthenticated, user, auth0Client } from '$lib/stores/store';
 
 	import '../app.css';
 	import { onMount } from 'svelte';
@@ -13,7 +15,12 @@
 		return $page.url.pathname.startsWith('/home');
 	});
 
-	onMount(() => {
+	onMount(async () => {
+		const client = await auth.createClient();
+		auth0Client.set(client);
+		isAuthenticated.set(await $auth0Client.isAuthenticated());
+		user.set(await $auth0Client.getUser());
+
 		const localTheme = localStorage.getItem('theme');
 		if (localTheme === 'light') {
 			document.documentElement.setAttribute('data-theme', 'light');

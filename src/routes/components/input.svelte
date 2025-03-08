@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isChanged } from '$lib/stores/ischanged';
+	import { isChanged } from '$lib/stores/store';
 
 	export let originalData: any;
 	export let data: any;

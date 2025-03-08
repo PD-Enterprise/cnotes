@@ -20,6 +20,8 @@
 		auth0Client.set(client);
 		isAuthenticated.set(await $auth0Client.isAuthenticated());
 		user.set(await $auth0Client.getUser());
+		// console.log($user);
+		localStorage.setItem('user', JSON.stringify($user));
 
 		const localTheme = localStorage.getItem('theme');
 		if (localTheme === 'light') {

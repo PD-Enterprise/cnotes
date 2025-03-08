@@ -4,10 +4,9 @@
 	import SvelteToast from '../components/svelteToast.svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
-	import { isAuthenticated, notesStore } from '$lib/stores/store'; // Import the store
+	import { isAuthenticated, notesStore, user } from '$lib/stores/store'; // Import the store
 	import { onDestroy } from 'svelte';
 	import config from '$lib/utils/apiConfig';
-	import { user } from '$lib/stores/store';
 
 	// Variables
 	let error: string = '';
@@ -22,80 +21,75 @@
 
 	// Functions
 	async function getNotes(userEmail: string) {
-		if ($isAuthenticated) {
-			try {
-				// First check and use local storage for the notes list
-				const localNotesIndex = localStorage.getItem('notesIndex');
-				if (localNotesIndex) {
-					const parsedNotes = JSON.parse(localNotesIndex);
-					// Load each note from its individual cache
-					const loadedNotes = parsedNotes.map((note) => {
-						const cachedNote = localStorage.getItem(`note_${note.slug}`);
-						return cachedNote ? JSON.parse(cachedNote) : note;
-					});
-					notesStore.set(loadedNotes);
-					// console.log('Set notes from localStorage:', loadedNotes);
-				}
-
-				// Then fetch from server
-				// console.log('Fetching from server...');
-				const request = await fetch(`${config.apiUrl}notes/notes`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						email: userEmail
-					})
-				});
-				const result = await request.json();
-				// console.log('Server response:', result);
-
-				if (result.status == 200) {
-					const serverNotes = result.data;
-					// Only update if server notes is not empty and different from local
-					if (serverNotes.length > 0) {
-						console.log('Updating with server notes:', serverNotes);
-
-						// Update individual note caches
-						serverNotes.forEach((note) => {
-							localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
-						});
-
-						// Update the index
-						localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
-
-						notesStore.set(serverNotes);
-					}
-				} else {
-					error = result.message;
-					console.error('Server error:', result.message);
-				}
-			} catch (error) {
-				console.error('Error:', error);
-				// Fallback to local index
-				const localNotesIndex = localStorage.getItem('notesIndex');
-				if (localNotesIndex) {
-					const parsedNotes = JSON.parse(localNotesIndex);
-					const loadedNotes = parsedNotes.map((note) => {
-						const cachedNote = localStorage.getItem(`note_${note.slug}`);
-						return cachedNote ? JSON.parse(cachedNote) : note;
-					});
-					notesStore.set(loadedNotes);
-				}
-			}
-		} else {
-			showToast('error', 'Please login to view your notes.', 2000, 'error');
-		}
-	}
-	onMount(() => {
-		user.subscribe((value) => {
+		isAuthenticated.subscribe(async (value) => {
 			if (value) {
-				// @ts-expect-error
-				userEmail = value.email;
+				try {
+					// First check and use local storage for the notes list
+					const localNotesIndex = localStorage.getItem('notesIndex');
+					if (localNotesIndex) {
+						const parsedNotes = JSON.parse(localNotesIndex);
+						// Load each note from its individual cache
+						const loadedNotes = parsedNotes.map((note) => {
+							const cachedNote = localStorage.getItem(`note_${note.slug}`);
+							return cachedNote ? JSON.parse(cachedNote) : note;
+						});
+						notesStore.set(loadedNotes);
+						// console.log('Set notes from localStorage:', loadedNotes);
+					}
+
+					// Then fetch from server
+					// console.log('Fetching from server...');
+					const request = await fetch(`${config.apiUrl}notes/notes`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({
+							email: userEmail
+						})
+					});
+					const result = await request.json();
+					// console.log('Server response:', result);
+
+					if (result.status == 200) {
+						const serverNotes = result.data;
+						// Only update if server notes is not empty and different from local
+						if (serverNotes.length > 0) {
+							console.log('Updating with server notes:', serverNotes);
+
+							// Update individual note caches
+							serverNotes.forEach((note) => {
+								localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
+							});
+
+							// Update the index
+							localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
+
+							notesStore.set(serverNotes);
+						}
+					} else {
+						error = result.message;
+						console.error('Server error:', result.message);
+					}
+				} catch (error) {
+					console.error('Error:', error);
+					// Fallback to local index
+					const localNotesIndex = localStorage.getItem('notesIndex');
+					if (localNotesIndex) {
+						const parsedNotes = JSON.parse(localNotesIndex);
+						const loadedNotes = parsedNotes.map((note) => {
+							const cachedNote = localStorage.getItem(`note_${note.slug}`);
+							return cachedNote ? JSON.parse(cachedNote) : note;
+						});
+						notesStore.set(loadedNotes);
+					}
+				}
 			}
 		});
-
+	}
+	onMount(() => {
+		userEmail = JSON.parse(localStorage.getItem('user')).email;
+		console.log(userEmail);
 		// Immediately load from localStorage
 		const localNotes = localStorage.getItem('notes');
 		if (localNotes) {

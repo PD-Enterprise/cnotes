@@ -12,12 +12,10 @@
 	let cookieValue: string;
 
 	onMount(async () => {
-		if ($autoLogin) {
-			const client = await auth.createClient();
-			auth0Client.set(client);
-			isAuthenticated.set(await $auth0Client.isAuthenticated());
-			user.set(await $auth0Client.getUser());
-		}
+		isAuthenticated.set(await $auth0Client.isAuthenticated());
+		user.set(await $auth0Client.getUser());
+		console.log($user);
+		localStorage.setItem('user', JSON.stringify($user));
 	});
 </script>
 

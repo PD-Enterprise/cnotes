@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { note } from '../../routes/types';
+import type { note, userType } from '../../routes/types';
 
 export let theme = writable(false);
 export let showModal = writable(false);

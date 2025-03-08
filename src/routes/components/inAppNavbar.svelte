@@ -8,6 +8,10 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { goto } from '$app/navigation';
 	import SvelteToast from './svelteToast.svelte';
+	import { user } from '$lib/stores/store';
+
+	let userPictureUrl: string;
+	let userName: string;
 
 	onMount(() => {
 		const storedTheme = localStorage.getItem('theme');
@@ -19,6 +23,14 @@
 		}
 		theme.subscribe((value) => {
 			localStorage.setItem('theme', value ? 'light' : 'dark');
+		});
+		user.subscribe((value) => {
+			if (value) {
+				// @ts-expect-error
+				userPictureUrl = value.picture;
+				// @ts-expect-error
+				userName = value.name;
+			}
 		});
 	});
 	function logout() {
@@ -49,7 +61,21 @@
 				</svg>
 			</div>
 			<ul class="menu dropdown-content menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
-				<!-- <li><a href="#home">Settings</a></li> -->
+				<li>
+					<a
+						href="https://pd-enterprise.pages.dev/admin-dashboard"
+						title="Admin Dashboard"
+						class="flex justify-center"
+					>
+						<img
+							src={userPictureUrl}
+							alt="profile"
+							title={userName}
+							class="w-15 h-10 cursor-pointer rounded-full"
+						/>
+						{userName}
+					</a>
+				</li>
 				<li>
 					<label class="flex cursor-pointer gap-2">
 						<svg

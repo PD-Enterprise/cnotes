@@ -14,7 +14,19 @@
 	onMount(async () => {
 		isAuthenticated.set(await $auth0Client.isAuthenticated());
 		user.set(await $auth0Client.getUser());
-		console.log($user);
+		const request = await fetch(`${apiConfig.apiUrl}users/roles/get-role`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				// @ts-expect-error
+				email: $user.email
+			})
+		});
+		const result = await request.json();
+		localStorage.setItem('role', result.data);
+		// console.log($user);
 		localStorage.setItem('user', JSON.stringify($user));
 	});
 </script>

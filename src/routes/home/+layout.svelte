@@ -4,6 +4,7 @@
 	import InAppNavbar from '../components/inAppNavbar.svelte';
 	import auth from '$lib/utils/authService';
 	import { isAuthenticated, user, auth0Client, autoLogin } from '$lib/stores/store';
+	import apiConfig from '$lib/utils/apiConfig';
 
 	// Destructuring children from props
 	let { children } = $props();

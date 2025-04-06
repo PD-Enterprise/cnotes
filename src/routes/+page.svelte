@@ -7,6 +7,7 @@
 <div class="main">
 	<div class="hero min-h-screen">
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<div class="hero-content flex-col lg:flex-row-reverse gap-8">
 			<div class="app-image">
 				<img src="/images/cnotes-preview.png" alt="Cnotes App Interface" class="rounded-lg shadow-xl" />
@@ -17,10 +18,15 @@
 				</h1>
 				<p class="hero-text">
 =======
+=======
+>>>>>>> parent of 09c5810 (pull request)
 		<div class="hero-content flex-col lg:flex-row-reverse">
 			<div id="home">
 				<h8 id="grade-app" class="title text-5xl font-bold">Cnotes</h8>
 				<p class="py-6" id="homep">
+<<<<<<< HEAD
+>>>>>>> parent of 09c5810 (pull request)
+=======
 >>>>>>> parent of 09c5810 (pull request)
 					Your personal notes, organized and accessible anywhere. Start your journey now by logging
 					in or creating an account.

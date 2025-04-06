@@ -9,6 +9,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 		<div class="hero-content flex-col lg:flex-row-reverse gap-8">
 			<div class="app-image">
 				<img src="/images/cnotes-preview.png" alt="Cnotes App Interface" class="rounded-lg shadow-xl" />
@@ -23,12 +24,17 @@
 >>>>>>> parent of 09c5810 (pull request)
 =======
 >>>>>>> parent of 09c5810 (pull request)
+=======
+>>>>>>> parent of 09c5810 (pull request)
 		<div class="hero-content flex-col lg:flex-row-reverse">
 			<div id="home">
 				<h8 id="grade-app" class="title text-5xl font-bold">Cnotes</h8>
 				<p class="py-6" id="homep">
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> parent of 09c5810 (pull request)
+=======
 >>>>>>> parent of 09c5810 (pull request)
 =======
 >>>>>>> parent of 09c5810 (pull request)

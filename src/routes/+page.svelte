@@ -8,7 +8,7 @@
 	<div class="hero min-h-screen">
 		<div class="hero-content flex-col lg:flex-row-reverse gap-8">
 			<div class="app-image">
-				<img src="/images/cnotes-preview.png" alt="Cnotes App Interface" class="rounded-lg shadow-xl" />
+				<img src="/cnotes-preview.png" alt="Cnotes App Interface" class="rounded-lg shadow-xl" />
 			</div>
 			<div id="home" class="text-center lg:text-left">
 				<h1 class="title">

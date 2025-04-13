@@ -49,13 +49,13 @@
 						})
 					});
 					const result = await request.json();
-					// console.log('Server response:', result);
+					// console.log('Server response:', result.data);
 
 					if (result.status == 200) {
 						const serverNotes = result.data;
 						// Only update if server notes is not empty and different from local
 						if (serverNotes.length > 0) {
-							console.log('Updating with server notes:', serverNotes);
+							// console.log('Updating with server notes:', serverNotes);
 
 							// Update individual note caches
 							serverNotes.forEach((note) => {
@@ -89,7 +89,7 @@
 	}
 	onMount(() => {
 		userEmail = JSON.parse(localStorage.getItem('user')).email;
-		console.log(userEmail);
+		// console.log(userEmail);
 		// Immediately load from localStorage
 		const localNotes = localStorage.getItem('notes');
 		if (localNotes) {
@@ -122,10 +122,10 @@
 			shouldShowSearchResults = true;
 			// Use filter and map for better performance
 			const matches = notes
-				.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
+				.filter((note) => note.notes.title.toLowerCase().includes(searchQuery.toLowerCase()))
 				.map((note) => ({
-					title: note.title,
-					slug: note.slug
+					title: note.notes.title,
+					slug: note.notes.slug
 				}));
 
 			searchResults = matches.map((match) => ({

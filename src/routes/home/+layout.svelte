@@ -27,6 +27,7 @@
 		});
 		const result = await request.json();
 		localStorage.setItem('role', result.data);
+		// console.log(result.data);
 		// console.log($user);
 		localStorage.setItem('user', JSON.stringify($user));
 	});

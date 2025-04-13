@@ -3,6 +3,7 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import SvelteToast from './svelteToast.svelte';
 	import { notesStore } from '$lib/stores/store';
+	import { onMount } from 'svelte';
 
 	let notes = $props();
 
@@ -31,7 +32,7 @@
 	role="button"
 	tabindex="0"
 	class="note card flex w-96 bg-base-200 shadow-xl"
-	id={notes.note.slug}
+	id={notes.note.notes.slug}
 >
 	<div class="card-options">
 		<details class="dropdown dropdown-end">
@@ -115,12 +116,14 @@
 		</dialog>
 	</div>
 	<div class="card-body">
-		<a class="note-title card-title" href="/home/{notes.note.slug}">{notes.note.title}</a>
+		<a class="note-title card-title" href="/home/{notes.note.notes.slug}"
+			>{notes.note.notes.title}</a
+		>
 		<div class="note-meta card-actions justify-end">
-			<div class="badge badge-outline">{notes.note.grade}th grade</div>
-			<div class="badge badge-outline">{notes.note.subject}</div>
+			<div class="badge badge-outline">{notes.note.notes.grade}th grade</div>
+			<div class="badge badge-outline">{notes.note.notes.subject}</div>
 			<div class="badge badge-outline">
-				{new Date(notes.note.dateCreated)
+				{new Date(notes.note.notes.dateCreated)
 					.toLocaleDateString('en-US', {
 						day: 'numeric',
 						month: 'numeric',
@@ -132,7 +135,7 @@
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.notescontent}
+			{@html notes.note.notes.notescontent}
 		</p>
 	</div>
 </div>

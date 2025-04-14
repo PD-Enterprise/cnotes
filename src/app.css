@@ -1,3 +1,71 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
-@import 'tailwindcss/utilities'
+@import 'tailwindcss/utilities';
+
+@layer components {
+  .hover-bihu {
+    @apply transition-all duration-300;
+  }
+
+  .hover-bihu:hover {
+    @apply shadow-sm;
+    box-shadow: 0 2px 4px rgba(255, 215, 0, 0.1);
+  }
+
+  .bihu-border-subtle {
+    @apply border-b border-bihu-accent-border/30;
+  }
+
+  .bihu-tilt {
+    @apply transition-transform duration-200;
+  }
+
+  .bihu-tilt:hover {
+    @apply animate-bihu-tilt;
+  }
+}
+
+/* Theme variables */
+:root {
+  --primary: #4A90E2;
+  --secondary: #50E3C2;
+  --background: #F8F9FA;
+  --text: #2C3E50;
+  --accent: #9013FE;
+}
+
+/* Apply theme variables to elements */
+body {
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: var(--text);
+}
+
+.border-primary {
+  border-color: var(--primary);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}

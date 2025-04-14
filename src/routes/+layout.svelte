@@ -7,6 +7,7 @@
 	import auth from '$lib/utils/authService';
 	import { isAuthenticated, user, auth0Client } from '$lib/stores/store';
 	import apiConfig from '$lib/utils/apiConfig';
+	import { loadSavedTheme, applyThemeToDocument, themeStore } from '$lib/stores/themeStore';
 
 	import '../app.css';
 	import { onMount } from 'svelte';
@@ -36,11 +37,23 @@
 		// console.log($user);
 		localStorage.setItem('user', JSON.stringify($user));
 
-		const localTheme = localStorage.getItem('theme');
-		if (localTheme === 'light') {
-			document.documentElement.setAttribute('data-theme', 'light');
-		} else {
+		// Check for saved theme
+		try {
+			const savedTheme = loadSavedTheme();
+			if (savedTheme) {
+				applyThemeToDocument(savedTheme);
+			} else {
+				// Fallback to light/dark theme
+				const localTheme = localStorage.getItem('theme') || 'dark';
+				const themeType = localTheme === 'light' ? 'light' : 'dark';
+				document.documentElement.setAttribute('data-theme', themeType);
+				themeStore.setTheme(themeType);
+			}
+		} catch (error) {
+			console.error('Error initializing theme:', error);
+			// Set a default theme in case of error
 			document.documentElement.setAttribute('data-theme', 'dark');
+			themeStore.setTheme('dark');
 		}
 	});
 </script>

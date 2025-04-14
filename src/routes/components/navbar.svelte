@@ -1,16 +1,24 @@
 <script lang="ts">
 	// Imports
-	import icon from '../images/icon.png'; // Importing the icon image for the navbar
-	import { autoLogin, theme } from '$lib/stores/store'; // Importing the theme store for theme management
-	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
-	import { showModal } from '$lib/stores/store'; // Importing the showModal store to manage the login form visibility
-	import { isAuthenticated, auth0Client } from '$lib/stores/store'; // Importing the loggedIn store to manage the user's login state
-	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
+	import icon from '../images/icon.png';
+	import { autoLogin } from '$lib/stores/store';
+	import { onMount } from 'svelte';
+	import { showModal } from '$lib/stores/store';
+	import { isAuthenticated, auth0Client } from '$lib/stores/store';
+	import AutoLogin from './autoLogin.svelte';
+	import { goto } from '$app/navigation';
 	import auth from '$lib/utils/authService';
+	import { themeStore, toggleTheme, currentTheme, type Theme } from '$lib/stores/themeStore';
+
+	let theme: Theme;
+
+	// Subscribe to theme changes
+	currentTheme.subscribe(value => {
+		theme = value;
+	});
 
 	// Functions
-	onMount(async () => {
+	onMount(() => {
 		// Selecting elements for navbar and menu login and dashboard buttons
 		const navbarLoginButtonsElement = document.getElementById(
 			'navbar-login-buttons'
@@ -36,19 +44,16 @@
 			}
 		});
 
-		const storedTheme = localStorage.getItem('theme');
-		// console.log(storedTheme);
-		if (storedTheme == 'light') {
-			theme.set(true);
-		} else if (storedTheme == 'dark') {
-			theme.set(false);
-		}
-		theme.subscribe((value) => {
-			localStorage.setItem('theme', value ? 'light' : 'dark');
-		});
+		// Initialize theme store
+		themeStore.initialize();
 	});
+	
 	function login() {
 		auth.loginWithPopup($auth0Client, {});
+	}
+	
+	function handleThemeToggle() {
+		toggleTheme();
 	}
 </script>
 
@@ -77,46 +82,57 @@
 					<a href="#features">Features</a>
 				</li>
 				<li>
+					<a href="/themes">Theme Gallery</a>
+				</li>
+				<li>
 					<a href="#contact-us">Contact</a>
 				</li>
 				<li>
-					<label class="flex cursor-pointer gap-2">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<circle cx="12" cy="12" r="5" />
-							<path
-								d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
-							/>
-						</svg>
-						<input
-							type="checkbox"
-							value="light"
-							class="theme-controller toggle"
-							bind:checked={$theme}
-						/>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-						>
-							<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-						</svg>
-					</label>
+					<button 
+						class="flex items-center gap-2 btn btn-ghost" 
+						on:click={handleThemeToggle}
+						aria-label="Toggle theme"
+					>
+						{#if theme?.type === 'light'}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+							</svg>
+							<span>Dark Mode</span>
+						{:else}
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<circle cx="12" cy="12" r="5" />
+								<line x1="12" y1="1" x2="12" y2="3" />
+								<line x1="12" y1="21" x2="12" y2="23" />
+								<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+								<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+								<line x1="1" y1="12" x2="3" y2="12" />
+								<line x1="21" y1="12" x2="23" y2="12" />
+								<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+								<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+							</svg>
+							<span>Light Mode</span>
+						{/if}
+					</button>
 				</li>
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
@@ -142,46 +158,57 @@
 				<a href="#features">Features</a>
 			</li>
 			<li>
+				<a href="/themes">Theme Gallery</a>
+			</li>
+			<li>
 				<a href="#contact-us">Contact Us</a>
 			</li>
 			<li>
-				<label class="flex cursor-pointer gap-2">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<circle cx="12" cy="12" r="5" />
-						<path
-							d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
-						/>
-					</svg>
-					<input
-						type="checkbox"
-						value="light"
-						class="theme-controller toggle"
-						bind:checked={$theme}
-					/>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="20"
-						height="20"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-					</svg>
-				</label>
+				<button 
+					class="flex items-center gap-2 btn btn-ghost" 
+					on:click={handleThemeToggle}
+					aria-label="Toggle theme"
+				>
+					{#if theme?.type === 'light'}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+						</svg>
+						<span>Dark Mode</span>
+					{:else}
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<circle cx="12" cy="12" r="5" />
+							<line x1="12" y1="1" x2="12" y2="3" />
+							<line x1="12" y1="21" x2="12" y2="23" />
+							<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+							<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+							<line x1="1" y1="12" x2="3" y2="12" />
+							<line x1="21" y1="12" x2="23" y2="12" />
+							<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+							<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+						</svg>
+						<span>Light Mode</span>
+					{/if}
+				</button>
 			</li>
 		</ul>
 	</div>
@@ -205,8 +232,9 @@
 		cursor: default;
 		position: fixed;
 		z-index: 1000;
-		background-color: var(--base-300);
+		background-color: var(--background);
 		backdrop-filter: blur(30px);
+		transition: background-color 0.3s ease;
 	}
 	@media (max-width: 466px) {
 		.navbar-buttons {

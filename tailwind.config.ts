@@ -8,7 +8,23 @@ export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
 
   theme: {
-    extend: {}
+    extend: {
+      colors: {
+        'bihu-accent': {
+          light: '#FFF3D6',
+          border: '#FFE4B5'
+        }
+      },
+      animation: {
+        'bihu-tilt': 'tilt 0.2s ease-in-out'
+      },
+      keyframes: {
+        tilt: {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '50%': { transform: 'rotate(0.5deg)' }
+        }
+      }
+    }
   },
 
   plugins: [typography, forms, containerQueries, daisyui],

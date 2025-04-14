@@ -1,296 +1,219 @@
 <script lang="ts">
-    import { currentTheme, applyThemeToDocument, previewTheme } from '$lib/stores/themeStore';
-    import type { Theme } from '$lib/stores/themeStore';
+    import { currentTheme, type Theme, applyThemeToDocument } from '$lib/stores/themeStore';
     import { onMount } from 'svelte';
-    
-    // Sample themes
+
+    let currentThemeValue: Theme;
+    currentTheme.subscribe(value => {
+        currentThemeValue = value;
+    });
+
     const themes: Theme[] = [
-        {
-            id: 'quantum',
-            name: 'Quantum',
-            description: 'Futuristic light theme with quantum-inspired colors',
-            type: 'light',
-            colors: {
-                primary: '#4A90E2',
-                secondary: '#50E3C2',
-                background: '#F8F9FA',
-                text: '#2C3E50',
-                accent: '#9013FE'
-            },
-            preview: 'quantum-preview'
-        },
-        {
-            id: 'neon',
-            name: 'Neon Pulse',
-            description: 'Vibrant light theme with neon accents',
-            type: 'light',
-            colors: {
-                primary: '#FF00FF',
-                secondary: '#00FFFF',
-                background: '#FFFFFF',
-                text: '#333333',
-                accent: '#FF0099'
-            },
-            preview: 'neon-preview'
-        },
-        {
-            id: 'cyber',
-            name: 'Cyber Light',
-            description: 'Clean, minimalist light theme with cyber aesthetics',
-            type: 'light',
-            colors: {
-                primary: '#00BCD4',
-                secondary: '#3F51B5',
-                background: '#F5F5F5',
-                text: '#212121',
-                accent: '#FF4081'
-            },
-            preview: 'cyber-light-preview'
-        },
-        {
-            id: 'void',
-            name: 'Void',
-            description: 'Deep space dark theme with cosmic colors',
-            type: 'dark',
-            colors: {
-                primary: '#6C63FF',
-                secondary: '#2A2A72',
-                background: '#121212',
-                text: '#E0E0E0',
-                accent: '#FF6B6B'
-            },
-            preview: 'void-preview'
-        },
-        {
-            id: 'matrix',
-            name: 'Matrix',
-            description: 'Classic green-on-black matrix aesthetic',
-            type: 'dark',
-            colors: {
-                primary: '#00FF00',
-                secondary: '#003300',
-                background: '#000000',
-                text: '#00FF00',
-                accent: '#00CC00'
-            },
-            preview: 'matrix-preview'
-        },
         {
             id: 'nebula',
             name: 'Nebula',
-            description: 'Cosmic dark theme with purple and blue hues',
+            description: 'A beautiful cosmic theme with deep blues and purples',
+            type: 'dark',
+            colors: {
+                primary: '#6C63FF',
+                secondary: '#4A90E2',
+                background: '#1A1B26',
+                text: '#A9B1D6',
+                accent: '#BB9AF7'
+            },
+            preview: '/themes/nebula.png'
+        },
+        {
+            id: 'daylight',
+            name: 'Daylight',
+            description: 'A clean, light theme for better readability',
+            type: 'light',
+            colors: {
+                primary: '#4A90E2',
+                secondary: '#6C63FF',
+                background: '#FFFFFF',
+                text: '#2D3748',
+                accent: '#805AD5'
+            },
+            preview: '/themes/daylight.png'
+        },
+        {
+            id: 'royal-purple',
+            name: 'Royal Purple',
+            description: 'Elegant purple theme with royal aesthetics',
             type: 'dark',
             colors: {
                 primary: '#9D4EDD',
-                secondary: '#3C096C',
-                background: '#10002B',
+                secondary: '#7B2CBF',
+                background: '#240046',
                 text: '#E0AAFF',
                 accent: '#C77DFF'
             },
-            preview: 'nebula-preview'
+            preview: '/themes/royal-purple.png'
+        },
+        {
+            id: 'lavender-light',
+            name: 'Lavender Light',
+            description: 'Soft purple theme with a gentle touch',
+            type: 'light',
+            colors: {
+                primary: '#7C3AED',
+                secondary: '#8B5CF6',
+                background: '#F5F3FF',
+                text: '#4C1D95',
+                accent: '#6D28D9'
+            },
+            preview: '/themes/lavender-light.png'
+        },
+        {
+            id: 'crimson',
+            name: 'Crimson',
+            description: 'Bold and powerful red theme',
+            type: 'dark',
+            colors: {
+                primary: '#DC2626',
+                secondary: '#EF4444',
+                background: '#18020C',
+                text: '#FEE2E2',
+                accent: '#B91C1C'
+            },
+            preview: '/themes/crimson.png'
+        },
+        {
+            id: 'coral-light',
+            name: 'Coral Light',
+            description: 'Warm and inviting red theme',
+            type: 'light',
+            colors: {
+                primary: '#EF4444',
+                secondary: '#F87171',
+                background: '#FEF2F2',
+                text: '#7F1D1D',
+                accent: '#DC2626'
+            },
+            preview: '/themes/coral-light.png'
+        },
+        {
+            id: 'ocean',
+            name: 'Ocean',
+            description: 'Deep blue theme inspired by the sea',
+            type: 'dark',
+            colors: {
+                primary: '#0EA5E9',
+                secondary: '#38BDF8',
+                background: '#082F49',
+                text: '#E0F2FE',
+                accent: '#0284C7'
+            },
+            preview: '/themes/ocean.png'
+        },
+        {
+            id: 'sky-light',
+            name: 'Sky Light',
+            description: 'Fresh blue theme like a clear sky',
+            type: 'light',
+            colors: {
+                primary: '#0EA5E9',
+                secondary: '#38BDF8',
+                background: '#F0F9FF',
+                text: '#075985',
+                accent: '#0284C7'
+            },
+            preview: '/themes/sky-light.png'
+        },
+        {
+            id: 'forest',
+            name: 'Forest',
+            description: 'A soothing green theme inspired by nature',
+            type: 'dark',
+            colors: {
+                primary: '#4CAF50',
+                secondary: '#81C784',
+                background: '#1B2821',
+                text: '#C8E6C9',
+                accent: '#66BB6A'
+            },
+            preview: '/themes/forest.png'
+        },
+        {
+            id: 'sunset',
+            name: 'Sunset',
+            description: 'Warm and inviting colors of a sunset',
+            type: 'light',
+            colors: {
+                primary: '#FF9800',
+                secondary: '#FFA726',
+                background: '#FFF3E0',
+                text: '#424242',
+                accent: '#FF7043'
+            },
+            preview: '/themes/sunset.png'
         }
     ];
-
-    let selectedTheme: Theme | null = null;
-    let isPreviewMode = false;
-    let activeTab: 'light' | 'dark' = 'light';
-    let isApplying = false;
-    let successMessage = '';
-    let currentAppliedTheme: Theme | null = null;
-
-    onMount(() => {
-        // Check if there's a saved theme
-        const savedTheme = localStorage.getItem('selectedTheme');
-        if (savedTheme) {
-            try {
-                const theme = JSON.parse(savedTheme);
-                // Find the matching theme in our themes array
-                const matchingTheme = themes.find(t => t.id === theme.id);
-                if (matchingTheme) {
-                    currentAppliedTheme = matchingTheme;
-                }
-            } catch (e) {
-                console.error('Failed to parse saved theme:', e);
-            }
-        }
-    });
-
-    function applyTheme(theme: Theme) {
-        selectedTheme = theme;
-        isPreviewMode = true;
-        
-        // Apply the theme to preview without saving
-        document.documentElement.style.setProperty('--primary', theme.colors.primary);
-        document.documentElement.style.setProperty('--secondary', theme.colors.secondary);
-        document.documentElement.style.setProperty('--background', theme.colors.background);
-        document.documentElement.style.setProperty('--text', theme.colors.text);
-        document.documentElement.style.setProperty('--accent', theme.colors.accent);
-    }
-
-    function resetPreview() {
-        isPreviewMode = false;
-        selectedTheme = null;
-        
-        // Restore the current applied theme
-        if (currentAppliedTheme) {
-            document.documentElement.style.setProperty('--primary', currentAppliedTheme.colors.primary);
-            document.documentElement.style.setProperty('--secondary', currentAppliedTheme.colors.secondary);
-            document.documentElement.style.setProperty('--background', currentAppliedTheme.colors.background);
-            document.documentElement.style.setProperty('--text', currentAppliedTheme.colors.text);
-            document.documentElement.style.setProperty('--accent', currentAppliedTheme.colors.accent);
-        }
-    }
-
-    function setActiveTab(tab: 'light' | 'dark') {
-        activeTab = tab;
-    }
-
-    function applySelectedTheme() {
-        if (!selectedTheme) return;
-        
-        isApplying = true;
-        
-        // Apply the theme permanently
-        applyThemeToDocument(selectedTheme);
-        currentTheme.set(selectedTheme);
-        currentAppliedTheme = selectedTheme;
-        
-        // Show success message
-        successMessage = `Theme "${selectedTheme.name}" applied successfully!`;
-        
-        // Reset after a delay
-        setTimeout(() => {
-            isApplying = false;
-            successMessage = '';
-            resetPreview();
-        }, 2000);
-    }
-
-    $: filteredThemes = themes.filter(theme => theme.type === activeTab);
 </script>
 
-<div class="container mx-auto px-4 py-8 pt-32">
-    <h1 class="text-4xl font-bold mb-8 border-b border-primary pb-2 inline-block">Theme Gallery</h1>
-    
-    {#if successMessage}
-        <div class="alert alert-success mb-6 shadow-lg">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span>{successMessage}</span>
-            </div>
+<div class="min-h-screen bg-base-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-base-content mb-4">Theme Gallery</h1>
+            <p class="text-base-content/70">Choose your preferred theme from our collection</p>
         </div>
-    {/if}
-    
-    {#if isPreviewMode && selectedTheme}
-        <div class="preview-mode mb-8 p-4 rounded-lg shadow-lg" style="background-color: {selectedTheme.colors.background}; color: {selectedTheme.colors.text};">
-            <h2 class="text-2xl font-semibold mb-4" style="color: {selectedTheme.colors.primary}">Preview: {selectedTheme.name}</h2>
-            <div class="preview-content p-6 rounded-lg border" style="border-color: {selectedTheme.colors.accent};">
-                <h3 style="color: {selectedTheme.colors.primary}; font-size: 1.5rem; margin-bottom: 1rem;">Sample Heading</h3>
-                <p class="my-4">This is how your notes will look with this theme. The colors and styling are carefully chosen to provide the best reading experience.</p>
-                <div class="flex gap-4 mt-6">
-                    <button class="px-4 py-2 rounded" style="background-color: {selectedTheme.colors.primary}; color: white;">
-                        Primary Button
-                    </button>
-                    <button class="px-4 py-2 rounded" style="background-color: {selectedTheme.colors.accent}; color: white;">
-                        Accent Button
-                    </button>
-                </div>
-            </div>
-            <div class="mt-4 flex gap-4">
-                <button class="btn" style="background-color: {selectedTheme.colors.secondary}; color: white;" on:click={() => resetPreview()}>Back to Gallery</button>
-                <button class="btn" style="background-color: {selectedTheme.colors.primary}; color: white;" on:click={applySelectedTheme} disabled={isApplying}>
-                    {#if isApplying}
-                        <span class="loading loading-spinner"></span>
-                        Applying...
-                    {:else}
-                        Apply Theme
-                    {/if}
-                </button>
-            </div>
-        </div>
-    {:else}
-        <div class="tabs tabs-boxed mb-6">
-            <button 
-                class="tab {activeTab === 'light' ? 'tab-active glow-light' : ''}" 
-                on:click={() => setActiveTab('light')}
-            >
-                <span class="tab-icon">☀️</span> Light Themes
-            </button>
-            <button 
-                class="tab {activeTab === 'dark' ? 'tab-active glow-dark' : ''}" 
-                on:click={() => setActiveTab('dark')}
-            >
-                <span class="tab-icon">🌙</span> Dark Themes
-            </button>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {#each filteredThemes as theme}
-                <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300">
-                    <div class="card-body">
-                        <h2 class="card-title border-b border-primary pb-2">{theme.name}</h2>
-                        <p class="text-sm opacity-80">{theme.description}</p>
-                        <div class="color-preview mt-4 flex gap-2">
-                            {#each Object.entries(theme.colors) as [name, color]}
-                                <div class="w-6 h-6 rounded-full" style="background-color: {color};" title={name}></div>
-                            {/each}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {#each themes as theme}
+                <div class="card bg-base-200 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out">
+                    <figure class="relative h-48">
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-base-200/30">
+                            <div class="w-full h-full" style="background-color: {theme.colors.background};">
+                                <div class="flex items-center justify-center h-full space-x-4">
+                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.primary}"></div>
+                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.secondary}"></div>
+                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.accent}"></div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-actions justify-end mt-4">
-                            <button class="btn btn-primary" on:click={() => applyTheme(theme)}>Preview Theme</button>
+                    </figure>
+
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title text-base-content mb-2">{theme.name}</h2>
+                        <p class="text-base-content/80 mb-4">{theme.description}</p>
+                        <div class="flex items-center justify-center gap-2 mb-4">
+                            <span class="badge badge-outline">{theme.type}</span>
+                        </div>
+                        <div class="card-actions justify-center">
+                            <button 
+                                class="btn btn-primary w-full"
+                                class:btn-active={currentThemeValue?.id === theme.id}
+                                on:click={() => applyThemeToDocument(theme)}
+                            >
+                                {#if currentThemeValue?.id === theme.id}
+                                    Current Theme
+                                {:else}
+                                    Apply Theme
+                                {/if}
+                            </button>
                         </div>
                     </div>
                 </div>
             {/each}
         </div>
-    {/if}
+    </div>
 </div>
 
 <style>
-    .color-preview {
-        display: flex;
-        gap: 0.5rem;
-    }
-    
-    .preview-content {
-        transition: all 0.3s ease;
-    }
-    
     .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease-in-out;
     }
-    
+
     .card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-4px);
     }
-    
-    .tabs {
-        display: flex;
-        justify-content: center;
+
+    .card-body {
+        padding: 1.5rem;
     }
-    
-    .tab {
-        padding: 0.5rem 1.5rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.3s ease;
-    }
-    
-    .tab-active {
-        background-color: var(--primary);
-        color: white;
-    }
-    
-    .glow-light {
-        box-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.5);
-    }
-    
-    .glow-dark {
-        box-shadow: 0 0 10px #6C63FF, 0 0 20px rgba(108, 99, 255, 0.5);
-    }
-    
-    .tab-icon {
-        font-size: 1.2rem;
+
+    .badge {
+        text-transform: capitalize;
     }
 </style> 

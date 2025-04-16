@@ -1,8 +1,12 @@
 <script lang="ts">
     import { currentTheme, type Theme, applyThemeToDocument } from '$lib/stores/themeStore';
     import { onMount } from 'svelte';
+    import { fade, fly } from 'svelte/transition';
 
     let currentThemeValue: Theme;
+    let activeTab: 'all' | 'light' | 'dark' = 'all';
+    let searchQuery = '';
+
     currentTheme.subscribe(value => {
         currentThemeValue = value;
     });
@@ -149,53 +153,119 @@
             preview: '/themes/sunset.png'
         }
     ];
+
+    $: filteredThemes = themes.filter(theme => {
+        const matchesSearch = theme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            theme.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesTab = activeTab === 'all' || theme.type === activeTab;
+        return matchesSearch && matchesTab;
+    });
 </script>
 
-<div class="min-h-screen bg-base-100 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-base-content mb-4">Theme Gallery</h1>
-            <p class="text-base-content/70">Choose your preferred theme from our collection</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {#each themes as theme}
-                <div class="card bg-base-200 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out">
-                    <figure class="relative h-48">
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-base-200/30">
-                            <div class="w-full h-full" style="background-color: {theme.colors.background};">
-                                <div class="flex items-center justify-center h-full space-x-4">
-                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.primary}"></div>
-                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.secondary}"></div>
-                                    <div class="w-8 h-8 rounded-full" style="background-color: {theme.colors.accent}"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </figure>
-
-                    <div class="card-body items-center text-center">
-                        <h2 class="card-title text-base-content mb-2">{theme.name}</h2>
-                        <p class="text-base-content/80 mb-4">{theme.description}</p>
-                        <div class="flex items-center justify-center gap-2 mb-4">
-                            <span class="badge badge-outline">{theme.type}</span>
-                        </div>
-                        <div class="card-actions justify-center">
-                            <button 
-                                class="btn btn-primary w-full"
-                                class:btn-active={currentThemeValue?.id === theme.id}
-                                on:click={() => applyThemeToDocument(theme)}
-                            >
-                                {#if currentThemeValue?.id === theme.id}
-                                    Current Theme
-                                {:else}
-                                    Apply Theme
-                                {/if}
-                            </button>
-                        </div>
+<div class="min-h-screen bg-base-100">
+    <!-- Hero Section -->
+    <div class="hero bg-base-200 py-16">
+        <div class="hero-content text-center">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl font-bold text-base-content mb-4" in:fly="{{ y: -20, duration: 800 }}">
+                    Theme Gallery
+                </h1>
+                <p class="text-xl text-base-content/70 mb-8" in:fly="{{ y: -10, duration: 800, delay: 200 }}">
+                    Customize your experience with our handcrafted themes. Each theme is designed to provide the perfect balance of style and functionality.
+                </p>
+                
+                <!-- Search and Filter -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8" in:fly="{{ y: -10, duration: 800, delay: 400 }}">
+                    <div class="join">
+                        <button 
+                            class="btn join-item" 
+                            class:btn-primary={activeTab === 'all'}
+                            on:click={() => activeTab = 'all'}
+                        >
+                            All
+                        </button>
+                        <button 
+                            class="btn join-item" 
+                            class:btn-primary={activeTab === 'light'}
+                            on:click={() => activeTab = 'light'}
+                        >
+                            <span class="mr-2">☀️</span> Light
+                        </button>
+                        <button 
+                            class="btn join-item" 
+                            class:btn-primary={activeTab === 'dark'}
+                            on:click={() => activeTab = 'dark'}
+                        >
+                            <span class="mr-2">🌙</span> Dark
+                        </button>
+                    </div>
+                    <div class="form-control w-full max-w-xs">
+                        <input 
+                            type="text" 
+                            placeholder="Search themes..." 
+                            class="input input-bordered w-full" 
+                            bind:value={searchQuery}
+                        />
                     </div>
                 </div>
-            {/each}
+            </div>
         </div>
+    </div>
+
+    <!-- Themes Grid -->
+    <div class="container mx-auto px-4 py-12">
+        {#if filteredThemes.length === 0}
+            <div class="text-center py-12" in:fade>
+                <h3 class="text-2xl font-semibold mb-4">No themes found</h3>
+                <p class="text-base-content/70">Try adjusting your search or filters</p>
+            </div>
+        {:else}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" in:fade>
+                {#each filteredThemes as theme (theme.id)}
+                    <div 
+                        class="card bg-base-200 shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 ease-in-out"
+                        in:fly="{{ y: 20, duration: 600, delay: 200 }}"
+                    >
+                        <figure class="relative h-48 group">
+                            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-base-200/30">
+                                <div class="w-full h-full" style="background-color: {theme.colors.background};">
+                                    <div class="flex items-center justify-center h-full space-x-4">
+                                        <div class="w-8 h-8 rounded-full transform group-hover:scale-110 transition-transform" style="background-color: {theme.colors.primary}"></div>
+                                        <div class="w-8 h-8 rounded-full transform group-hover:scale-110 transition-transform" style="background-color: {theme.colors.secondary}"></div>
+                                        <div class="w-8 h-8 rounded-full transform group-hover:scale-110 transition-transform" style="background-color: {theme.colors.accent}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </figure>
+
+                        <div class="card-body items-center text-center">
+                            <h2 class="card-title text-base-content mb-2 group-hover:text-primary transition-colors">{theme.name}</h2>
+                            <p class="text-base-content/80 mb-4">{theme.description}</p>
+                            <div class="flex items-center justify-center gap-2 mb-4">
+                                <span class="badge badge-outline" class:badge-primary={theme.type === 'dark'} class:badge-secondary={theme.type === 'light'}>
+                                    {theme.type}
+                                </span>
+                            </div>
+                            <div class="card-actions justify-center w-full">
+                                <button 
+                                    class="btn btn-primary w-full group relative overflow-hidden"
+                                    class:btn-active={currentThemeValue?.id === theme.id}
+                                    on:click={() => applyThemeToDocument(theme)}
+                                >
+                                    <span class="relative z-10">
+                                        {#if currentThemeValue?.id === theme.id}
+                                            Current Theme
+                                        {:else}
+                                            Apply Theme
+                                        {/if}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {/each}
+            </div>
+        {/if}
     </div>
 </div>
 
@@ -216,4 +286,36 @@
     .badge {
         text-transform: capitalize;
     }
-</style> 
+
+    /* Add smooth transitions */
+    .btn, .badge {
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Enhance hover effects */
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Add gradient overlay for cards */
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            to bottom right,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.05)
+        );
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+        opacity: 1;
+    }
+</style>

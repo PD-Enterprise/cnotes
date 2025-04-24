@@ -4,20 +4,21 @@
 	import SvelteToast from './svelteToast.svelte';
 	import { notesStore } from '$lib/stores/store';
 	import { onMount } from 'svelte';
+	import config from '$lib/utils/apiConfig';
 
 	let notes = $props();
 
 	async function deleteNote(note: note) {
 		showToast('Deleting...', 'Deleting your note...', 2500, 'info');
-		const response = await fetch(`/api/notes/note/delete-note`, {
-			method: 'POST',
+		const response = await fetch(`${config.apiUrl}notes/note/${note.slug}/delete`, {
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ noteSlug: note.slug })
+			}
 		});
 		const result = await response.json();
-		if (result.status === 'success') {
+		console.log(result);
+		if (result.status == 200) {
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
 			notesStore.update((currentNotes) => currentNotes.filter((n) => n.slug !== note.slug));
 		} else {
@@ -32,7 +33,7 @@
 	role="button"
 	tabindex="0"
 	class="note card flex w-96 bg-base-200 shadow-xl"
-	id={notes.note.notes.slug}
+	id={notes.note.slug}
 >
 	<div class="card-options">
 		<details class="dropdown dropdown-end">
@@ -116,14 +117,12 @@
 		</dialog>
 	</div>
 	<div class="card-body">
-		<a class="note-title card-title" href="/home/{notes.note.notes.slug}"
-			>{notes.note.notes.title}</a
-		>
+		<a class="note-title card-title" href="/home/{notes.note.slug}">{notes.note.title}</a>
 		<div class="note-meta card-actions justify-end">
-			<div class="badge badge-outline">{notes.note.notes.grade}th grade</div>
-			<div class="badge badge-outline">{notes.note.notes.subject}</div>
+			<div class="badge badge-outline">{notes.note.grade}th grade</div>
+			<div class="badge badge-outline">{notes.note.subject}</div>
 			<div class="badge badge-outline">
-				{new Date(notes.note.notes.dateCreated)
+				{new Date(notes.note.dateCreated)
 					.toLocaleDateString('en-US', {
 						day: 'numeric',
 						month: 'numeric',
@@ -135,7 +134,7 @@
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.notes.notescontent}
+			{@html notes.note.content}
 		</p>
 	</div>
 </div>

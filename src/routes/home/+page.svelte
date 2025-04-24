@@ -19,87 +19,73 @@
 	// Subscribe to the store
 	$: notes = $notesStore; // Replace the manual subscription with reactive statement
 
-	// Functions
+	// // Functions
 	async function getNotes(userEmail: string) {
 		isAuthenticated.subscribe(async (value) => {
-			if (value) {
-				try {
-					// First check and use local storage for the notes list
-					const localNotesIndex = localStorage.getItem('notesIndex');
-					if (localNotesIndex) {
-						const parsedNotes = JSON.parse(localNotesIndex);
-						// Load each note from its individual cache
-						const loadedNotes = parsedNotes.map((note) => {
-							const cachedNote = localStorage.getItem(`note_${note.slug}`);
-							return cachedNote ? JSON.parse(cachedNote) : note;
-						});
-						notesStore.set(loadedNotes);
-						// console.log('Set notes from localStorage:', loadedNotes);
-					}
-
-					// Then fetch from server
-					// console.log('Fetching from server...');
-					const request = await fetch(`${config.apiUrl}notes/notes`, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({
-							email: userEmail
-						})
+			if (!value) {
+				return;
+			}
+			try {
+				// console.log('Fetching from server...');
+				const request = await fetch(`${config.apiUrl}notes/notes`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						email: userEmail
+					})
+				});
+				const result = await request.json();
+				if (result.status != 200) {
+					error = result.message;
+					console.error('Server error:', result.message);
+					return;
+				}
+				// console.log('Server response:', result.data);
+				const serverNotes = result.data;
+				// Only update if server notes is not empty and different from local
+				if (serverNotes.length > 0) {
+					// console.log('Updating with server notes:', serverNotes);
+					// Update individual note caches
+					serverNotes.forEach((note) => {
+						localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
 					});
-					const result = await request.json();
-					// console.log('Server response:', result.data);
-
-					if (result.status == 200) {
-						const serverNotes = result.data;
-						// Only update if server notes is not empty and different from local
-						if (serverNotes.length > 0) {
-							// console.log('Updating with server notes:', serverNotes);
-
-							// Update individual note caches
-							serverNotes.forEach((note) => {
-								localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
-							});
-
-							// Update the index
-							localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
-
-							notesStore.set(serverNotes);
-						}
-					} else {
-						error = result.message;
-						console.error('Server error:', result.message);
-					}
-				} catch (error) {
-					console.error('Error:', error);
-					// Fallback to local index
-					const localNotesIndex = localStorage.getItem('notesIndex');
-					if (localNotesIndex) {
-						const parsedNotes = JSON.parse(localNotesIndex);
-						const loadedNotes = parsedNotes.map((note) => {
-							const cachedNote = localStorage.getItem(`note_${note.slug}`);
-							return cachedNote ? JSON.parse(cachedNote) : note;
-						});
-						notesStore.set(loadedNotes);
-					}
+					// Update the index
+					localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
+					notesStore.set(serverNotes);
+				}
+			} catch (error) {
+				console.error('Error:', error);
+				// Fallback to local index
+				const localNotesIndex = localStorage.getItem('notesIndex');
+				if (localNotesIndex) {
+					const parsedNotes = JSON.parse(localNotesIndex);
+					const loadedNotes = parsedNotes.map((note) => {
+						const cachedNote = localStorage.getItem(`note_${note.slug}`);
+						return cachedNote ? JSON.parse(cachedNote) : note;
+					});
+					notesStore.set(loadedNotes);
 				}
 			}
 		});
 	}
 	onMount(() => {
+		// First check and use local storage for the notes list
+		const localNotesIndex = localStorage.getItem('notesIndex');
+		if (localNotesIndex) {
+			const parsedNotes = JSON.parse(localNotesIndex);
+			// Load each note from its individual cache
+			const loadedNotes = parsedNotes.map((note) => {
+				const cachedNote = localStorage.getItem(`note_${note.slug}`);
+				return cachedNote ? JSON.parse(cachedNote) : note;
+			});
+			notesStore.set(loadedNotes);
+			// console.log('Set notes from localStorage:', loadedNotes);
+		}
 		userEmail = JSON.parse(localStorage.getItem('user')).email;
 		// console.log(userEmail);
-		// Immediately load from localStorage
-		const localNotes = localStorage.getItem('notes');
-		if (localNotes) {
-			const parsedNotes = JSON.parse(localNotes);
-			notesStore.set(parsedNotes);
-		}
-
-		// Then fetch updates from server
 		getNotes(userEmail);
-
 		// Add click event listener to document to hide search results when clicking outside
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
@@ -107,7 +93,6 @@
 				shouldShowSearchResults = false;
 			}
 		});
-
 		loadingTimeout = setTimeout(() => {
 			if (notes.length === 0) {
 				error = 'No notes found.';
@@ -122,10 +107,10 @@
 			shouldShowSearchResults = true;
 			// Use filter and map for better performance
 			const matches = notes
-				.filter((note) => note.notes.title.toLowerCase().includes(searchQuery.toLowerCase()))
+				.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
 				.map((note) => ({
-					title: note.notes.title,
-					slug: note.notes.slug
+					title: note.title,
+					slug: note.slug
 				}));
 
 			searchResults = matches.map((match) => ({
@@ -200,7 +185,7 @@
 			{/if}
 		</div>
 		<div class="add-note">
-			<a class="addNoteButton btn bg-accent" href="/home/add-new-note">New Note</a>
+			<a class="addNoteButton btn bg-accent" href="/home/new-note">New Note</a>
 		</div>
 	</div>
 	<div class="notes p-5">

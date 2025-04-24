@@ -5,48 +5,69 @@
 	import SvelteToast from './svelteToast.svelte';
 	import Editor from './editor.svelte';
 	import { goto } from '$app/navigation';
+	import config from '$lib/utils/apiConfig';
+	import { onMount } from 'svelte';
+	import { user } from '$lib/stores/store';
 
 	// Variables
 	// @ts-expect-error
-	let newNote: note[] = [{}];
+	let newNote: note = {};
+	let email: string = '';
 
 	// Functions
 	const quickValidate = (note) => {
-		return (
-			(note?.title &&
-				note?.notescontent &&
-				note?.subject &&
-				note?.grade &&
-				note?.board &&
-				note?.date_created &&
-				note?.school) ??
-			false
-		);
+		if (
+			note?.title &&
+			note?.content &&
+			note?.board &&
+			note?.dateCreated &&
+			note?.grade &&
+			note?.subject
+		) {
+			return true;
+		} else {
+			return false;
+		}
 	};
 	async function addNewNote() {
-		if (quickValidate(newNote[0])) {
-			showToast('Saving...', 'Saving your note', 2500, 'info');
-			const response = await fetch('/api/notes/note/add-note', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					note: newNote,
-					email: localStorage.getItem('Email')
-				})
-			});
-			const result = await response.json();
-			if (result.status === 'success') {
-				showToast('Success', 'Note added successfully', 2500, 'success');
-				goto('/home');
-			} else {
-				showToast('Error', result.message, 2500, 'error');
-			}
+		console.log(newNote);
+		if (!quickValidate(newNote)) {
+			console.error('Data Validation failed');
+			showToast(
+				'Data Validation failed',
+				'Make sure you have entered the correct data type.',
+				2500,
+				'error'
+			);
+		}
+		showToast('Saving...', 'Saving your note', 2500, 'info');
+		const response = await fetch(`${config.apiUrl}notes/new-note/text`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				note: newNote,
+				email: email
+			})
+		});
+		const result = await response.json();
+		console.log(result);
+		if (result.status == 200) {
+			showToast('Success', 'Note added successfully', 2500, 'success');
+			goto('/home');
 		} else {
-			showToast('Error', 'Please fill all the fields', 2500, 'error');
+			showToast('Error', result.message, 2500, 'error');
 		}
 	}
+	onMount(() => {
+		user.subscribe((value) => {
+			if (value) {
+				// @ts-expect-error
+				email = value.email;
+			}
+		});
+	});
 </script>
 
 <SvelteToast />
@@ -63,7 +84,7 @@
 					<input
 						type="text"
 						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].title}
+						bind:value={newNote.title}
 						required
 						placeholder="Title"
 					/>
@@ -75,7 +96,7 @@
 					<input
 						type="text"
 						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].board}
+						bind:value={newNote.board}
 						required
 						placeholder="Board"
 					/>
@@ -87,7 +108,7 @@
 					<input
 						type="date"
 						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].date_created}
+						bind:value={newNote.dateCreated}
 						required
 						placeholder="Date Created"
 					/>
@@ -99,21 +120,9 @@
 					<input
 						type="text"
 						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].grade}
+						bind:value={newNote.grade}
 						required
-						placeholder="Grade"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">School:</span>
-					</div>
-					<input
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].school}
-						required
-						placeholder="School"
+						placeholder="Grade (Enter in number)"
 					/>
 				</label>
 				<label class="form-control w-full max-w-xs">
@@ -123,7 +132,7 @@
 					<input
 						type="text"
 						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].subject}
+						bind:value={newNote.subject}
 						required
 						placeholder="Subject"
 					/>
@@ -192,7 +201,7 @@
 
 	.form-control input:focus {
 		outline: none;
-		box-shadow: 0 0 8px rgba(107, 190, 110, 0.4);
+		box-shadow: 0 0 8px rgba(107, 136, 190, 0.4);
 	}
 
 	/* Button styling */

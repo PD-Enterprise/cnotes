@@ -1,21 +1,14 @@
 type note = {
-	notes: {
-
-		note_id: number;
-		title: string;
-		slug: string;
-		notescontent: string;
-		subject: string;
-		grade: number;
-		email: string;
-		board: string;
-		school: string;
-		dateCreated: string;
-		dateUpdated: string;
-	},
-	user: {
-		email: string;
-	}
+	noteId: number;
+	title: string;
+	slug: string;
+	content: string;
+	board: string;
+	dateCreated: string;
+	dateUpdated: string;
+	email: string;
+	grade: number;
+	subject: string;
 };
 
 type searchResult = {

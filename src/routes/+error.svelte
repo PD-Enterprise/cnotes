@@ -28,7 +28,7 @@
 	<iframe src={imgSrc} title="Error" class="mt-5"></iframe>
 </center>
 <center>
-	<a href="/" class="btn mb-5 mt-5 text-3xl">Go To Home</a>
+	<a href="/home" class="btn mb-5 mt-5 text-3xl">Go To Home</a>
 </center>
 
 <style>

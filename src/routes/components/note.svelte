@@ -3,20 +3,22 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import SvelteToast from './svelteToast.svelte';
 	import { notesStore } from '$lib/stores/store';
+	import { onMount } from 'svelte';
+	import config from '$lib/utils/apiConfig';
 
 	let notes = $props();
 
 	async function deleteNote(note: note) {
 		showToast('Deleting...', 'Deleting your note...', 2500, 'info');
-		const response = await fetch(`/api/notes/note/delete-note`, {
-			method: 'POST',
+		const response = await fetch(`${config.apiUrl}notes/note/${note.slug}/delete`, {
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ noteSlug: note.slug })
+			}
 		});
 		const result = await response.json();
-		if (result.status === 'success') {
+		console.log(result);
+		if (result.status == 200) {
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
 			notesStore.update((currentNotes) => currentNotes.filter((n) => n.slug !== note.slug));
 		} else {
@@ -132,7 +134,7 @@
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.notescontent}
+			{@html notes.note.content}
 		</p>
 	</div>
 </div>

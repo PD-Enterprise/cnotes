@@ -1,15 +1,14 @@
 type note = {
-	note_id: number;
+	noteId: number;
 	title: string;
 	slug: string;
-	notescontent: string;
-	subject: string;
-	grade: number;
-	email: string;
+	content: string;
 	board: string;
-	school: string;
 	dateCreated: string;
 	dateUpdated: string;
+	email: string;
+	grade: number;
+	subject: string;
 };
 
 type searchResult = {

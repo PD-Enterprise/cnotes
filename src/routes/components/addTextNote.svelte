@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script lang="ts">
 	// Imports
 	import { showToast } from '$lib/utils/svelteToastsUtil';
@@ -245,3 +246,261 @@
 		}
 	}
 </style>
+=======
+<script lang="ts">
+	// Imports
+	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import type { note } from '../types';
+	import SvelteToast from './svelteToast.svelte';
+	import Editor from './editor.svelte';
+	import { goto } from '$app/navigation';
+	import config from '$lib/utils/apiConfig';
+	import { onMount } from 'svelte';
+	import { user } from '$lib/stores/store';
+
+	// Variables
+	// @ts-expect-error
+	let newNote: note = {};
+	let email: string = '';
+
+	// Functions
+	const quickValidate = (note) => {
+		if (
+			note?.title &&
+			note?.content &&
+			note?.board &&
+			note?.dateCreated &&
+			note?.grade &&
+			note?.subject
+		) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+	async function addNewNote() {
+		console.log(newNote);
+		if (!quickValidate(newNote)) {
+			console.error('Data Validation failed');
+			showToast(
+				'Data Validation failed',
+				'Make sure you have entered the correct data type.',
+				2500,
+				'error'
+			);
+		}
+		showToast('Saving...', 'Saving your note', 2500, 'info');
+		const response = await fetch(`${config.apiUrl}notes/new-note/text`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				note: newNote,
+				email: email
+			})
+		});
+		const result = await response.json();
+		console.log(result);
+		if (result.status == 200) {
+			showToast('Success', 'Note added successfully', 2500, 'success');
+			goto('/home');
+		} else {
+			showToast('Error', result.message, 2500, 'error');
+		}
+	}
+	onMount(() => {
+		user.subscribe((value) => {
+			if (value) {
+				// @ts-expect-error
+				email = value.email;
+			}
+		});
+	});
+</script>
+
+<SvelteToast />
+
+<div class="main p-1">
+	<form>
+		<div class="header-box">
+			<h2 class="mb-6 text-3xl">Add a Text Note</h2>
+			<div class="new-note-data">
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Title:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote.title}
+						required
+						placeholder="Title"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Board:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote.board}
+						required
+						placeholder="Board"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Date Created:</span>
+					</div>
+					<input
+						type="date"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote.dateCreated}
+						required
+						placeholder="Date Created"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Grade:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote.grade}
+						required
+						placeholder="Grade (Enter in number)"
+					/>
+				</label>
+				<label class="form-control w-full max-w-xs">
+					<div class="label">
+						<span class="label-text">Subject:</span>
+					</div>
+					<input
+						type="text"
+						class="input input-bordered w-full max-w-xs"
+						bind:value={newNote.subject}
+						required
+						placeholder="Subject"
+					/>
+				</label>
+				<label class="form-control">
+					<div class="label">
+						<span class="label-text">Note Content:</span>
+					</div>
+					<Editor data={newNote} />
+				</label>
+			</div>
+			<br />
+		</div>
+		<button class="btn btn-outline btn-accent" on:click={addNewNote}>Add Note</button>
+	</form>
+</div>
+
+<style>
+	.main {
+		padding: 20px;
+		animation: fadeInDown 0.8s ease-in-out;
+	}
+	.header-box {
+		text-align: center;
+		animation: fadeInDown 0.6s ease-in-out;
+	}
+
+	.header-box h2 {
+		font-size: 2.5rem;
+		font-weight: bold;
+		animation: fadeInDown 0.8s ease-in-out;
+	}
+
+	/* Form container */
+	.new-note-data {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 20px;
+		/* Space between fields */
+		animation: fadeInDown 1s ease-in-out;
+	}
+
+	/* Label styling */
+	.form-control {
+		width: 100%;
+		/* Full width for inputs */
+		display: flex;
+		flex-direction: column;
+	}
+
+	.form-control .label-text {
+		font-weight: 600;
+		margin-bottom: 5px;
+		transition: color 0.3s ease-in-out;
+	}
+
+	/* Input styling */
+	.form-control input {
+		padding: 10px;
+		border: 2px solid #333333;
+		border-radius: 8px;
+		font-size: 1rem;
+		transition: all 0.3s ease-in-out;
+	}
+
+	.form-control input:focus {
+		outline: none;
+		box-shadow: 0 0 8px rgba(107, 136, 190, 0.4);
+	}
+
+	/* Button styling */
+	.btn {
+		padding: 10px 20px;
+		font-size: 1rem;
+		font-weight: 600;
+		border-radius: 8px;
+		cursor: pointer;
+		transition: all 0.3s ease-in-out;
+		align-self: center;
+		/* Center align the button */
+	}
+
+	.btn:active {
+		transform: translateY(0);
+		box-shadow: none;
+	}
+
+	/* Animations */
+	@keyframes fadeInDown {
+		from {
+			opacity: 0;
+			transform: translateY(-50px);
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Ensure responsiveness for both desktop and mobile */
+	@media (max-width: 768px) {
+		.main {
+			padding: 10px;
+		}
+
+		.new-note-data {
+			gap: 15px;
+		}
+
+		.header-box h2 {
+			font-size: 2rem;
+		}
+
+		.btn {
+			width: 100%;
+			/* Full-width button on smaller screens */
+		}
+	}
+</style>
+>>>>>>> temp-recovery-branch

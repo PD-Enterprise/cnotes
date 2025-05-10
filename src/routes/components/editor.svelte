@@ -43,21 +43,22 @@
 		file_picker_types: 'image'
 	};
 
-	// onMount(() => {
-	// 	theme.subscribe((value) => {
-	// 		if (value) {
-	// 			conf = { ...conf, skin: 'oxide', content_css: 'light' };
-	// 		} else {
-	// 			conf = { ...conf, skin: 'oxide-dark', content_css: 'dark' };
-	// 		}
-	// 	});
-	// });
+	onMount(() => {
+		theme.subscribe((value) => {
+			if (value) {
+				conf = { ...conf, skin: 'oxide', content_css: 'light' };
+			} else {
+				conf = { ...conf, skin: 'oxide-dark', content_css: 'dark' };
+			}
+		});
+		// console.log(data[0].notescontent);
+	});
 </script>
 
 {#if Editor}
 	<Editor
 		bind:this={editorRef as any}
-		bind:value={data.content}
+		bind:value={data[0].notescontent}
 		apiKey="vy0yfom8b74patlx3pqq3fsgzs7yo91br84xiy2o6744slrf"
 		channel="7"
 		{conf}

@@ -2,7 +2,7 @@ type note = {
 	noteId: number;
 	title: string;
 	slug: string;
-	content: string;
+	notescontent: string;
 	board: string;
 	dateCreated: string;
 	dateUpdated: string;

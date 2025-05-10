@@ -7,6 +7,7 @@
 	import { isAuthenticated, isChanged, user } from '$lib/stores/store';
 	import Input from '../../components/input.svelte';
 	import config from '$lib/utils/apiConfig';
+	import { page } from '$app/stores';
 
 	// Variables
 	let data: note[] = [];
@@ -47,6 +48,7 @@
 			})
 		});
 		const result = await response.json();
+		console.log(result);
 		if (result.status == 200) {
 			// Only update if server data is different from local data
 			const serverNote = result.data;
@@ -90,18 +92,18 @@
 	}
 	async function syncWithBackend() {
 		console.log('Syncing with backend...');
-		const response = await fetch('/api/notes/note/update-note', {
+		const response = await fetch(`${config.apiUrl}notes/note/text/${slug}/update`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				data: data,
-				email: localStorage.getItem('Email')
+				data: data
 			})
 		});
 		const result = await response.json();
-		if (result.status === 'success') {
+		console.log(result);
+		if (result.status === 200) {
 			// Update local cache
 			localStorage.setItem(`note_${data[0].slug}`, JSON.stringify(data[0]));
 
@@ -130,7 +132,7 @@
 			}
 		});
 		// console.log(userEmail);
-		slug = window.location.href.split('/home/')[1].split('/sharing')[0];
+		slug = $page.url.pathname.split('/home/')[1];
 
 		if (!$isAuthenticated) {
 			error = 'You must be logged in to view your notes';
@@ -141,7 +143,7 @@
 			}
 		}
 	});
-	export { updateNote };
+	// export { updateNote };
 </script>
 
 <SvelteToast />

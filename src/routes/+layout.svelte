@@ -3,45 +3,42 @@
 	import { derived } from 'svelte/store';
 	import Navbar from './components/navbar.svelte';
 	import Footer from './components/footer.svelte';
-	import { theme } from '$lib/stores/store';
-	import auth from '$lib/utils/authService';
-	import { isAuthenticated, user, auth0Client } from '$lib/stores/store';
-	import apiConfig from '$lib/utils/apiConfig';
-
 	import '../app.css';
 	import { onMount } from 'svelte';
+	import { auth0Client, isAuthenticated } from '$lib/stores/store.svelte';
+	import auth from '$lib/utils/authService';
+
 	let { children } = $props();
 
 	const isAdminRoute = derived(page, ($page) => {
 		return $page.url.pathname.startsWith('/home');
 	});
-
 	onMount(async () => {
-		const client = await auth.createClient();
-		auth0Client.set(client);
-		isAuthenticated.set(await $auth0Client.isAuthenticated());
-		user.set(await $auth0Client.getUser());
-		const request = await fetch(`${apiConfig.apiUrl}users/roles/get-role`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				// @ts-expect-error
-				email: $user.email
-			})
-		});
-		const result = await request.json();
-		localStorage.setItem('role', result.data);
-		// console.log($user);
-		localStorage.setItem('user', JSON.stringify($user));
-
-		const localTheme = localStorage.getItem('theme');
-		if (localTheme === 'light') {
-			document.documentElement.setAttribute('data-theme', 'light');
-		} else {
-			document.documentElement.setAttribute('data-theme', 'dark');
-		}
+		// try {
+		// 	const client = await auth.createClient();
+		// 	// console.log('client', client);
+		// 	auth0Client.set(client);
+		// 	// console.log('client', $auth0Client);
+		// 	auth0Client.subscribe(async (value) => {
+		// 		if (!value) {
+		// 			localStorage.setItem('isAuthenticated', 'false');
+		// 		} else {
+		// 			try {
+		// 				isAuthenticated.set(await $auth0Client.isAuthenticated());
+		// 				// console.log('isauth', $isAuthenticated);
+		// 				isAuthenticated.subscribe(async (value) => {
+		// 					localStorage.setItem('isAuthenticated', JSON.stringify(value));
+		// 				});
+		// 			} catch (error) {
+		// 				if (localStorage.getItem('isAuthenticated') == 'true') {
+		// 					isAuthenticated.set(true);
+		// 				}
+		// 			}
+		// 		}
+		// 	});
+		// } catch (error) {
+		// 	console.error(error);
+		// }
 	});
 </script>
 

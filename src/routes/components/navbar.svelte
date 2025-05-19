@@ -1,10 +1,9 @@
 <script lang="ts">
 	// Imports
 	import icon from '../images/icon.png'; // Importing the icon image for the navbar
-	import { autoLogin, theme } from '$lib/stores/store'; // Importing the theme store for theme management
+	import { theme } from '$lib/stores/store.svelte'; // Importing the theme store for theme management
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
-	import { showModal } from '$lib/stores/store'; // Importing the showModal store to manage the login form visibility
-	import { isAuthenticated, auth0Client } from '$lib/stores/store'; // Importing the loggedIn store to manage the user's login state
+	import { isAuthenticated, auth0Client } from '$lib/stores/store.svelte'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
 	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
 	import auth from '$lib/utils/authService';
@@ -24,29 +23,39 @@
 		) as HTMLElement;
 
 		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
+		// console.log('isAuthenticated: ', $isAuthenticated);
 		isAuthenticated.subscribe((value) => {
+			// console.log(value);
 			if (value) {
 				navbarLoginButtonsElement.classList.add('hidden');
 				menuLoginButtonsElement.classList.add('hidden');
 				navbarDashboardButtonsElement.classList.remove('hidden');
 				menuDashboardButtonsElement.classList.remove('hidden');
-			}
-			if (value && $autoLogin) {
-				goto('/home');
+			} else {
+				navbarLoginButtonsElement.classList.remove('hidden');
+				menuLoginButtonsElement.classList.remove('hidden');
+				navbarDashboardButtonsElement.classList.add('hidden');
+				menuDashboardButtonsElement.classList.add('hidden');
 			}
 		});
-
-		const storedTheme = localStorage.getItem('theme');
-		// console.log(storedTheme);
-		if (storedTheme == 'light') {
-			theme.set(true);
-		} else if (storedTheme == 'dark') {
-			theme.set(false);
+		const localTheme = localStorage.getItem('theme');
+		if (localTheme === 'light') {
+			theme.value = true;
+		} else {
+			theme.value = false;
 		}
-		theme.subscribe((value) => {
-			localStorage.setItem('theme', value ? 'light' : 'dark');
+		$effect(() => {
+			// console.log(theme.value)
+			if (theme.value == true) {
+				document.documentElement.setAttribute('data-theme', 'light');
+				localStorage.setItem('theme', 'light');
+			} else {
+				localStorage.setItem('theme', 'dark');
+				document.documentElement.setAttribute('data-theme', 'dark');
+			}
 		});
 	});
+
 	function login() {
 		auth.loginWithPopup($auth0Client, {});
 	}
@@ -101,7 +110,7 @@
 							type="checkbox"
 							value="light"
 							class="theme-controller toggle"
-							bind:checked={$theme}
+							bind:checked={theme.value}
 						/>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -121,10 +130,10 @@
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
-						<button class="btn btn-accent" on:click={login}>Login</button>
+						<button class="btn btn-accent" onclick={login}>Login</button>
 					</li>
 					<li>
-						<button class="btn" on:click={login}>Sign up</button>
+						<button class="btn" onclick={login}>Sign up</button>
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
@@ -166,7 +175,7 @@
 						type="checkbox"
 						value="light"
 						class="theme-controller toggle"
-						bind:checked={$theme}
+						bind:checked={theme.value}
 					/>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -186,8 +195,8 @@
 		</ul>
 	</div>
 	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-2" id="navbar-login-buttons">
-		<button class="btn btn-accent" on:click={login}>Login</button>
-		<button class="btn" on:click={login}>Sign up</button>
+		<button class="btn btn-accent" onclick={login}>Login</button>
+		<button class="btn" onclick={login}>Sign up</button>
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
 		<a class="btn btn-accent" href="/home">Go to App</a>

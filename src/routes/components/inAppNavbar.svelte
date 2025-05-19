@@ -1,40 +1,43 @@
 <script lang="ts">
 	// Imports
-	import { theme } from '$lib/stores/store';
+	import { theme, user, auth0Client } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 	import auth from '$lib/utils/authService';
-	import { auth0Client } from '$lib/stores/store';
 	import AutoLogin from './autoLogin.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { goto } from '$app/navigation';
 	import SvelteToast from './svelteToast.svelte';
-	import { user } from '$lib/stores/store';
 
-	let userPictureUrl: string;
-	let userName: string;
+	let userPictureUrl: string | undefined;
+	let userName: string | undefined;
 
 	onMount(() => {
-		const storedTheme = localStorage.getItem('theme');
-		// console.log(storedTheme);
-		if (storedTheme == 'light') {
-			theme.set(true);
-		} else if (storedTheme == 'dark') {
-			theme.set(false);
+		const localTheme = localStorage.getItem('theme');
+		if (localTheme === 'light') {
+			theme.value = true;
+		} else {
+			theme.value = false;
 		}
-		theme.subscribe((value) => {
-			localStorage.setItem('theme', value ? 'light' : 'dark');
-		});
-		user.subscribe((value) => {
-			if (value) {
-				// @ts-expect-error
-				userPictureUrl = value.picture;
-				// @ts-expect-error
-				userName = value.name;
+		$effect(() => {
+			// console.log(theme.value)
+			if (theme.value == true) {
+				document.documentElement.setAttribute('data-theme', 'light');
+				localStorage.setItem('theme', 'light');
+			} else {
+				localStorage.setItem('theme', 'dark');
+				document.documentElement.setAttribute('data-theme', 'dark');
 			}
 		});
+		// console.log(user.value);
+		if (user.value) {
+			userPictureUrl = user.value.picture;
+			userName = user.value.name;
+		}
 	});
+
 	function logout() {
-		auth.logout($auth0Client);
+		auth.logout(auth0Client);
+		localStorage.setItem('isAuthenticated', 'false');
 		goto('/');
 	}
 </script>
@@ -98,7 +101,7 @@
 							type="checkbox"
 							value="light"
 							class="theme-controller toggle"
-							bind:checked={$theme}
+							bind:checked={theme.value}
 						/>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +124,7 @@
 						<a
 							class="btn btn-accent"
 							href="#form"
-							on:click={() => {
+							onclick={() => {
 								const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
 								logout_modal.showModal();
 							}}>Log Out</a
@@ -138,14 +141,14 @@
 						<div class="modal-action">
 							<button
 								class="btn btn-info"
-								on:click={() => {
+								onclick={() => {
 									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
 									logout_modal.close();
 								}}>Cancel</button
 							>
 							<button
 								class="btn btn-error"
-								on:click={() => {
+								onclick={() => {
 									logout();
 									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
 									logout_modal.close();

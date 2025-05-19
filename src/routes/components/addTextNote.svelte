@@ -1,152 +1,180 @@
 <script lang="ts">
 	// Imports
-	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import { Tipex, type TipexEditor } from '@friendofsvelte/tipex';
+	import '@friendofsvelte/tipex/styles/Tipex.css';
+	import '@friendofsvelte/tipex/styles/ProseMirror.css';
+	import '@friendofsvelte/tipex/styles/Controls.css';
+	import '@friendofsvelte/tipex/styles/EditLink.css';
+	import '@friendofsvelte/tipex/styles/CodeBlock.css';
 	import type { note } from '../types';
-	import SvelteToast from './svelteToast.svelte';
-	import Editor from './editor.svelte';
-	import { goto } from '$app/navigation';
-	import config from '$lib/utils/apiConfig';
-	import { onMount } from 'svelte';
-	import { user } from '$lib/stores/store';
+	import { validateNote } from '$lib/utils/validateNote';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import { user } from '$lib/stores/store.svelte';
 
 	// Variables
-	// @ts-expect-error
-	let newNote: note = {};
-	let email: string = '';
+	let newNote: note = {
+		title: '',
+		slug: '',
+		notescontent: '',
+		board: '',
+		dateCreated: '',
+		email: '',
+		grade: undefined,
+		subject: ''
+	};
+	let editor: TipexEditor = $state();
 
 	// Functions
-	const quickValidate = (note) => {
-		if (
-			note?.title &&
-			note?.content &&
-			note?.board &&
-			note?.dateCreated &&
-			note?.grade &&
-			note?.subject
-		) {
-			return true;
-		} else {
-			return false;
-		}
-	};
-	async function addNewNote() {
-		console.log(newNote);
-		if (!quickValidate(newNote)) {
-			console.error('Data Validation failed');
+	// $effect(() => {
+	// 	console.log(editor.getHTML());
+	// });
+	// Functions
+	function addNote() {
+		if (!validateNote(newNote)) {
+			console.error('Note is not in correct form to be added to database.');
 			showToast(
-				'Data Validation failed',
-				'Make sure you have entered the correct data type.',
-				2500,
+				'Data type error.',
+				'The note is not in correct form. Please recheck your data.',
+				3000,
 				'error'
 			);
-		}
-		showToast('Saving...', 'Saving your note', 2500, 'info');
-		const response = await fetch(`${config.apiUrl}notes/new-note/text`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				note: newNote,
-				email: email
-			})
-		});
-		const result = await response.json();
-		console.log(result);
-		if (result.status == 200) {
-			showToast('Success', 'Note added successfully', 2500, 'success');
-			goto('/home');
 		} else {
-			showToast('Error', result.message, 2500, 'error');
+			try {
+				newNote.notescontent = editor.getHTML();
+				newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
+
+				if (user.value) {
+					// @ts-expect-error
+					newNote.email = user.value.email;
+				} else {
+					newNote.email = null;
+				}
+
+				console.log(newNote);
+				const encryptedNote = btoa(JSON.stringify(newNote));
+				console.log(encryptedNote);
+				const storableNote: { key: string; value: string } = {
+					key: `note:${newNote.slug}`,
+					value: encryptedNote
+				};
+
+				if (localStorage.getItem(`note:${newNote.slug}`)) {
+					console.error('Another note with that name already exists.');
+					showToast(
+						'Title name Conflict',
+						'Another note with that name already exists, please choose another name',
+						3000,
+						'error'
+					);
+				} else {
+					localStorage.setItem(storableNote.key, storableNote.value);
+					showToast('Successfully added note', 'Note added successfully', 3000, 'success');
+					window.location.href = '/home';
+				}
+			} catch (error) {
+				console.error('There was an error:', error);
+			}
 		}
 	}
-	onMount(() => {
-		user.subscribe((value) => {
-			if (value) {
-				// @ts-expect-error
-				email = value.email;
-			}
-		});
-	});
 </script>
 
-<SvelteToast />
-
 <div class="main p-1">
-	<form>
-		<div class="header-box">
-			<h2 class="mb-6 text-3xl">Add a Text Note</h2>
-			<div class="new-note-data">
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Title:</span>
-					</div>
-					<input
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote.title}
-						required
-						placeholder="Title"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Board:</span>
-					</div>
-					<input
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote.board}
-						required
-						placeholder="Board"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Date Created:</span>
-					</div>
-					<input
-						type="date"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote.dateCreated}
-						required
-						placeholder="Date Created"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Grade:</span>
-					</div>
-					<input
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote.grade}
-						required
-						placeholder="Grade (Enter in number)"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Subject:</span>
-					</div>
-					<input
-						type="text"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote.subject}
-						required
-						placeholder="Subject"
-					/>
-				</label>
-				<label class="form-control">
-					<div class="label">
-						<span class="label-text">Note Content:</span>
-					</div>
-					<Editor data={newNote} />
-				</label>
+	<dialog id="meta_data_modal" class="modal">
+		<div class="modal-box flex w-96 flex-col">
+			<div class="absolute right-2">
+				<form method="dialog" onsubmit={(e) => e.preventDefault()}>
+					<button
+						class="btn btn-circle btn-ghost btn-sm top-2"
+						onclick={(e) => {
+							e.preventDefault();
+							if (validateNote(newNote)) {
+								const meta_data_modal = document.getElementById(
+									'meta_data_modal'
+								) as HTMLDialogElement;
+								meta_data_modal.close();
+							} else {
+								showToast(
+									'Data type error.',
+									'The note is not in correct form. Please recheck your data.',
+									3000,
+									'error'
+								);
+							}
+							console.log(newNote);
+						}}>✕</button
+					>
+				</form>
 			</div>
-			<br />
+			<div class="flex flex-col gap-2">
+				<h3>Enter Metadata for your Note Here:</h3>
+				<div class="new-note-data flex flex-row flex-wrap gap-3">
+					{#each Object.keys(newNote) as newNoteKey}
+						{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(newNoteKey)}
+							<label class="form-control w-full max-w-xs">
+								<div class="label">
+									<span class="label-text">{newNoteKey}:</span>
+								</div>
+								{#if newNoteKey == 'dateCreated'}
+									<input
+										type="date"
+										class="input input-bordered w-full max-w-xs"
+										bind:value={newNote[newNoteKey]}
+										required
+										placeholder="Date Created"
+										onchange={() => {
+											console.log(newNote[newNoteKey]);
+										}}
+									/>
+								{:else}
+									<input
+										type="text"
+										class="input input-bordered w-full max-w-xs"
+										required
+										bind:value={newNote[newNoteKey]}
+										placeholder={newNoteKey}
+										oninput={() => {
+											console.log(newNote[newNoteKey]);
+										}}
+									/>
+								{/if}
+							</label>
+						{/if}
+					{/each}
+				</div>
+			</div>
 		</div>
-		<button class="btn btn-outline btn-accent" on:click={addNewNote}>Add Note</button>
+	</dialog>
+	<div class="header-box">
+		<h2 class="mb-6 text-3xl">Add a Text Note</h2>
+	</div>
+	<form class="flex flex-col gap-4">
+		<div class="metadata-btn w-40">
+			<button
+				class="btn h-12"
+				onclick={() => {
+					const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
+					meta_data_modal.showModal();
+				}}>Edit Metadata</button
+			>
+		</div>
+		<div class="dark">
+			<Tipex
+				body=""
+				controls
+				floating
+				focal
+				oncreate={() => {
+					console.log('editor created');
+				}}
+				onupdate={() => {
+					console.log(editor.getHTML());
+				}}
+				bind:tipex={editor}
+				class="p-2"
+				style="height: calc(100vh - 200px)"
+			/>
+		</div>
+		<button class="btn btn-outline btn-accent h-14" onclick={addNote}>Add Note</button>
 	</form>
 </div>
 
@@ -159,13 +187,11 @@
 		text-align: center;
 		animation: fadeInDown 0.6s ease-in-out;
 	}
-
 	.header-box h2 {
 		font-size: 2.5rem;
 		font-weight: bold;
 		animation: fadeInDown 0.8s ease-in-out;
 	}
-
 	/* Form container */
 	.new-note-data {
 		display: flex;
@@ -212,8 +238,6 @@
 		border-radius: 8px;
 		cursor: pointer;
 		transition: all 0.3s ease-in-out;
-		align-self: center;
-		/* Center align the button */
 	}
 
 	.btn:active {

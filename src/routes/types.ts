@@ -1,11 +1,11 @@
 type note = {
-	noteId: number;
+	noteId?: number;
 	title: string;
 	slug: string;
 	notescontent: string;
 	board: string;
 	dateCreated: string;
-	dateUpdated: string;
+	dateUpdated?: string;
 	email: string;
 	grade: number;
 	subject: string;
@@ -26,5 +26,4 @@ type userType = {
 	sub: string;
 	updated_at: string;
 }
-
 export type { note, searchResult, userType };

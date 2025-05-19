@@ -2,32 +2,28 @@
 	import type { note } from '../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import SvelteToast from './svelteToast.svelte';
-	import { notesStore } from '$lib/stores/store';
 	import { onMount } from 'svelte';
 	import config from '$lib/utils/apiConfig';
+	import { notesStore } from '$lib/stores/store.svelte';
 
 	let notes = $props();
 
+	console.log(notes.note);
+
 	async function deleteNote(note: note) {
-		showToast('Deleting...', 'Deleting your note...', 2500, 'info');
-		const response = await fetch(`${config.apiUrl}notes/note/${note.slug}/delete`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
+		try {
+			localStorage.removeItem(`note:${notes.note.slug}`);
+			for (let i = 0; i < notesStore.value.length; i++) {
+				if (notesStore.value[i].slug == notes.note.slug) {
+					notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
+				}
 			}
-		});
-		const result = await response.json();
-		console.log(result);
-		if (result.status == 200) {
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
-			notesStore.update((currentNotes) => currentNotes.filter((n) => n.slug !== note.slug));
-		} else {
-			showToast('Error', 'Error deleting note', 2500, 'error');
+		} catch (error) {
+			showToast('Error deleting note', 'There was an error deleting your note', 3000, 'error');
 		}
 	}
 </script>
-
-<SvelteToast />
 
 <div
 	role="button"
@@ -117,11 +113,13 @@
 		</dialog>
 	</div>
 	<div class="card-body">
-		<a class="note-title card-title" href="/home/{notes.note.slug}">{notes.note.title}</a>
+		<a class="note-title card-title p-2" href="/home/{notes.note.slug}/sharing"
+			>{notes.note.title}</a
+		>
 		<div class="note-meta card-actions justify-end">
-			<div class="badge badge-outline">{notes.note.grade}th grade</div>
-			<div class="badge badge-outline">{notes.note.subject}</div>
-			<div class="badge badge-outline">
+			<div class="badge badge-outline p-3">{notes.note.grade}th grade</div>
+			<div class="badge badge-outline p-3">{notes.note.subject}</div>
+			<div class="badge badge-outline p-3">
 				{new Date(notes.note.dateCreated)
 					.toLocaleDateString('en-US', {
 						day: 'numeric',
@@ -129,12 +127,11 @@
 						year: '2-digit'
 					})
 					.split('/')
-					.reverse()
 					.join('/')}
 			</div>
 		</div>
 		<p class="note-content">
-			{@html notes.note.content}
+			{@html notes.note.notescontent}
 		</p>
 	</div>
 </div>
@@ -168,7 +165,7 @@
 		margin-left: auto;
 	}
 	.card-body {
-		margin-top: -85px;
+		margin-top: -80px;
 	}
 	@media (max-width: 768px) {
 		.note {

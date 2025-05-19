@@ -1,5 +1,5 @@
 import { createAuth0Client } from "@auth0/auth0-spa-js";
-import { user, isAuthenticated, popupOpen } from "$lib/stores/store";
+import { user, isAuthenticated, popupOpen } from "$lib/stores/store.svelte";
 import authConfig from "./authConfig"
 
 async function createClient() {
@@ -12,22 +12,28 @@ async function createClient() {
 }
 
 async function loginWithPopup(client, options) {
-    popupOpen.set(true);
+    popupOpen.value = true;
     try {
         await client.loginWithPopup(options);
 
-        user.set(await client.getUser());
+        user.value = await client.getUser();
         isAuthenticated.set(true);
     } catch (e) {
         // eslint-disable-next-line
         console.error(e);
     } finally {
-        popupOpen.set(false);
+        popupOpen.value = false;
     }
 }
 
-function logout(client) {
-    return client.logout();
+async function logout(client) {
+    try {
+        const logout = await client.logout();
+        isAuthenticated.set(false);
+        return logout
+    } catch (e) {
+        console.error(e)
+    }
 }
 
 const auth = {

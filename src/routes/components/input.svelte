@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isChanged } from '$lib/stores/store';
+	import { isChanged } from '$lib/stores/store.svelte';
 
 	export let originalData: any;
 	export let data: any;
@@ -11,7 +11,7 @@
 	function checkForChanges() {
 		// Compare current data with original data
 		const hasChanges = JSON.stringify(data) !== JSON.stringify(originalData);
-		isChanged.set(hasChanges);
+		isChanged.value = hasChanges;
 	}
 </script>
 
@@ -19,7 +19,7 @@
 	<div class="w-full max-w-xs">
 		<div class="label">
 			<span class="label-text w-full max-w-xs">
-				<b>{title}</b>: {data[0][tag]}
+				<b>{title}</b>: {data.value[0][tag]}
 			</span>
 		</div>
 	</div>
@@ -31,7 +31,7 @@
 		<input
 			{type}
 			class="input input-bordered w-full"
-			bind:value={data[0][tag]}
+			bind:value={data.value[0][tag]}
 			on:input={checkForChanges}
 		/>
 	</label>

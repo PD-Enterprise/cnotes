@@ -1,91 +1,86 @@
 <script lang="ts">
-	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { onMount } from 'svelte';
-	import SvelteToast from '../components/svelteToast.svelte';
+	// Imports
+	import { onMount, onDestroy } from 'svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
-	import { isAuthenticated, notesStore, user } from '$lib/stores/store'; // Import the store
-	import { onDestroy } from 'svelte';
-	import config from '$lib/utils/apiConfig';
+	import { notesStore } from '../../lib/stores/store.svelte';
 
 	// Variables
-	let error: string = '';
-	let searchQuery: string = '';
-	let searchResults: searchResult[];
-	let shouldShowSearchResults: boolean = false;
+	let error: string = $state('');
+	let searchQuery: string = $state('');
+	let searchResults: searchResult[] = $state();
+	let shouldShowSearchResults: boolean = $state(false);
 	let loadingTimeout;
-	let userEmail: string;
+	// let userEmail: string;
 
-	// Subscribe to the store
-	$: notes = $notesStore; // Replace the manual subscription with reactive statement
-
-	// // Functions
-	async function getNotes(userEmail: string) {
-		isAuthenticated.subscribe(async (value) => {
-			if (!value) {
-				return;
+	// Functions
+	async function getNotes() {
+		let hasNotes = false;
+		const notes = [];
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i);
+			if (key?.startsWith('note:')) {
+				hasNotes = true;
+				const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+				notes.push(noteData);
 			}
-			try {
-				// console.log('Fetching from server...');
-				const request = await fetch(`${config.apiUrl}notes/notes`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						email: userEmail
-					})
-				});
-				const result = await request.json();
-				if (result.status != 200) {
-					error = result.message;
-					console.error('Server error:', result.message);
-					return;
-				}
-				// console.log('Server response:', result.data);
-				const serverNotes = result.data;
-				// Only update if server notes is not empty and different from local
-				if (serverNotes.length > 0) {
-					// console.log('Updating with server notes:', serverNotes);
-					// Update individual note caches
-					serverNotes.forEach((note) => {
-						localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
-					});
-					// Update the index
-					localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
-					notesStore.set(serverNotes);
-				}
-			} catch (error) {
-				console.error('Error:', error);
-				// Fallback to local index
-				const localNotesIndex = localStorage.getItem('notesIndex');
-				if (localNotesIndex) {
-					const parsedNotes = JSON.parse(localNotesIndex);
-					const loadedNotes = parsedNotes.map((note) => {
-						const cachedNote = localStorage.getItem(`note_${note.slug}`);
-						return cachedNote ? JSON.parse(cachedNote) : note;
-					});
-					notesStore.set(loadedNotes);
-				}
-			}
-		});
+		}
+		if (hasNotes) {
+			notesStore.value = notes;
+			console.log(notes);
+		}
+		// 	// console.log(isAuthenticated.value);
+		// 	if (!$isAuthenticated) {
+		// 		return;
+		// 	}
+		// 	try {
+		// 		// console.log('Fetching from server...');
+		// 		const request = await fetch(`${config.apiUrl}notes/notes`, {
+		// 			method: 'POST',
+		// 			headers: {
+		// 				'Content-Type': 'application/json'
+		// 			},
+		// 			body: JSON.stringify({
+		// 				email: userEmail
+		// 			})
+		// 		});
+		// 		const result = await request.json();
+		// 		if (result.status != 200) {
+		// 			error = result.message;
+		// 			console.error('Server error:', result.message);
+		// 			return;
+		// 		}
+		// 		// console.log('Server response:', result.data);
+		// 		const serverNotes = result.data;
+		// 		// Only update if server notes is not empty and different from local
+		// 		if (serverNotes.length > 0) {
+		// 			// console.log('Updating with server notes:', serverNotes);
+		// 			// Update individual note caches
+		// 			serverNotes.forEach((note) => {
+		// 				localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
+		// 			});
+		// 			// Update the index
+		// 			localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
+		// 			notesStore.value = serverNotes;
+		// 		}
+		// 	} catch (error) {
+		// 		console.error('Error:', error);
+		// 		// Fallback to local index
+		// 		const localNotesIndex = localStorage.getItem('notesIndex');
+		// 		if (localNotesIndex) {
+		// 			const parsedNotes = JSON.parse(localNotesIndex);
+		// 			const loadedNotes = parsedNotes.map((note) => {
+		// 				const cachedNote = localStorage.getItem(`note_${note.slug}`);
+		// 				return cachedNote ? JSON.parse(cachedNote) : note;
+		// 			});
+		// 			notesStore.value = loadedNotes;
+		// 		}
+		// 	}
 	}
 	onMount(() => {
-		// First check and use local storage for the notes list
-		const localNotesIndex = localStorage.getItem('notesIndex');
-		if (localNotesIndex) {
-			const parsedNotes = JSON.parse(localNotesIndex);
-			// Load each note from its individual cache
-			const loadedNotes = parsedNotes.map((note) => {
-				const cachedNote = localStorage.getItem(`note_${note.slug}`);
-				return cachedNote ? JSON.parse(cachedNote) : note;
-			});
-			notesStore.set(loadedNotes);
-			// console.log('Set notes from localStorage:', loadedNotes);
-		}
-		userEmail = JSON.parse(localStorage.getItem('user')).email;
-		// console.log(userEmail);
-		getNotes(userEmail);
+		// 	userEmail = JSON.parse(atob(localStorage.getItem('user'))).email;
+		// 	// console.log(userEmail);
+		getNotes();
 		// Add click event listener to document to hide search results when clicking outside
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
@@ -94,7 +89,7 @@
 			}
 		});
 		loadingTimeout = setTimeout(() => {
-			if (notes.length === 0) {
+			if (!notesStore.value || notesStore.value.length === 0) {
 				error = 'No notes found.';
 			}
 		}, 5000);
@@ -103,49 +98,38 @@
 		clearTimeout(loadingTimeout);
 	});
 	function search() {
-		if (searchQuery.length > 0) {
-			shouldShowSearchResults = true;
-			// Use filter and map for better performance
-			const matches = notes
-				.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
-				.map((note) => ({
-					title: note.title,
-					slug: note.slug
-				}));
-
-			searchResults = matches.map((match) => ({
-				title: match.title,
-				slug: match.slug
-			}));
-		} else {
-			shouldShowSearchResults = false;
-			searchResults = null;
-		}
+		// 	if (searchQuery.length > 0 && notes.value) {
+		// 		shouldShowSearchResults = true;
+		// 		const matches = notes.value
+		// 			.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
+		// 			.map((note) => ({
+		// 				title: note.title,
+		// 				slug: note.slug
+		// 			}));
+		// 		searchResults = matches;
+		// 	} else {
+		// 		shouldShowSearchResults = false;
+		// 		searchResults = [];
+		// 	}
 	}
 	function handleKeyDown(event: any) {
 		search();
 	}
 </script>
 
-<SvelteToast />
-
 <div class="main">
-	<div class="header">
-		<div class="search-bar mb-5 mt-5 grow pl-5 pr-5">
-			<label class="input input-bordered flex items-center gap-2">
+	<div class="header gap-3 p-1">
+		<div class="search-bar grow">
+			<label class="input input-bordered flex items-center gap-2 p-2">
 				<input
 					type="text"
 					class="search-input grow"
 					placeholder="Search for a note"
-					on:keydown={handleKeyDown}
+					onkeydown={handleKeyDown}
 					bind:value={searchQuery}
 				/>
 
-				<button
-					on:click={search}
-					class="search-button btn btn-circle btn-ghost"
-					aria-label="Search"
-				>
+				<button onclick={search} class="search-button btn btn-circle btn-ghost" aria-label="Search">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
@@ -160,6 +144,7 @@
 					</svg>
 				</button>
 			</label>
+			<!--
 			{#if shouldShowSearchResults}
 				<div class="search-results mt-2 p-2">
 					{#if searchResults.length > 0}
@@ -167,7 +152,7 @@
 							<a
 								href={`#${searchResult.slug}`}
 								tabindex="0"
-								on:click={() => {
+								onclick={() => {
 									event.preventDefault();
 									document.getElementById(searchResult.slug).focus();
 								}}
@@ -183,6 +168,7 @@
 					{/if}
 				</div>
 			{/if}
+			-->
 		</div>
 		<div class="add-note">
 			<a class="addNoteButton btn bg-accent" href="/home/new-note">New Note</a>
@@ -191,9 +177,9 @@
 	<div class="notes p-5">
 		{#if error}
 			<p class="error">{error}</p>
-		{:else if notes.length > 0}
+		{:else if notesStore.value && notesStore.value.length > 0}
 			<div class="notes-grid">
-				{#each notes as note}
+				{#each notesStore.value as note}
 					<Note {note} />
 				{/each}
 			</div>
@@ -208,12 +194,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		gap: 15px;
 	}
 	/* Search bar styles with gradient and smooth animations */
 	.search-bar {
-		border-radius: 12px;
-		padding: 12px;
+		border-radius: 10px;
 		transition:
 			box-shadow 0.4s ease,
 			transform 0.4s ease;

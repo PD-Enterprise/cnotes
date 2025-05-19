@@ -1,37 +1,72 @@
 <script lang="ts">
-	// Importing necessary modules and components
+	// Imports
 	import { onMount } from 'svelte';
 	import InAppNavbar from '../components/inAppNavbar.svelte';
-	import auth from '$lib/utils/authService';
-	import { isAuthenticated, user, auth0Client, autoLogin } from '$lib/stores/store';
-	import apiConfig from '$lib/utils/apiConfig';
+	// import auth from '$lib/utils/authService';
+	import { isAuthenticated, user, auth0Client } from '$lib/stores/store.svelte';
+	import SvelteToast from '../components/svelteToast.svelte';
+	import config from '$lib/utils/apiConfig';
 
-	// Destructuring children from props
 	let { children } = $props();
 
-	// Variable to hold the cookie value
-	let cookieValue: string;
-
 	onMount(async () => {
-		isAuthenticated.set(await $auth0Client.isAuthenticated());
-		user.set(await $auth0Client.getUser());
-		const request = await fetch(`${apiConfig.apiUrl}users/roles/get-role`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				// @ts-expect-error
-				email: $user.email
-			})
-		});
-		const result = await request.json();
-		localStorage.setItem('role', result.data);
-		// console.log(result.data);
-		// console.log($user);
-		localStorage.setItem('user', JSON.stringify($user));
+		// try {
+		// 	auth0Client.subscribe(async (value) => {
+		// 		if (!value) {
+		// 			localStorage.setItem('isAuthenticated', 'false');
+		// 			localStorage.setItem('user', 'null');
+		// 		} else {
+		// 			try {
+		// 				isAuthenticated.set(await $auth0Client.isAuthenticated());
+		// 				user.value = await $auth0Client.getUser();
+		// 				// @ts-expect-error
+		// 				fetchRole(user.value.email);
+		// 				// console.log('isauth', $isAuthenticated);
+		// 				// console.log('user', user.value);
+		// 				isAuthenticated.subscribe(async (value) => {
+		// 					localStorage.setItem('isAuthenticated', JSON.stringify(value));
+		// 				});
+		// 				const encryptedUser = btoa(JSON.stringify(user.value));
+		// 				// console.log(encryptedUser);
+		// 				localStorage.setItem('user', encryptedUser);
+		// 			} catch (error) {
+		// 				if (localStorage.getItem('isAuthenticated') == 'true') {
+		// 					isAuthenticated.set(true);
+		// 				}
+		// 				if (localStorage.getItem('user')) {
+		// 					const encryptedUser = localStorage.getItem('user');
+		// 					// console.log(encryptedUser);
+		// 					const decryptedUser = atob(encryptedUser);
+		// 					// console.log(decryptedUser);
+		// 					user.value = JSON.parse(decryptedUser);
+		// 				}
+		// 			}
+		// 		}
+		// 	});
+		// } catch (error) {
+		// 	console.error(error);
+		// }
 	});
+	async function fetchRole(email: string) {
+		try {
+			const request = await fetch(`${config.apiUrl}users/roles/get-role`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email: email
+				})
+			});
+			const result = await request.json();
+			localStorage.setItem('role', result.data);
+		} catch (error) {
+			localStorage.setItem('role', 'tier-1');
+		}
+	}
 </script>
+
+<SvelteToast />
 
 <div class="main">
 	<div class="navbar mb-5 mt-3">

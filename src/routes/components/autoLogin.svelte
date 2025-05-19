@@ -1,47 +1,38 @@
 <script lang="ts">
 	// Imports
 	import { goto } from '$app/navigation';
-	import { autoLogin } from '$lib/stores/store';
-	import { isAuthenticated } from '$lib/stores/store';
+	import { autoLogin, isAuthenticated } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 
 	// Variables
 	let whichNav = $props();
-	let autoLoginLocal = '';
 
 	// Functions
 	onMount(() => {
 		// Getting the auto-login element
 		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
 
-		// Subscribing to the loggedIn store
-		isAuthenticated.subscribe((value) => {
-			// If the user is logged in
-			if (value) {
-				// Remove the 'hidden' class from the auto-login element
-				autoLoginElement.classList.remove('hidden');
-				// Subscribing to the autoLogin store
-				autoLogin.subscribe((value) => {
-					// Saving the autoLogin value to localStorage
-					localStorage.setItem('AutoLogin', value.toString());
-					// If the navigation type is 'nav'
+		// Getting the autoLogin value from localStorage
+		let autoLoginLocal = localStorage.getItem('AutoLogin');
+		if (autoLoginLocal == 'true') {
+			autoLogin.value = true;
+		} else {
+			autoLogin.value = false;
+		}
+		$effect(() => {
+			if (autoLogin.value == true) {
+				localStorage.setItem('AutoLogin', 'true');
+
+				if ($isAuthenticated == true) {
+					autoLoginElement.classList.remove('hidden');
 					if (whichNav.type == 'nav') {
-						// If autoLogin is true, navigate to the home page
-						if (value) {
-							goto('/home');
-						}
+						goto('/home');
 					}
-				});
+				}
+			} else {
+				localStorage.setItem('AutoLogin', 'false');
 			}
 		});
-		// Getting the autoLogin value from localStorage
-		autoLoginLocal = localStorage.getItem('AutoLogin');
-		// Setting the autoLogin store based on the value from localStorage
-		if (autoLoginLocal == 'true') {
-			autoLogin.set(true);
-		} else {
-			autoLogin.set(false);
-		}
 	});
 </script>
 
@@ -51,9 +42,9 @@
 		<input
 			type="checkbox"
 			class="toggle"
-			checked={$autoLogin}
+			checked={autoLogin.value}
 			onclick={() => {
-				autoLogin.set(!$autoLogin);
+				autoLogin.value = !autoLogin.value;
 			}}
 		/>
 	</label>

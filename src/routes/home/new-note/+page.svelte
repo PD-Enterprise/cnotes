@@ -7,7 +7,7 @@
 </script>
 
 <div class="main">
-	<div class="dropdown ml-2">
+	<!-- <div class="dropdown ml-2">
 		<select bind:value={option} class="menu z-[1] m-1 w-52 bg-base-100 p-2 shadow">
 			<option value="text">Text</option>
 			<option value="diagram">Diagram</option>
@@ -36,13 +36,13 @@
 			</div>
 		</div>
 	</div>
-	{#if option === 'text'}
-		<div class="text">
-			<AddTextNote />
-		</div>
-	{:else if option === 'diagram'}
+	{#if option === 'text'} -->
+	<div class="text">
+		<AddTextNote />
+	</div>
+	<!-- {:else if option === 'diagram'}
 		<div class="diagram mt-1">
 			<Diagram />
-		</div>
-	{/if}
+		</div> -->
+	<!-- {/if} -->
 </div>

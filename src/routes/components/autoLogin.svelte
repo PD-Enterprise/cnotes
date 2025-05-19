@@ -23,11 +23,9 @@
 			if (autoLogin.value == true) {
 				localStorage.setItem('AutoLogin', 'true');
 
-				if ($isAuthenticated == true) {
-					autoLoginElement.classList.remove('hidden');
-					if (whichNav.type == 'nav') {
-						goto('/home');
-					}
+				autoLoginElement.classList.remove('hidden');
+				if (whichNav.type == 'nav') {
+					goto('/home');
 				}
 			} else {
 				localStorage.setItem('AutoLogin', 'false');

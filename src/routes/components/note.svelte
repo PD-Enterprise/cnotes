@@ -28,12 +28,12 @@
 <div
 	role="button"
 	tabindex="0"
-	class="note card flex w-96 bg-base-200 shadow-xl"
+	class="note card flex bg-base-200 p-2 shadow-xl"
 	id={notes.note.slug}
 >
 	<div class="card-options">
 		<details class="dropdown dropdown-end">
-			<summary class="btn btn-circle btn-ghost m-1">
+			<summary class="btn btn-circle m-1 hover:bg-base-100">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -50,7 +50,28 @@
 					/>
 				</svg>
 			</summary>
-			<ul class="options menu dropdown-content z-[1] w-20 rounded-box bg-base-100 p-2 shadow">
+			<ul
+				class="options menu dropdown-content z-[1] flex flex-col gap-2 rounded-box bg-base-300 p-2 shadow"
+			>
+				<li>
+					<a class="btn btn-success" href={`/home/${notes.note.slug}`}>
+						Edit
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+							/>
+						</svg>
+					</a>
+				</li>
 				<li>
 					<button
 						class="btn btn-error"
@@ -80,43 +101,10 @@
 				</li>
 			</ul>
 		</details>
-		<dialog id="delete_modal_{notes.note.slug}" class="modal">
-			<div class="modal-box">
-				<form method="dialog">
-					<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
-				</form>
-				<h1 class="text-2xl">Delete Note</h1>
-				<p class="py-4">Are you sure you want to delete this note?</p>
-				<div class="modal-action">
-					<button
-						class="btn btn-info"
-						onclick={() => {
-							const delete_modal = document.getElementById(
-								`delete_modal_${notes.note.slug}`
-							) as HTMLDialogElement;
-							delete_modal.close();
-						}}>Cancel</button
-					>
-					<button
-						class="btn btn-error"
-						onclick={() => {
-							deleteNote(notes.note);
-							const delete_modal = document.getElementById(
-								`delete_modal_${notes.note.slug}`
-							) as HTMLDialogElement;
-							delete_modal.close();
-						}}
-						>Delete
-					</button>
-				</div>
-			</div>
-		</dialog>
 	</div>
-	<div class="card-body">
-		<a class="note-title card-title p-2" href="/home/{notes.note.slug}/sharing"
-			>{notes.note.title}</a
-		>
-		<div class="note-meta card-actions justify-end">
+	<div class="card-body flex flex-col p-2">
+		<a class="note-title card-title" href="/home/{notes.note.slug}/sharing">{notes.note.title}</a>
+		<div class="note-meta card-actions mt-1 justify-end">
 			<div class="badge badge-outline p-3">{notes.note.grade}th grade</div>
 			<div class="badge badge-outline p-3">{notes.note.subject}</div>
 			<div class="badge badge-outline p-3">
@@ -135,6 +123,38 @@
 		</p>
 	</div>
 </div>
+
+<dialog id="delete_modal_{notes.note.slug}" class="modal">
+	<div class="modal-box">
+		<form method="dialog">
+			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+		</form>
+		<h1 class="text-2xl">Delete Note</h1>
+		<p class="py-4">Are you sure you want to delete this note?</p>
+		<div class="modal-action">
+			<button
+				class="btn btn-info"
+				onclick={() => {
+					const delete_modal = document.getElementById(
+						`delete_modal_${notes.note.slug}`
+					) as HTMLDialogElement;
+					delete_modal.close();
+				}}>Cancel</button
+			>
+			<button
+				class="btn btn-error"
+				onclick={() => {
+					deleteNote(notes.note);
+					const delete_modal = document.getElementById(
+						`delete_modal_${notes.note.slug}`
+					) as HTMLDialogElement;
+					delete_modal.close();
+				}}
+				>Delete
+			</button>
+		</div>
+	</div>
+</dialog>
 
 <style>
 	.note {
@@ -157,15 +177,17 @@
 		border: 2px solid #007bff;
 	}
 	.note-meta {
-		margin-top: 10px;
 		font-size: 0.9rem;
-		color: #a0a0a0;
+		color: #aaaaaa;
+	}
+	.note-title {
+		width: 11.2em;
 	}
 	.card-options {
 		margin-left: auto;
 	}
 	.card-body {
-		margin-top: -80px;
+		margin-top: -58px;
 	}
 	@media (max-width: 768px) {
 		.note {

@@ -8,7 +8,7 @@
 
 	let notes = $props();
 
-	console.log(notes.note);
+	// console.log(notes.note);
 
 	async function deleteNote(note: note) {
 		try {
@@ -51,7 +51,7 @@
 				</svg>
 			</summary>
 			<ul
-				class="options menu dropdown-content z-[1] flex flex-col gap-2 rounded-box bg-base-300 p-2 shadow"
+				class="options dropdown-content menu z-[1] flex flex-col gap-2 rounded-box bg-base-300 p-2 shadow"
 			>
 				<li>
 					<a class="btn btn-success" href={`/home/${notes.note.slug}`}>
@@ -127,7 +127,7 @@
 <dialog id="delete_modal_{notes.note.slug}" class="modal">
 	<div class="modal-box">
 		<form method="dialog">
-			<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+			<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 		</form>
 		<h1 class="text-2xl">Delete Note</h1>
 		<p class="py-4">Are you sure you want to delete this note?</p>

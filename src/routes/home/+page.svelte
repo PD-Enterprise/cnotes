@@ -27,55 +27,8 @@
 		}
 		if (hasNotes) {
 			notesStore.value = notes;
-			console.log(notes);
+			// console.log(notes);
 		}
-		// 	// console.log(isAuthenticated.value);
-		// 	if (!$isAuthenticated) {
-		// 		return;
-		// 	}
-		// 	try {
-		// 		// console.log('Fetching from server...');
-		// 		const request = await fetch(`${config.apiUrl}notes/notes`, {
-		// 			method: 'POST',
-		// 			headers: {
-		// 				'Content-Type': 'application/json'
-		// 			},
-		// 			body: JSON.stringify({
-		// 				email: userEmail
-		// 			})
-		// 		});
-		// 		const result = await request.json();
-		// 		if (result.status != 200) {
-		// 			error = result.message;
-		// 			console.error('Server error:', result.message);
-		// 			return;
-		// 		}
-		// 		// console.log('Server response:', result.data);
-		// 		const serverNotes = result.data;
-		// 		// Only update if server notes is not empty and different from local
-		// 		if (serverNotes.length > 0) {
-		// 			// console.log('Updating with server notes:', serverNotes);
-		// 			// Update individual note caches
-		// 			serverNotes.forEach((note) => {
-		// 				localStorage.setItem(`note_${note.slug}`, JSON.stringify(note));
-		// 			});
-		// 			// Update the index
-		// 			localStorage.setItem('notesIndex', JSON.stringify(serverNotes));
-		// 			notesStore.value = serverNotes;
-		// 		}
-		// 	} catch (error) {
-		// 		console.error('Error:', error);
-		// 		// Fallback to local index
-		// 		const localNotesIndex = localStorage.getItem('notesIndex');
-		// 		if (localNotesIndex) {
-		// 			const parsedNotes = JSON.parse(localNotesIndex);
-		// 			const loadedNotes = parsedNotes.map((note) => {
-		// 				const cachedNote = localStorage.getItem(`note_${note.slug}`);
-		// 				return cachedNote ? JSON.parse(cachedNote) : note;
-		// 			});
-		// 			notesStore.value = loadedNotes;
-		// 		}
-		// 	}
 	}
 	onMount(() => {
 		// 	userEmail = JSON.parse(atob(localStorage.getItem('user'))).email;
@@ -120,7 +73,7 @@
 <div class="main">
 	<div class="header gap-3 p-1">
 		<div class="search-bar grow">
-			<label class="input input-bordered flex items-center gap-2 p-2">
+			<label class="input-bordered input flex items-center gap-2 p-2">
 				<input
 					type="text"
 					class="search-input grow"
@@ -129,7 +82,7 @@
 					bind:value={searchQuery}
 				/>
 
-				<button onclick={search} class="search-button btn btn-circle btn-ghost" aria-label="Search">
+				<button onclick={search} class="search-button btn btn-ghost btn-circle" aria-label="Search">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"

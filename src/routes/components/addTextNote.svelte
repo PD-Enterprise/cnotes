@@ -157,7 +157,7 @@
 				}}>Edit Metadata</button
 			>
 		</div>
-		<div class="dark">
+		<div class="editor dark">
 			<Tipex
 				body=""
 				controls

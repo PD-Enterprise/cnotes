@@ -30,7 +30,9 @@
 		});
 		// console.log(user.value);
 		if (user.value) {
+			// @ts-expect-error
 			userPictureUrl = user.value.picture;
+			// @ts-expect-error
 			userName = user.value.name;
 		}
 	});
@@ -63,7 +65,7 @@
 					/>
 				</svg>
 			</div>
-			<ul class="menu dropdown-content menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
+			<ul class="dropdown-content menu menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
 				<li>
 					<a
 						href="https://pd-enterprise.pages.dev/admin-dashboard"
@@ -134,7 +136,7 @@
 				<dialog id="logout_modal" class="modal">
 					<div class="modal-box">
 						<form method="dialog">
-							<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+							<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 						</form>
 						<h1 class="text-2xl">Log out</h1>
 						<p class="py-4">Are you sure you want to log out?</p>

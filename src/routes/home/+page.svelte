@@ -195,7 +195,6 @@
 	}
 	/* Add Note button styles moved to the left for cleaner layout */
 	.addNoteButton {
-		color: white;
 		border: none;
 		border-radius: 8px;
 		padding: 12px 20px;

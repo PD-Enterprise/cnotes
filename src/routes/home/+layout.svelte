@@ -10,42 +10,42 @@
 	let { children } = $props();
 
 	onMount(async () => {
-		// try {
-		// 	auth0Client.subscribe(async (value) => {
-		// 		if (!value) {
-		// 			localStorage.setItem('isAuthenticated', 'false');
-		// 			localStorage.setItem('user', 'null');
-		// 		} else {
-		// 			try {
-		// 				isAuthenticated.set(await $auth0Client.isAuthenticated());
-		// 				user.value = await $auth0Client.getUser();
-		// 				// @ts-expect-error
-		// 				fetchRole(user.value.email);
-		// 				// console.log('isauth', $isAuthenticated);
-		// 				// console.log('user', user.value);
-		// 				isAuthenticated.subscribe(async (value) => {
-		// 					localStorage.setItem('isAuthenticated', JSON.stringify(value));
-		// 				});
-		// 				const encryptedUser = btoa(JSON.stringify(user.value));
-		// 				// console.log(encryptedUser);
-		// 				localStorage.setItem('user', encryptedUser);
-		// 			} catch (error) {
-		// 				if (localStorage.getItem('isAuthenticated') == 'true') {
-		// 					isAuthenticated.set(true);
-		// 				}
-		// 				if (localStorage.getItem('user')) {
-		// 					const encryptedUser = localStorage.getItem('user');
-		// 					// console.log(encryptedUser);
-		// 					const decryptedUser = atob(encryptedUser);
-		// 					// console.log(decryptedUser);
-		// 					user.value = JSON.parse(decryptedUser);
-		// 				}
-		// 			}
-		// 		}
-		// 	});
-		// } catch (error) {
-		// 	console.error(error);
-		// }
+		try {
+			auth0Client.subscribe(async (value) => {
+				if (!value) {
+					localStorage.setItem('isAuthenticated', 'false');
+					localStorage.setItem('user', 'null');
+				} else {
+					try {
+						isAuthenticated.set(await $auth0Client.isAuthenticated());
+						user.value = await $auth0Client.getUser();
+						// @ts-expect-error
+						fetchRole(user.value.email);
+						// console.log('isauth', $isAuthenticated);
+						// console.log('user', user.value);
+						isAuthenticated.subscribe(async (value) => {
+							localStorage.setItem('isAuthenticated', JSON.stringify(value));
+						});
+						const encryptedUser = btoa(JSON.stringify(user.value));
+						// console.log(encryptedUser);
+						localStorage.setItem('user', encryptedUser);
+					} catch (error) {
+						if (localStorage.getItem('isAuthenticated') == 'true') {
+							isAuthenticated.set(true);
+						}
+						if (localStorage.getItem('user')) {
+							const encryptedUser = localStorage.getItem('user');
+							// console.log(encryptedUser);
+							const decryptedUser = atob(encryptedUser);
+							// console.log(decryptedUser);
+							user.value = JSON.parse(decryptedUser);
+						}
+					}
+				}
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	});
 	async function fetchRole(email: string) {
 		try {

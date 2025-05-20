@@ -7,9 +7,10 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { goto } from '$app/navigation';
 	import SvelteToast from './svelteToast.svelte';
+	import Sync from './sync.svelte';
 
-	let userPictureUrl: string | undefined;
-	let userName: string | undefined;
+	let userPictureUrl: string = $state('');
+	let userName: string = $state('');
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -28,7 +29,7 @@
 				document.documentElement.setAttribute('data-theme', 'dark');
 			}
 		});
-		// console.log(user.value);
+		console.log(user.value);
 		if (user.value) {
 			// @ts-expect-error
 			userPictureUrl = user.value.picture;
@@ -65,7 +66,9 @@
 					/>
 				</svg>
 			</div>
-			<ul class="dropdown-content menu menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
+			<ul
+				class="dropdown-content menu menu-sm z-[1] mt-3 flex gap-2 rounded-box bg-base-100 p-2 shadow"
+			>
 				<li>
 					<a
 						href="https://pd-enterprise.pages.dev/admin-dashboard"
@@ -121,6 +124,7 @@
 					</label>
 				</li>
 				<AutoLogin type="inapp" />
+				<Sync />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
 						<a

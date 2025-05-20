@@ -29,52 +29,56 @@
 	// 	console.log(editor.getHTML());
 	// });
 	// Functions
-	function addNote() {
-		if (!validateNote(newNote)) {
-			console.error('Note is not in correct form to be added to database.');
-			showToast(
-				'Data type error.',
-				'The note is not in correct form. Please recheck your data.',
-				3000,
-				'error'
-			);
-		} else {
-			try {
-				newNote.notescontent = editor.getHTML();
-				newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
+	async function addNote() {
+		// if (!validateNote(newNote)) {
+		// 	console.error('Note is not in correct form to be added to database.');
+		// 	showToast(
+		// 		'Data type error.',
+		// 		'The note is not in correct form. Please recheck your data.',
+		// 		3000,
+		// 		'error'
+		// 	);
+		// } else {
+		try {
+			newNote.notescontent = editor.getHTML();
+			newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
 
-				if (user.value) {
-					// @ts-expect-error
-					newNote.email = user.value.email;
-				} else {
-					newNote.email = null;
-				}
-
-				console.log(newNote);
-				const encryptedNote = btoa(JSON.stringify(newNote));
-				console.log(encryptedNote);
-				const storableNote: { key: string; value: string } = {
-					key: `note:${newNote.slug}`,
-					value: encryptedNote
-				};
-
-				if (localStorage.getItem(`note:${newNote.slug}`)) {
-					console.error('Another note with that name already exists.');
-					showToast(
-						'Title name Conflict',
-						'Another note with that name already exists, please choose another name',
-						3000,
-						'error'
-					);
-				} else {
-					localStorage.setItem(storableNote.key, storableNote.value);
-					showToast('Successfully added note', 'Note added successfully', 3000, 'success');
-					window.location.href = '/home';
-				}
-			} catch (error) {
-				console.error('There was an error:', error);
+			if (user.value) {
+				// @ts-expect-error
+				newNote.email = user.value.email;
+			} else {
+				newNote.email = null;
 			}
+
+			// console.log(newNote);
+			const encryptedNote = btoa(JSON.stringify(newNote));
+			// console.log(encryptedNote);
+			const storableNote: { key: string; value: string } = {
+				key: `note:${newNote.slug}`,
+				value: encryptedNote
+			};
+
+			if (localStorage.getItem(`note:${newNote.slug}`)) {
+				console.error('Another note with that name already exists.');
+				showToast(
+					'Title name Conflict',
+					'Another note with that name already exists, please choose another name',
+					3000,
+					'error'
+				);
+			} else {
+				localStorage.setItem(storableNote.key, storableNote.value);
+				await addToDB(newNote);
+				showToast('Successfully added note', 'Note added successfully', 3000, 'success');
+				window.location.href = '/home';
+			}
+		} catch (error) {
+			console.error('There was an error:', error);
 		}
+	}
+	// }
+	async function addToDB(note: note) {
+		console.log(note);
 	}
 </script>
 
@@ -84,7 +88,7 @@
 			<div class="absolute right-2">
 				<form method="dialog" onsubmit={(e) => e.preventDefault()}>
 					<button
-						class="btn btn-circle btn-ghost btn-sm top-2"
+						class="btn btn-ghost btn-sm btn-circle top-2"
 						onclick={(e) => {
 							e.preventDefault();
 							if (validateNote(newNote)) {
@@ -117,7 +121,7 @@
 								{#if newNoteKey == 'dateCreated'}
 									<input
 										type="date"
-										class="input input-bordered w-full max-w-xs"
+										class="input-bordered input w-full max-w-xs"
 										bind:value={newNote[newNoteKey]}
 										required
 										placeholder="Date Created"
@@ -128,7 +132,7 @@
 								{:else}
 									<input
 										type="text"
-										class="input input-bordered w-full max-w-xs"
+										class="input-bordered input w-full max-w-xs"
 										required
 										bind:value={newNote[newNoteKey]}
 										placeholder={newNoteKey}
@@ -174,7 +178,7 @@
 				style="height: calc(100vh - 200px)"
 			/>
 		</div>
-		<button class="btn btn-outline btn-accent h-14" onclick={addNote}>Add Note</button>
+		<button class="btn btn-accent btn-outline h-14" onclick={addNote}>Add Note</button>
 	</form>
 </div>
 

@@ -3,7 +3,9 @@
 	import { onMount, onDestroy } from 'svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
-	import { notesStore } from '../../lib/stores/store.svelte';
+	import { notesStore, user } from '../../lib/stores/store.svelte';
+	import config from '$lib/utils/apiConfig';
+	import { isAuthenticated } from '../../lib/stores/store.svelte';
 
 	// Variables
 	let error: string = $state('');
@@ -27,7 +29,47 @@
 		}
 		if (hasNotes) {
 			notesStore.value = notes;
-			// console.log(notes);
+			// console.log('notes:', notes);
+		}
+		// console.log(JSON.parse(atob(localStorage.getItem('user'))));
+		if (JSON.parse(atob(localStorage.getItem('user')))) {
+			// console.log(user.value);
+			try {
+				const request = await fetch(`${config.apiUrl}notes/notes`, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						email: JSON.parse(atob(localStorage.getItem('user'))).email
+					})
+				});
+				const result = await request.json();
+				// console.log(result);
+				if (result.status == 200) {
+					// console.log('result data: ', result.data);
+					for (let i = 0; i < result.data.length; i++) {
+						// console.log(result.data[i]);
+						const encryptedNote = btoa(JSON.stringify(result.data[i]));
+						// console.log(encryptedNote);
+						const storableNote: { key: string; value: string } = {
+							key: `note:${result.data[i].slug}`,
+							value: encryptedNote
+						};
+						console.log(storableNote);
+						localStorage.setItem(storableNote.key, storableNote.value);
+						if (!localStorage.getItem(`note:${result.data[i].slug}`)) {
+							notesStore.value = [...notesStore.value, result.data[i]];
+						}
+					}
+
+					// console.log('notesStore: ', notesStore.value);
+				} else {
+					console.error('Fetch call returned with status:', result.status);
+				}
+			} catch (error) {
+				console.error('There was an error.', error);
+			}
 		}
 	}
 	onMount(() => {

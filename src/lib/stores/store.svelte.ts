@@ -14,3 +14,5 @@ export const isAuthenticated = writable(null)
 export const user = $state({ value: {} });
 export const popupOpen = $state({ value: false });
 export const error = $state(null);
+
+export const sync = writable(false);

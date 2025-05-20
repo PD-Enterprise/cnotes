@@ -28,7 +28,11 @@ async function loginWithPopup(client, options) {
 
 async function logout(client) {
     try {
-        const logout = await client.logout();
+        const logout = await client.logout({
+            logoutParams: {
+                returnTo: "/"
+            }
+        });
         isAuthenticated.set(false);
         return logout
     } catch (e) {

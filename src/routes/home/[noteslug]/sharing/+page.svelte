@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { note } from '../../../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import config from '$lib/utils/apiConfig';
 
 	// Variables
 	let noteData: note = {
@@ -24,10 +25,21 @@
 		// console.log(slug);
 		const storedNote = localStorage.getItem(`note:${slug}`);
 		// console.log(storedNote);
-		const decrypedNote = atob(storedNote);
-		// console.log(decrypedNote);
-		noteData = JSON.parse(decrypedNote);
-		// console.log(noteData);
+		if (storedNote) {
+			const decrypedNote = atob(storedNote);
+			// console.log(decrypedNote);
+			noteData = JSON.parse(decrypedNote);
+			// console.log(noteData);
+		} else {
+			const request = await fetch(`${config.apiUrl}notes/note/:${slug}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			const result = await request.json();
+			console.log(result);
+		}
 	}
 
 	onMount(async () => {
@@ -90,7 +102,7 @@
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
-					<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 				</form>
 				<label for="share-link">Link:</label>
 				<div class="share-container">
@@ -100,7 +112,7 @@
 						class="share-link">https://cnotes.pages.dev/{noteData.slug}/sharing</a
 					>
 					<button
-						class="btn btn-square btn-sm"
+						class="btn btn-sm btn-square"
 						aria-label="Copy share link to clipboard"
 						on:click={() => {
 							navigator.clipboard.writeText(`https://cnotes.pages.dev/${noteData.slug}/sharing`);

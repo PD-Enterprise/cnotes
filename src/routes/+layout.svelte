@@ -14,31 +14,31 @@
 		return $page.url.pathname.startsWith('/home');
 	});
 	onMount(async () => {
-		// try {
-		// 	const client = await auth.createClient();
-		// 	// console.log('client', client);
-		// 	auth0Client.set(client);
-		// 	// console.log('client', $auth0Client);
-		// 	auth0Client.subscribe(async (value) => {
-		// 		if (!value) {
-		// 			localStorage.setItem('isAuthenticated', 'false');
-		// 		} else {
-		// 			try {
-		// 				isAuthenticated.set(await $auth0Client.isAuthenticated());
-		// 				// console.log('isauth', $isAuthenticated);
-		// 				isAuthenticated.subscribe(async (value) => {
-		// 					localStorage.setItem('isAuthenticated', JSON.stringify(value));
-		// 				});
-		// 			} catch (error) {
-		// 				if (localStorage.getItem('isAuthenticated') == 'true') {
-		// 					isAuthenticated.set(true);
-		// 				}
-		// 			}
-		// 		}
-		// 	});
-		// } catch (error) {
-		// 	console.error(error);
-		// }
+		try {
+			const client = await auth.createClient();
+			// console.log('client', client);
+			auth0Client.set(client);
+			// console.log('client', $auth0Client);
+			auth0Client.subscribe(async (value) => {
+				if (!value) {
+					localStorage.setItem('isAuthenticated', 'false');
+				} else {
+					try {
+						isAuthenticated.set(await $auth0Client.isAuthenticated());
+						// console.log('isauth', $isAuthenticated);
+						isAuthenticated.subscribe(async (value) => {
+							localStorage.setItem('isAuthenticated', JSON.stringify(value));
+						});
+					} catch (error) {
+						if (localStorage.getItem('isAuthenticated') == 'true') {
+							isAuthenticated.set(true);
+						}
+					}
+				}
+			});
+		} catch (error) {
+			console.error(error);
+		}
 	});
 </script>
 

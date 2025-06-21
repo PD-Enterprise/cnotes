@@ -8,6 +8,8 @@
 	import '@friendofsvelte/tipex/styles/Controls.css';
 	import '@friendofsvelte/tipex/styles/EditLink.css';
 	import '@friendofsvelte/tipex/styles/CodeBlock.css';
+	import config from '$lib/utils/apiConfig';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
 
 	// Variables
 	let noteData = $state<note>({
@@ -20,8 +22,11 @@
 		slug: '',
 		email: ''
 	});
+	let originalNoteData: note | null = $state(null);
 	let error: string = $state('');
-	let isChanged = $state(false);
+	const isChanged = $derived(
+		originalNoteData && JSON.stringify(noteData) !== JSON.stringify(originalNoteData)
+	);
 	let editor: TipexEditor = $state();
 
 	// Functions
@@ -32,19 +37,43 @@
 		// console.log(slug);
 		const storedNote = localStorage.getItem(`note:${slug}`);
 		// console.log(storedNote);
-		const decrypedNote = atob(storedNote);
-		// console.log(decrypedNote);
-		noteData = JSON.parse(decrypedNote);
-		// console.log(noteData);
+		if (storedNote) {
+			const decrypedNote = atob(storedNote);
+			// console.log(decrypedNote);
+			noteData = JSON.parse(decrypedNote);
+			originalNoteData = JSON.parse(decrypedNote);
+			// console.log(noteData);
+		}
 	}
-	function saveNote() {
-		// console.log(noteData);
-		const encryptedNote = btoa(JSON.stringify(noteData));
-		const storableNote: { key: string; value: string } = {
-			key: `note:${noteData.slug}`,
-			value: encryptedNote
-		};
-		localStorage.setItem(storableNote.key, storableNote.value);
+	async function saveNote() {
+		noteData.dateUpdated = new Date().toISOString();
+
+		try {
+			const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					email: JSON.parse(atob(localStorage.getItem('user') || '{}')).email,
+					data: noteData
+				})
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				console.error('Failed to save note:', errorData);
+				showToast('Error', 'Failed to save note', 3000, 'error');
+				return;
+			}
+			const result = await response.json();
+			console.log(result);
+			originalNoteData = JSON.parse(JSON.stringify(noteData));
+			showToast('Success', 'Note saved successfully', 3000, 'success');
+		} catch (e) {
+			console.error(e);
+			showToast('Error', 'Failed to save note', 3000, 'error');
+		}
 	}
 	onMount(async () => {
 		noteData.slug = window.location.href.split('/home/')[1];
@@ -63,9 +92,6 @@
 				class="edit-title input-bordered input w-full text-lg font-bold"
 				placeholder="Title"
 				bind:value={noteData.title}
-				oninput={() => {
-					saveNote();
-				}}
 			/>
 			<div class="meta-data">
 				{#each Object.keys(noteData) as noteDataKey}
@@ -80,18 +106,12 @@
 									class="input-bordered input"
 									placeholder={noteDataKey}
 									bind:value={noteData[noteDataKey]}
-									onchange={() => {
-										saveNote();
-									}}
 								/>{:else}
 								<input
 									type="text"
 									class="input-bordered input"
 									placeholder={noteDataKey}
 									bind:value={noteData[noteDataKey]}
-									oninput={() => {
-										saveNote();
-									}}
 								/>
 							{/if}
 						</div>
@@ -100,7 +120,7 @@
 			</div>
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
-					<button class="btn btn-accent btn-outline">Save</button>
+					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
 				{:else}
 					<button class="btn btn-accent btn-outline" disabled>Save</button>
 				{/if}
@@ -138,7 +158,6 @@
 					onupdate={() => {
 						// console.log(editor.getHTML());
 						noteData.notescontent = editor.getHTML();
-						saveNote();
 					}}
 					bind:tipex={editor}
 					class="p-2"

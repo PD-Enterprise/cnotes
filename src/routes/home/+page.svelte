@@ -56,13 +56,22 @@
 							key: `note:${result.data[i].slug}`,
 							value: encryptedNote
 						};
-						console.log(storableNote);
+						// console.log(storableNote);
 						localStorage.setItem(storableNote.key, storableNote.value);
-						if (!localStorage.getItem(`note:${result.data[i].slug}`)) {
-							notesStore.value = [...notesStore.value, result.data[i]];
-						}
 					}
 
+					const notes = [];
+					for (let i = 0; i < localStorage.length; i++) {
+						const key = localStorage.key(i);
+						if (key?.startsWith('note:')) {
+							hasNotes = true;
+							const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+							notes.push(noteData);
+						}
+					}
+					if (hasNotes) {
+						notesStore.value = notes;
+					}
 					// console.log('notesStore: ', notesStore.value);
 				} else {
 					console.error('Fetch call returned with status:', result.status);
@@ -169,7 +178,7 @@
 			<a class="addNoteButton btn bg-accent" href="/home/new-note">New Note</a>
 		</div>
 	</div>
-	<div class="notes p-5">
+	<div class="notes h-screen p-5">
 		{#if error}
 			<p class="error">{error}</p>
 		{:else if notesStore.value && notesStore.value.length > 0}
@@ -252,11 +261,12 @@
 		background-color: var(--fallback-a, oklch(var(--a) / var(--tw-bg-opacity, 1)));
 	}
 	/* Search results container with smoother animations */
-	.search-results {
+	/* .search-results {
 		border-radius: 8px;
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		padding: 10px;
 		margin-top: 10px;
 		transform: translateY(-5px);
-	}
+	} 
+	*/
 </style>

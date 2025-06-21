@@ -12,6 +12,25 @@
 
 	async function deleteNote(note: note) {
 		try {
+			const user = JSON.parse(atob(localStorage.getItem('user') || '{}'));
+			if (!user.email) {
+				showToast('Error', 'You must be logged in to delete a note', 3000, 'error');
+				return;
+			}
+			const request = await fetch(`${config.apiUrl}notes/note/${note.slug}/delete`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email: user.email })
+			});
+
+			const result = await request.json();
+
+			if (result.status !== 200) {
+				showToast('Error deleting note', result.message, 3000, 'error');
+				return;
+			}
 			localStorage.removeItem(`note:${notes.note.slug}`);
 			for (let i = 0; i < notesStore.value.length; i++) {
 				if (notesStore.value[i].slug == notes.note.slug) {
@@ -198,7 +217,7 @@
 	}
 	@media (max-width: 635px) {
 		.note {
-			--note-width: 14em;
+			--note-width: 16em;
 			--note-height: 11em;
 			font-size: 0.9rem;
 		}

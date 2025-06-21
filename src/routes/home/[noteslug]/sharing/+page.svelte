@@ -96,7 +96,7 @@
 			</div>
 		</div>
 		<br />
-		<div class="editor">
+		<div class="editor rounded-lg border-4 border-base-300 bg-base-200 p-2">
 			{@html noteData.notescontent}
 		</div>
 		<dialog id="share_modal" class="modal">
@@ -143,6 +143,9 @@
 </div>
 
 <style>
+	.editor {
+		height: calc(100vh - 200px);
+	}
 	.share-link {
 		text-decoration: underline;
 		color: #4a90e2;

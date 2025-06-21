@@ -59,6 +59,7 @@
 				})
 			});
 			const result = await request.json();
+			// console.log(result);
 			localStorage.setItem('role', result.data);
 		} catch (error) {
 			localStorage.setItem('role', 'tier-1');

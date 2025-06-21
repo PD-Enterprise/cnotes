@@ -29,13 +29,15 @@
 				document.documentElement.setAttribute('data-theme', 'dark');
 			}
 		});
-		console.log(user.value);
-		if (user.value) {
-			// @ts-expect-error
-			userPictureUrl = user.value.picture;
-			// @ts-expect-error
-			userName = user.value.name;
-		}
+		$effect(() => {
+			// console.log(user.value);
+			if (user.value) {
+				// @ts-expect-error
+				userPictureUrl = user.value.picture;
+				// @ts-expect-error
+				userName = user.value.name;
+			}
+		});
 	});
 
 	function logout() {

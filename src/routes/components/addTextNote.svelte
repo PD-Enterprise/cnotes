@@ -10,6 +10,7 @@
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { user } from '$lib/stores/store.svelte';
+	import config from '$lib/utils/apiConfig';
 
 	// Variables
 	let newNote: note = {
@@ -30,56 +31,79 @@
 	// });
 	// Functions
 	async function addNote() {
-		// if (!validateNote(newNote)) {
-		// 	console.error('Note is not in correct form to be added to database.');
-		// 	showToast(
-		// 		'Data type error.',
-		// 		'The note is not in correct form. Please recheck your data.',
-		// 		3000,
-		// 		'error'
-		// 	);
-		// } else {
-		try {
-			newNote.notescontent = editor.getHTML();
-			newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
+		if (!validateNote(newNote)) {
+			console.error('Note is not in correct form to be added to database.');
+			showToast(
+				'Data type error.',
+				'The note is not in correct form. Please recheck your data.',
+				3000,
+				'error'
+			);
+		} else {
+			try {
+				newNote.notescontent = editor.getHTML();
+				newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
 
-			if (user.value) {
-				// @ts-expect-error
-				newNote.email = user.value.email;
-			} else {
-				newNote.email = null;
+				if (user.value) {
+					// @ts-expect-error
+					newNote.email = user.value.email;
+				} else {
+					newNote.email = null;
+				}
+
+				// console.log(newNote);
+				const encryptedNote = btoa(JSON.stringify(newNote));
+				// console.log(encryptedNote);
+				const storableNote: { key: string; value: string } = {
+					key: `note:${newNote.slug}`,
+					value: encryptedNote
+				};
+
+				if (localStorage.getItem(`note:${newNote.slug}`)) {
+					console.error('Another note with that name already exists.');
+					showToast(
+						'Title name Conflict',
+						'Another note with that name already exists, please choose another name',
+						3000,
+						'error'
+					);
+				} else {
+					localStorage.setItem(storableNote.key, storableNote.value);
+					await addToDB(newNote);
+					showToast('Successfully added note', 'Note added successfully', 3000, 'success');
+					window.location.href = '/home';
+				}
+			} catch (error) {
+				console.error('There was an error:', error);
 			}
-
-			// console.log(newNote);
-			const encryptedNote = btoa(JSON.stringify(newNote));
-			// console.log(encryptedNote);
-			const storableNote: { key: string; value: string } = {
-				key: `note:${newNote.slug}`,
-				value: encryptedNote
-			};
-
-			if (localStorage.getItem(`note:${newNote.slug}`)) {
-				console.error('Another note with that name already exists.');
-				showToast(
-					'Title name Conflict',
-					'Another note with that name already exists, please choose another name',
-					3000,
-					'error'
-				);
-			} else {
-				localStorage.setItem(storableNote.key, storableNote.value);
-				await addToDB(newNote);
-				showToast('Successfully added note', 'Note added successfully', 3000, 'success');
-				window.location.href = '/home';
-			}
-		} catch (error) {
-			console.error('There was an error:', error);
 		}
 	}
-	// }
 	async function addToDB(note: note) {
 		console.log(note);
+		const request = await fetch(`${config.apiUrl}notes/new-note/text`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				email: JSON.parse(atob(localStorage.getItem('user'))).email,
+				note: note
+			})
+		});
+		const result = await request.json();
+		console.log(result);
 	}
+	// const testNote = {
+	// 	title: 'Test Note',
+	// 	slug: 'test-note',
+	// 	notescontent: 'This is a test note',
+	// 	board: 'Test Board',
+	// 	dateCreated: '2021-01-01',
+	// 	email: 'test@test.com',
+	// 	grade: 9,
+	// 	subject: 'Test Subject'
+	// };
+	// addToDB(testNote);
 </script>
 
 <div class="main p-1">

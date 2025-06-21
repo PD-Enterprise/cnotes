@@ -11,7 +11,6 @@
 	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Underline from '@tiptap/extension-underline';
-	import CustomControl from '../../components/customControl.svelte';
 	import Heading from '@tiptap/extension-heading';
 	import Icon from '@iconify/svelte';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { Tipex, type TipexEditor } from '@friendofsvelte/tipex';
+	import { Tipex, type TipexEditor, defaultExtensions } from '@friendofsvelte/tipex';
 	import '@friendofsvelte/tipex/styles/Tipex.css';
 	import '@friendofsvelte/tipex/styles/ProseMirror.css';
 	import '@friendofsvelte/tipex/styles/Controls.css';
@@ -11,6 +11,9 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { user } from '$lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
+	import Underline from '@tiptap/extension-underline';
+	import Heading from '@tiptap/extension-heading';
+	import Icon from '@iconify/svelte';
 
 	// Variables
 	let newNote: note = {
@@ -24,6 +27,13 @@
 		subject: ''
 	};
 	let editor: TipexEditor = $state();
+	let extensions = [
+		...defaultExtensions,
+		Heading.configure({
+			levels: [1, 2, 3, 4]
+		}),
+		Underline
+	];
 
 	// Functions
 	// $effect(() => {
@@ -188,7 +198,6 @@
 		<div class="editor dark">
 			<Tipex
 				body=""
-				controls
 				floating
 				focal
 				oncreate={() => {
@@ -200,7 +209,66 @@
 				bind:tipex={editor}
 				class="p-2"
 				style="height: calc(100vh - 200px)"
-			/>
+			>
+				{#snippet controlComponent(tipex)}
+					<div class="tipex-controller">
+						<div class="tipex-controller-wrapper">
+							<div class="tipex-basic-controller-wrapper">
+								{#each { length: 4 } as _, index}
+									{@const level = index + 1}
+									<button
+										class="tipex-edit-button"
+										onclick={() => editor?.chain().focus().toggleHeading({ level }).run()}
+										class:active={editor?.isActive('heading', { level })}
+									>
+										H{level}
+									</button>
+								{/each}
+								<button
+									aria-label="Paragraph"
+									onclick={() => editor?.chain().focus().setParagraph().run()}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('paragraph')}
+								>
+									<Icon icon="fa6-solid:paragraph" />
+								</button>
+								<button
+									aria-label="Code"
+									onclick={() => editor?.chain().focus().toggleUnderline().run()}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('underline')}
+								>
+									<Icon icon="fa6-solid:underline" />
+								</button>
+								<button
+									aria-label="Bold"
+									onclick={() => editor?.chain().focus().toggleBold().run()}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('bold')}
+								>
+									<Icon icon="fa6-solid:bold" />
+								</button>
+								<button
+									aria-label="Italic"
+									onclick={() => editor?.chain().focus().toggleItalic().run()}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('italic')}
+								>
+									<Icon icon="fa6-solid:italic" />
+								</button>
+								<button
+									aria-label="Code"
+									onclick={() => editor?.chain().focus().toggleCode().run()}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('code')}
+								>
+									<Icon icon="fa6-solid:code" />
+								</button>
+							</div>
+						</div>
+					</div>
+				{/snippet}
+			</Tipex>
 		</div>
 		<button class="btn btn-accent btn-outline h-14" onclick={addNote}>Add Note</button>
 	</form>
@@ -304,5 +372,76 @@
 			width: 100%;
 			/* Full-width button on smaller screens */
 		}
+	}
+	.tipex-controller {
+		background-color: #f3f4f6; /* bg-neutral-100 */
+		position: sticky;
+		bottom: 0;
+		z-index: 10;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem; /* gap-2 */
+		border-radius: 0; /* rounded-none */
+		padding-left: 0.75rem; /* px-3 */
+		padding-right: 0.75rem;
+		padding-top: 0.5rem; /* py-2 */
+		padding-bottom: 0.5rem;
+	}
+	@media (min-width: 768px) {
+		.tipex-controller {
+			flex-direction: row;
+		}
+	}
+	.tipex-controller.dark,
+	:global(.dark) .tipex-controller {
+		background-color: #171717; /* dark:bg-neutral-900 */
+	}
+
+	.tipex-controller-wrapper {
+		display: flex;
+		width: 100%;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.75rem; /* gap-3 */
+	}
+
+	.tipex-basic-controller-wrapper {
+		display: flex;
+		gap: 0.5rem; /* gap-2 */
+	}
+
+	.tipex-edit-button {
+		background-color: #f3f4f6; /* bg-neutral-100 */
+		color: #374151; /* text-neutral-700 */
+		display: flex;
+		height: 2.5rem;
+		width: 2.5rem;
+		cursor: pointer;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.375rem; /* rounded-md */
+		border: 0;
+		padding: 0;
+		font-size: 0.75rem; /* text-xs */
+		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+		transition-duration: 100ms;
+	}
+	.tipex-edit-button.dark,
+	:global(.dark) .tipex-edit-button {
+		background-color: rgba(31, 41, 55, 0.8); /* dark:bg-neutral-800/80 */
+		color: #e5e7eb; /* dark:text-gray-200 */
+	}
+
+	.tipex-edit-button.active {
+		background-color: #f3f4f6; /* bg-neutral-100 */
+		box-shadow:
+			0 10px 15px -3px rgba(0, 0, 0, 0.1),
+			0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+	}
+	.tipex-edit-button.active.dark,
+	:global(.dark) .tipex-edit-button.active {
+		background-color: #374151; /* dark:bg-gray-700 */
 	}
 </style>

@@ -12,6 +12,12 @@
 
 	async function deleteNote(note: note) {
 		try {
+			localStorage.removeItem(`note:${notes.note.slug}`);
+			for (let i = 0; i < notesStore.value.length; i++) {
+				if (notesStore.value[i].slug == notes.note.slug) {
+					notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
+				}
+			}
 			const user = JSON.parse(atob(localStorage.getItem('user') || '{}'));
 			if (!user.email) {
 				showToast('Error', 'You must be logged in to delete a note', 3000, 'error');
@@ -31,12 +37,6 @@
 				showToast('Error deleting note', result.message, 3000, 'error');
 				return;
 			}
-			localStorage.removeItem(`note:${notes.note.slug}`);
-			for (let i = 0; i < notesStore.value.length; i++) {
-				if (notesStore.value[i].slug == notes.note.slug) {
-					notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
-				}
-			}
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
 		} catch (error) {
 			showToast('Error deleting note', 'There was an error deleting your note', 3000, 'error');
@@ -51,8 +51,8 @@
 	id={notes.note.slug}
 >
 	<div class="card-options">
-		<details class="dropdown dropdown-end">
-			<summary class="btn btn-circle m-1 hover:bg-base-100">
+		<div class="dropdown">
+			<div tabindex="0" role="button" class="btn btn-circle m-1 hover:bg-base-100">
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -68,9 +68,9 @@
 						d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
 					/>
 				</svg>
-			</summary>
+			</div>
 			<ul
-				class="options dropdown-content menu z-[1] flex flex-col gap-2 rounded-box bg-base-300 p-2 shadow"
+				class="z-1 dropdown-content menu absolute right-3 flex flex-col gap-2 rounded-box bg-base-100 p-2 shadow-sm"
 			>
 				<li>
 					<a class="btn btn-success" href={`/home/${notes.note.slug}`}>
@@ -119,7 +119,7 @@
 					</button>
 				</li>
 			</ul>
-		</details>
+		</div>
 	</div>
 	<div class="card-body flex flex-col p-2">
 		<a class="note-title card-title" href="/home/{notes.note.slug}/sharing">{notes.note.title}</a>

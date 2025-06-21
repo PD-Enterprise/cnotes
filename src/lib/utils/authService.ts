@@ -1,4 +1,4 @@
-import { createAuth0Client } from "@auth0/auth0-spa-js";
+import { Auth0Client, createAuth0Client } from "@auth0/auth0-spa-js";
 import { user, isAuthenticated, popupOpen } from "$lib/stores/store.svelte";
 import authConfig from "./authConfig"
 

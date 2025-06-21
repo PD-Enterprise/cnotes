@@ -42,7 +42,11 @@
 
 	function logout() {
 		auth.logout(auth0Client);
+		localStorage.setItem('AutoLogin', 'false');
+		localStorage.setItem('role', 'tier-1');
+		localStorage.setItem('syncState', 'false');
 		localStorage.setItem('isAuthenticated', 'false');
+		localStorage.removeItem('user');
 		goto('/');
 	}
 </script>
@@ -139,38 +143,38 @@
 						>
 					</li>
 				</div>
-				<dialog id="logout_modal" class="modal">
-					<div class="modal-box">
-						<form method="dialog">
-							<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
-						</form>
-						<h1 class="text-2xl">Log out</h1>
-						<p class="py-4">Are you sure you want to log out?</p>
-						<div class="modal-action">
-							<button
-								class="btn btn-info"
-								onclick={() => {
-									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-									logout_modal.close();
-								}}>Cancel</button
-							>
-							<button
-								class="btn btn-error"
-								onclick={() => {
-									logout();
-									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-									logout_modal.close();
-								}}
-								>Log Out
-							</button>
-						</div>
-					</div>
-				</dialog>
 			</ul>
 		</div>
 		<a class="btn btn-ghost text-2xl" href="/home">Home</a>
 	</div>
 </div>
+<dialog id="logout_modal" class="modal">
+	<div class="modal-box">
+		<form method="dialog">
+			<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
+		</form>
+		<h1 class="text-2xl">Log out</h1>
+		<p class="py-4">Are you sure you want to log out?</p>
+		<div class="modal-action">
+			<button
+				class="btn btn-info"
+				onclick={() => {
+					const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+					logout_modal.close();
+				}}>Cancel</button
+			>
+			<button
+				class="btn btn-error"
+				onclick={() => {
+					logout();
+					const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+					logout_modal.close();
+				}}
+				>Log Out
+			</button>
+		</div>
+	</div>
+</dialog>
 
 <style>
 	.navbar {

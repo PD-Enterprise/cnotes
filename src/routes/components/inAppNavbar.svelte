@@ -41,12 +41,7 @@
 	});
 
 	function logout() {
-		auth.logout(auth0Client);
-		localStorage.setItem('AutoLogin', 'false');
-		localStorage.setItem('role', 'tier-1');
-		localStorage.setItem('syncState', 'false');
-		localStorage.setItem('isAuthenticated', 'false');
-		localStorage.removeItem('user');
+		auth.logout($auth0Client);
 		goto('/');
 	}
 </script>

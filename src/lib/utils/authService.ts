@@ -26,14 +26,19 @@ async function loginWithPopup(client, options) {
     }
 }
 
-async function logout(client) {
+async function logout(client: Auth0Client) {
     try {
         const logout = await client.logout({
             logoutParams: {
-                returnTo: "/"
+                returnTo: window.location.origin
             }
         });
         isAuthenticated.set(false);
+        localStorage.setItem('AutoLogin', 'false');
+        localStorage.setItem('role', 'tier-1');
+        localStorage.setItem('syncState', 'false');
+        localStorage.setItem('isAuthenticated', 'false');
+        localStorage.removeItem('user');
         return logout
     } catch (e) {
         console.error(e)

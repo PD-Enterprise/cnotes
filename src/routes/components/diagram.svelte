@@ -25,7 +25,7 @@
 					</div>
 					<input
 						type="text"
-						class="input input-bordered w-full max-w-xs"
+						class="input-bordered input w-full max-w-xs"
 						bind:value={newNote[0].title}
 						required
 						placeholder="Title"
@@ -37,8 +37,8 @@
 					</div>
 					<input
 						type="date"
-						class="input input-bordered w-full max-w-xs"
-						bind:value={newNote[0].date_created}
+						class="input-bordered input w-full max-w-xs"
+						bind:value={newNote[0].dateCreated}
 						required
 						placeholder="Date Created"
 					/>
@@ -49,7 +49,7 @@
 					</div>
 					<input
 						type="text"
-						class="input input-bordered w-full max-w-xs"
+						class="input-bordered input w-full max-w-xs"
 						bind:value={newNote[0].grade}
 						required
 						placeholder="Grade"
@@ -61,7 +61,7 @@
 					</div>
 					<input
 						type="text"
-						class="input input-bordered w-full max-w-xs"
+						class="input-bordered input w-full max-w-xs"
 						bind:value={newNote[0].subject}
 						required
 						placeholder="Subject"
@@ -76,7 +76,7 @@
 			</label>
 			<br />
 		</div>
-		<button class="btn btn-outline btn-accent" onclick={addNewDiagram}>Add Note</button>
+		<button class="btn btn-accent btn-outline" onclick={addNewDiagram}>Add Note</button>
 	</form>
 </div>
 

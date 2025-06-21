@@ -61,9 +61,16 @@
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json();
-				console.error('Failed to save note:', errorData);
-				showToast('Error', 'Failed to save note', 3000, 'error');
+				const contentType = response.headers.get('content-type');
+				if (contentType && contentType.indexOf('application/json') !== -1) {
+					const errorData = await response.json();
+					console.error('Failed to save note:', errorData);
+					showToast('Error', 'Failed to save note', 3000, 'error');
+				} else {
+					const errorText = await response.text();
+					console.error('Failed to save note. Server returned non-JSON response:', errorText);
+					showToast('Error', 'Failed to save note: Server error', 3000, 'error');
+				}
 				return;
 			}
 			const result = await response.json();

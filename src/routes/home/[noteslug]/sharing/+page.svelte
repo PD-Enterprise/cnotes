@@ -23,12 +23,12 @@
 			return;
 		}
 		// console.log(slug);
-		const storedNote = localStorage.getItem(`snote:${slug}`);
+		const storedNote = localStorage.getItem(`note:${slug}`);
 		// console.log(storedNote);
 		if (storedNote) {
 			const decrypedNote = atob(storedNote);
 			// console.log(decrypedNote);
-			// noteData = JSON.parse(decrypedNote);
+			noteData = JSON.parse(decrypedNote);
 			// console.log(noteData);
 		} else {
 			const request = await fetch(`${config.apiUrl}notes/note/${slug}`, {
@@ -38,7 +38,7 @@
 				}
 			});
 			const result = await request.json();
-			console.log(result.data);
+			// console.log(result.data);
 			noteData = result.data;
 		}
 	}

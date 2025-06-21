@@ -1,20 +1,21 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import AddTextNote from '../../components/addTextNote.svelte';
 	import Diagram from '../../components/diagram.svelte';
 
 	// Variables
-	let option = 'text';
+	let option = $state('text');
 </script>
 
 <div class="main">
-	<!-- <div class="dropdown ml-2">
+	<div class="dropdown ml-2 p-2">
 		<select bind:value={option} class="menu z-[1] m-1 w-52 bg-base-100 p-2 shadow">
 			<option value="text">Text</option>
 			<option value="diagram">Diagram</option>
 		</select>
 	</div>
 	<div class="dropdown dropdown-end">
-		<div tabindex="0" role="button" class="btn btn-circle btn-ghost btn-xs text-info">
+		<div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle text-info">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
@@ -29,20 +30,21 @@
 				></path>
 			</svg>
 		</div>
-		<div class="card dropdown-content compact z-[1] w-64 rounded-box bg-base-100 shadow">
+		<div class="compact dropdown-content card z-[1] w-64 rounded-box bg-base-100 shadow">
 			<div class="card-body">
 				<h2 class="card-title">component state is not held!!</h2>
 				<p>Save your work before switching</p>
 			</div>
 		</div>
 	</div>
-	{#if option === 'text'} -->
-	<div class="text">
-		<AddTextNote />
-	</div>
-	<!-- {:else if option === 'diagram'}
-		<div class="diagram mt-1">
-			<Diagram />
-		</div> -->
-	<!-- {/if} -->
+	{#if option === 'text'}
+		<div class="text">
+			<AddTextNote />
+		</div>
+	{:else if option === 'diagram'}
+		<div class="diagram mt-1 p-2">
+			This feature coming soon!!
+			<!-- <Diagram /> -->
+		</div>
+	{/if}
 </div>

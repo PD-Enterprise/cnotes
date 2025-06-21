@@ -150,7 +150,7 @@
 										required
 										placeholder="Date Created"
 										onchange={() => {
-											console.log(newNote[newNoteKey]);
+											// console.log(newNote[newNoteKey]);
 										}}
 									/>
 								{:else}
@@ -161,7 +161,7 @@
 										bind:value={newNote[newNoteKey]}
 										placeholder={newNoteKey}
 										oninput={() => {
-											console.log(newNote[newNoteKey]);
+											// console.log(newNote[newNoteKey]);
 										}}
 									/>
 								{/if}
@@ -195,7 +195,7 @@
 					console.log('editor created');
 				}}
 				onupdate={() => {
-					console.log(editor.getHTML());
+					// console.log(editor.getHTML());
 				}}
 				bind:tipex={editor}
 				class="p-2"

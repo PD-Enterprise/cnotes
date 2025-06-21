@@ -34,7 +34,12 @@
 			const result = await request.json();
 
 			if (result.status !== 200) {
-				showToast('Error deleting note', result.message, 3000, 'error');
+				showToast(
+					'Error deleting note',
+					'There was an error deleting your note from the database.',
+					3000,
+					'error'
+				);
 				return;
 			}
 			showToast('Success', 'Note deleted successfully', 2500, 'success');

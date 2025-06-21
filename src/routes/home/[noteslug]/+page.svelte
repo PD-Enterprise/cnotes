@@ -177,10 +177,10 @@
 				<form method="dialog">
 					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 				</form>
-				<label>Link:</label>
-				<a href="/home/{noteData.slug}/sharing" class="share-link"
-					>https://cnotes.pages.dev/{noteData.slug}/sharing</a
-				>
+				<span>Link:</span>
+				<a href="/home/{noteData.slug}/sharing" class="share-link">
+					https://cnotes.pages.dev/{noteData.slug}/sharing
+				</a>
 			</div>
 		</dialog>
 	{:else}

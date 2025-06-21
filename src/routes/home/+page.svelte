@@ -12,6 +12,7 @@
 	let searchQuery: string = $state('');
 	let searchResults: searchResult[] = $state();
 	let shouldShowSearchResults: boolean = $state(false);
+	let isDataInconsistent: boolean = $state(false);
 	let loadingTimeout;
 	// let userEmail: string;
 
@@ -47,16 +48,30 @@
 				const result = await request.json();
 				// console.log(result);
 				if (result.status == 200) {
-					// console.log('result data: ', result.data);
-					for (let i = 0; i < result.data.length; i++) {
-						// console.log(result.data[i]);
-						const encryptedNote = btoa(JSON.stringify(result.data[i]));
-						// console.log(encryptedNote);
+					const serverNotes: note[] = result.data;
+					const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
+					const localNoteSlugs = new Set(notesStore.value.map((n) => n.slug));
+
+					const areEqual =
+						serverNoteSlugs.size === localNoteSlugs.size &&
+						[...serverNoteSlugs].every((slug) => localNoteSlugs.has(slug));
+
+					if (!areEqual) {
+						isDataInconsistent = true;
+						// Clean up local storage from notes that are not on the server anymore
+						for (const slug of localNoteSlugs) {
+							if (!serverNoteSlugs.has(slug)) {
+								localStorage.removeItem(`note:${slug}`);
+							}
+						}
+					}
+					//
+					for (let i = 0; i < serverNotes.length; i++) {
+						const encryptedNote = btoa(JSON.stringify(serverNotes[i]));
 						const storableNote: { key: string; value: string } = {
-							key: `note:${result.data[i].slug}`,
+							key: `note:${serverNotes[i].slug}`,
 							value: encryptedNote
 						};
-						// console.log(storableNote);
 						localStorage.setItem(storableNote.key, storableNote.value);
 					}
 

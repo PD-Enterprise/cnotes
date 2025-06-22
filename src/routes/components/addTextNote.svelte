@@ -144,17 +144,6 @@
 		const result = await request.json();
 		console.log(result);
 	}
-	// const testNote = {
-	// 	title: 'Test Note',
-	// 	slug: 'test-note',
-	// 	notescontent: 'This is a test note',
-	// 	board: 'Test Board',
-	// 	dateCreated: '2021-01-01',
-	// 	email: 'test@test.com',
-	// 	grade: 9,
-	// 	subject: 'Test Subject'
-	// };
-	// addToDB(testNote);
 </script>
 
 <div class="main p-1">

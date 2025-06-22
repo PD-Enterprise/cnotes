@@ -38,7 +38,6 @@
 		"@iconify/svelte": "5",
 		"@neondatabase/serverless": "^0.10.4",
 		"@tinymce/tinymce-svelte": "^3.0.0",
-		"@tiptap/extension-code-block-lowlight": "^2.22.3",
 		"@tiptap/extension-heading": "^2.22.2",
 		"@tiptap/extension-highlight": "^2.22.3",
 		"@tiptap/extension-subscript": "^2.22.3",

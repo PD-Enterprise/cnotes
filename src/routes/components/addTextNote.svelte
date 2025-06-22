@@ -344,7 +344,6 @@
 								<button
 									aria-label="Code"
 									onclick={() => {
-										// @ts-expect-error
 										editor?.chain().focus().toggleCodeBlock().run();
 									}}
 									class="tipex-edit-button"

@@ -23,6 +23,7 @@
 	import Mathematics from '@tiptap/extension-mathematics';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
+	import "../../../katex.min.css"
 	import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 	import { createLowlight } from 'lowlight';
 	import html from 'highlight.js/lib/languages/xml';

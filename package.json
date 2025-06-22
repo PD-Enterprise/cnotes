@@ -29,8 +29,7 @@
 		"tailwindcss": "^3.4.9",
 		"typescript": "^5.0.0",
 		"vite": "^6.0.6",
-		"vite-plugin-static-copy": "^2.2.0",
-		"wrangler": "^4.20.5"
+		"vite-plugin-static-copy": "^2.2.0"
 	},
 	"dependencies": {
 		"@auth0/auth0-spa-js": "^2.1.3",

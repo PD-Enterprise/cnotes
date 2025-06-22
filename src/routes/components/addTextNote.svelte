@@ -22,7 +22,6 @@
 	import Highlight from '@tiptap/extension-highlight';
 	import Subscript from '@tiptap/extension-subscript';
 	import Mathematics from '@tiptap/extension-mathematics';
-	import 'katex/dist/katex.min.css';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
 	import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
@@ -61,11 +60,7 @@
 			multicolor: true
 		}),
 		Subscript,
-		Mathematics.configure({
-			katexOptions: {
-				maxSize: 300
-			}
-		}),
+		Mathematics,
 		Typography,
 		TextAlign,
 		CodeBlockLowlight.configure({

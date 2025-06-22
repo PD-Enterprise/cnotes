@@ -1,6 +1,7 @@
 import { Auth0Client, createAuth0Client } from "@auth0/auth0-spa-js";
 import { user, isAuthenticated, popupOpen } from "$lib/stores/store.svelte";
 import authConfig from "./authConfig"
+import config from "./apiConfig";
 
 async function createClient() {
     let auth0Client = await createAuth0Client({
@@ -18,6 +19,17 @@ async function loginWithPopup(client, options) {
 
         user.value = await client.getUser();
         isAuthenticated.set(true);
+        const request = await fetch(`${config.apiUrl}user/new-user`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // @ts-expect-error
+                email: user.value.email
+            })
+        });
+        const result = await request.json();
     } catch (e) {
         // eslint-disable-next-line
         console.error(e);

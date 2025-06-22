@@ -1,10 +1,3 @@
-<script lang="ts">
-	import { goto } from '$app/navigation';
-	import { showModal } from '$lib/stores/store.svelte';
-
-	let formMode: 'register' | 'login' = 'register';
-</script>
-
 <div class="main">
 	<div class="hero min-h-screen">
 		<div class="hero-content flex-col lg:flex-row-reverse">
@@ -15,7 +8,7 @@
 					in or creating an account.
 				</p>
 				<div class="buttons">
-					<a class="loginButton btn btn-outline btn-primary" href="/home">Try it Out</a>
+					<a class="loginButton btn btn-primary btn-outline" href="/home">Try it Out</a>
 					<!-- <a
 						class="registerButton btn btn-outline btn-primary"
 						href="#form"

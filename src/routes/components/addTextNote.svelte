@@ -140,7 +140,7 @@
 									'error'
 								);
 							}
-							console.log(newNote);
+							// console.log(newNote);
 						}}>✕</button
 					>
 				</form>
@@ -161,9 +161,6 @@
 										bind:value={newNote[newNoteKey]}
 										required
 										placeholder="Date Created"
-										onchange={() => {
-											// console.log(newNote[newNoteKey]);
-										}}
 									/>
 								{:else}
 									<input
@@ -172,9 +169,6 @@
 										required
 										bind:value={newNote[newNoteKey]}
 										placeholder={newNoteKey}
-										oninput={() => {
-											// console.log(newNote[newNoteKey]);
-										}}
 									/>
 								{/if}
 							</label>

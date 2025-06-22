@@ -172,6 +172,13 @@
 					<button class="btn btn-accent btn-outline" disabled>Save</button>
 				{/if}
 				<button
+					class="btn btn-info"
+					onclick={() => {
+						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
+						meta_data_modal.showModal();
+					}}>Edit Metadata</button
+				>
+				<button
 					class="btn btn-success"
 					onclick={() => {
 						const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
@@ -191,15 +198,6 @@
 						/></svg
 					></button
 				>
-				<div class="metadata-btn w-40">
-					<button
-						class="btn h-12"
-						onclick={() => {
-							const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
-							meta_data_modal.showModal();
-						}}>Edit Metadata</button
-					>
-				</div>
 			</div>
 			<div class="editor dark">
 				<Tipex

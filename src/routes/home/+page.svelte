@@ -49,6 +49,7 @@
 				// console.log(result);
 				if (result.status == 200) {
 					const serverNotes: note[] = result.data;
+					// console.log(serverNotes);
 					const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
 					const localNoteSlugs = new Set(notesStore.value.map((n) => n.slug));
 
@@ -67,7 +68,11 @@
 					}
 					//
 					for (let i = 0; i < serverNotes.length; i++) {
-						const encryptedNote = btoa(JSON.stringify(serverNotes[i]));
+						// console.log(serverNotes[i]);
+						const encryptedNote = btoa(
+							String.fromCharCode(...new TextEncoder().encode(JSON.stringify(serverNotes[i])))
+						);
+						// console.log(encryptedNote);
 						const storableNote: { key: string; value: string } = {
 							key: `note:${serverNotes[i].slug}`,
 							value: encryptedNote
@@ -98,7 +103,7 @@
 	}
 	onMount(() => {
 		// 	userEmail = JSON.parse(atob(localStorage.getItem('user'))).email;
-		// 	// console.log(userEmail);
+		// console.log(userEmail);
 		getNotes();
 		// Add click event listener to document to hide search results when clicking outside
 		document.addEventListener('click', (event) => {

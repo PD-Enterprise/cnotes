@@ -59,7 +59,7 @@
 				{noteData.title}
 			</h1>
 			<br />
-			<div class="meta-data flex-col flex flex-wrap">
+			<div class="meta-data flex flex-col flex-wrap">
 				{#each Object.keys(noteData) as noteDataKey}
 					{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
 						<div class="mr-auto">
@@ -97,7 +97,9 @@
 			</div>
 		</div>
 		<br />
-		<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2">
+		<div
+			class="editor h-screen overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2"
+		>
 			{@html noteData.notescontent}
 		</div>
 		<dialog id="share_modal" class="modal">
@@ -144,9 +146,6 @@
 </div>
 
 <style>
-	.editor {
-		height: calc(100vh - 610px);
-	}
 	.share-link {
 		text-decoration: underline;
 		color: #4a90e2;

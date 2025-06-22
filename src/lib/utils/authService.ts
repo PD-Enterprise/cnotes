@@ -39,6 +39,13 @@ async function logout(client: Auth0Client) {
         localStorage.setItem('syncState', 'false');
         localStorage.setItem('isAuthenticated', 'false');
         localStorage.removeItem('user');
+        // Remove all localStorage items that start with "note"
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('note')) {
+                localStorage.removeItem(key);
+            }
+        });
+
         return logout
     } catch (e) {
         console.error(e)

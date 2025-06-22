@@ -25,11 +25,6 @@
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
 	import "../../katex.min.css"
-	import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-	import { createLowlight } from 'lowlight';
-	import html from 'highlight.js/lib/languages/xml';
-	import python from 'highlight.js/lib/languages/python';
-	import java from 'highlight.js/lib/languages/java';
 
 	// Variables
 	let newNote: note = {
@@ -43,7 +38,6 @@
 		subject: ''
 	};
 	let editor: TipexEditor = $state();
-	const lowlight = createLowlight();
 	let extensions = [
 		...defaultExtensions,
 		Heading.configure({
@@ -63,14 +57,8 @@
 		Subscript,
 		Mathematics,
 		Typography,
-		TextAlign,
-		CodeBlockLowlight.configure({
-			lowlight
-		})
+		TextAlign
 	];
-	lowlight.register('html', html);
-	lowlight.register('python', python);
-	lowlight.register('java', java);
 
 	// Functions
 	// $effect(() => {
@@ -329,7 +317,7 @@
 								<button
 									aria-label="Code"
 									onclick={() => {
-										editor?.chain().focus().toggleCodeBlock().run();
+										editor?.chain().focus().toggleCode().run();
 									}}
 									class="tipex-edit-button"
 									class:active={editor?.isActive('code')}

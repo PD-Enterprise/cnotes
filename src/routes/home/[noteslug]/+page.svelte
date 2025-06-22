@@ -13,14 +13,9 @@
 	import Underline from '@tiptap/extension-underline';
 	import Heading from '@tiptap/extension-heading';
 	import Icon from '@iconify/svelte';
-	import Table from '@tiptap/extension-table';
-	import TableHeader from '@tiptap/extension-table-header';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableCell from '@tiptap/extension-table-cell';
 	import Youtube from '@tiptap/extension-youtube';
 	import Highlight from '@tiptap/extension-highlight';
 	import Subscript from '@tiptap/extension-subscript';
-	import Mathematics from '@tiptap/extension-mathematics';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
 	import "../../../katex.min.css"
@@ -48,18 +43,11 @@
 			levels: [1, 2, 3, 4]
 		}),
 		Underline,
-		Table.configure({
-			resizable: true
-		}),
-		TableRow,
-		TableHeader,
-		TableCell,
 		Youtube,
 		Highlight.configure({
 			multicolor: true
 		}),
 		Subscript,
-		Mathematics,
 		Typography,
 		TextAlign
 	];

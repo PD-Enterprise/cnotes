@@ -24,6 +24,11 @@
 	import 'katex/dist/katex.min.css';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
+	import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+	import { createLowlight } from 'lowlight';
+	import html from 'highlight.js/lib/languages/xml';
+	import python from 'highlight.js/lib/languages/python';
+	import java from 'highlight.js/lib/languages/java';
 
 	// Variables
 	let noteData = $state<note>({
@@ -41,6 +46,7 @@
 	const isChanged = $derived(
 		originalNoteData && JSON.stringify(noteData) !== JSON.stringify(originalNoteData)
 	);
+	const lowlight = createLowlight();
 	let editor: TipexEditor = $state();
 	let extensions = [
 		...defaultExtensions,
@@ -65,8 +71,15 @@
 			}
 		}),
 		Typography,
-		TextAlign
+		TextAlign,
+		CodeBlockLowlight.configure({
+			lowlight
+		})
 	];
+
+	lowlight.register('html', html);
+	lowlight.register('python', python);
+	lowlight.register('java', java);
 
 	// Functions
 	async function getNote(slug: string) {
@@ -302,8 +315,7 @@
 									<button
 										aria-label="Code"
 										onclick={() => {
-											// @ts-expect-error
-											editor?.chain().focus().toggleCode().run();
+											editor?.chain().focus().toggleCodeBlock().run();
 										}}
 										class="tipex-edit-button"
 										class:active={editor?.isActive('code')}

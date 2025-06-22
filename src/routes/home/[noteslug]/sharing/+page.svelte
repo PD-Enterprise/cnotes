@@ -59,10 +59,10 @@
 				{noteData.title}
 			</h1>
 			<br />
-			<div class="meta-data">
+			<div class="meta-data flex-col flex flex-wrap">
 				{#each Object.keys(noteData) as noteDataKey}
 					{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-						<div class="w-full max-w-xs">
+						<div class="mr-auto">
 							<div class="label">
 								<span class="label-text">{noteDataKey}:</span>
 							</div>
@@ -145,7 +145,7 @@
 
 <style>
 	.editor {
-		height: calc(100vh - 660px);
+		height: calc(100vh - 610px);
 	}
 	.share-link {
 		text-decoration: underline;

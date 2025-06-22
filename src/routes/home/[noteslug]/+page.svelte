@@ -18,7 +18,7 @@
 	import Subscript from '@tiptap/extension-subscript';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
-	import "../../../katex.min.css"
+	import '../../../katex.min.css';
 
 	// Variables
 	let noteData = $state<note>({
@@ -99,6 +99,10 @@
 			const result = await response.json();
 			console.log(result);
 			originalNoteData = JSON.parse(JSON.stringify(noteData));
+
+			// Save to localStorage
+			localStorage.setItem(`note:${noteData.slug}`, JSON.stringify(noteData));
+
 			showToast('Success', 'Note saved successfully', 3000, 'success');
 		} catch (e) {
 			console.error(e);
@@ -125,7 +129,9 @@
 								class="btn btn-ghost btn-sm btn-circle top-2"
 								onclick={(e) => {
 									e.preventDefault();
-									const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement
+									const meta_data_modal = document.getElementById(
+										'meta_data_modal'
+									) as HTMLDialogElement;
 									meta_data_modal.close();
 									// console.log(newNote);
 								}}>✕</button
@@ -137,7 +143,7 @@
 						<div class="meta-data flex flex-row flex-wrap gap-3">
 							{#each Object.keys(noteData) as noteDataKey}
 								{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-									<label class="w-full max-w-xs form-control"> 
+									<label class="form-control w-full max-w-xs">
 										<div class="label">
 											<span class="label-text">{noteDataKey}:</span>
 										</div>
@@ -310,6 +316,7 @@
 									<button
 										aria-label="Code"
 										onclick={() => {
+											// @ts-expect-error
 											editor?.chain().focus().toggleCode().run();
 										}}
 										class="tipex-edit-button"
@@ -401,7 +408,7 @@
 	.note {
 		padding: 5px;
 	}
-	.Tiptap-mathematics-editor {
+	/* .Tiptap-mathematics-editor {
 		background: #202020;
 		color: #fff;
 		font-family: monospace;
@@ -425,7 +432,7 @@
 	.Tiptap-mathematics-render {
 		border-radius: 0.25rem;
 		display: inline-block;
-	}
+	} */
 	.tipex-controller {
 		background-color: #f3f4f6; /* bg-neutral-100 */
 		position: sticky;
@@ -447,10 +454,12 @@
 			flex-direction: row;
 		}
 	}
+	/* 
 	.tipex-controller.dark,
 	:global(.dark) .tipex-controller {
-		background-color: #171717; /* dark:bg-neutral-900 */
-	}
+		background-color: #171717;
+	} 
+	*/
 
 	.tipex-controller-wrapper {
 		display: flex;
@@ -481,11 +490,13 @@
 		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
 		transition-duration: 100ms;
 	}
+	/* 
 	.tipex-edit-button.dark,
 	:global(.dark) .tipex-edit-button {
-		background-color: rgba(31, 41, 55, 0.8); /* dark:bg-neutral-800/80 */
-		color: #e5e7eb; /* dark:text-gray-200 */
+		background-color: rgba(31, 41, 55, 0.8);
+		color: #e5e7eb;
 	}
+	*/
 
 	.tipex-edit-button.active {
 		background-color: #f3f4f6; /* bg-neutral-100 */
@@ -493,8 +504,10 @@
 			0 10px 15px -3px rgba(0, 0, 0, 0.1),
 			0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
 	}
+	/*
 	.tipex-edit-button.active.dark,
 	:global(.dark) .tipex-edit-button.active {
-		background-color: #374151; /* dark:bg-gray-700 */
+		background-color: #374151;
 	}
+	*/
 </style>

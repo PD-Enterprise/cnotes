@@ -1,7 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { goto } from '$app/navigation';
-	import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
+	import { isAuthenticated, sync } from '$lib/stores/store.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { onMount } from 'svelte';
 

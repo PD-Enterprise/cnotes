@@ -1,6 +1,7 @@
 <script lang="ts">
 	// Imports
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { autoLogin, isAuthenticated } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 
@@ -24,7 +25,7 @@
 				localStorage.setItem('AutoLogin', 'true');
 
 				autoLoginElement.classList.remove('hidden');
-				if (whichNav.type == 'nav') {
+				if (whichNav.type == 'nav' && $page.url.pathname == '/') {
 					goto('/home');
 				}
 			} else {

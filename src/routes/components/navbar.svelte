@@ -5,7 +5,6 @@
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
 	import { isAuthenticated, auth0Client } from '$lib/stores/store.svelte'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import { goto } from '$app/navigation'; // Importing the goto function from Svelte's app navigation for routing
 	import auth from '$lib/utils/authService';
 
 	// Functions
@@ -80,7 +79,7 @@
 					/>
 				</svg>
 			</div>
-			<ul class="dropdown-content menu menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
+			<ul class="menu dropdown-content menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
 				<li><a href="#home">Home</a></li>
 				<li>
 					<a href="#features">Features</a>

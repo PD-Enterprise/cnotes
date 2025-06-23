@@ -214,7 +214,6 @@
 	}
 	.badge {
 		font-size: 0.75rem;
-		color: #aaaaaa;
 		padding: 0.25rem 0.5rem;
 	}
 	.note-title {

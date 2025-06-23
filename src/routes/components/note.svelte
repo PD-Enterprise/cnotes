@@ -148,9 +148,6 @@
 					.join('/')}
 			</div>
 		</div>
-		<!-- <p class="note-content">
-			{@html notes.note.notescontent}
-		</p> -->
 	</div>
 </div>
 
@@ -185,6 +182,8 @@
 		</div>
 	</div>
 </dialog>
+
+<div class="note-content hidden"></div>
 
 <style>
 	.note {

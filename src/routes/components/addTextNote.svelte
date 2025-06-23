@@ -48,7 +48,6 @@
 			multicolor: true
 		}),
 		Subscript,
-		Typography,
 		TextAlign,
 		Table.configure({
 			resizable: true
@@ -103,7 +102,7 @@
 				} else {
 					localStorage.setItem(storableNote.key, storableNote.value);
 					await addToDB(newNote);
-					showToast('Successfully added note', 'Note added successfully', 3000, 'success');
+					showToast('Successfully added note', 'Note added successfully', 1000, 'success');
 					window.location.href = '/home';
 				}
 			} catch (error) {
@@ -201,21 +200,21 @@
 				}}>Edit Metadata</button
 			>
 		</div>
-		<div class="editor dark">
+		<div class="editor dark overflow-scroll">
 			<Tipex
 				body=""
 				floating
 				focal
+				{extensions}
+				bind:tipex={editor}
+				class="p-2"
+				style="height: calc(100vh - 440px)"
 				oncreate={() => {
 					// console.log('editor created');
 				}}
 				onupdate={() => {
 					// console.log(editor.getHTML());
 				}}
-				bind:tipex={editor}
-				{extensions}
-				class="p-2"
-				style="height: calc(100vh - 200px)"
 			>
 				{#snippet controlComponent(tipex)}
 					<div class="tipex-controller">
@@ -484,6 +483,10 @@
 </div>
 
 <style>
+	.editor {
+		min-height: 400px;
+		max-height: calc(100vh - 420px);
+	}
 	.main {
 		padding: 20px;
 		animation: fadeInDown 0.8s ease-in-out;

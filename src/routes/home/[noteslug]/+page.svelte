@@ -52,10 +52,6 @@
 			multicolor: true
 		}),
 		Subscript,
-		Typography.configure({
-			openDoubleQuote: false,
-			closeDoubleQuote: false
-		}),
 		TextAlign,
 		Table,
 		TableRow,
@@ -114,7 +110,7 @@
 			// Save to localStorage
 			localStorage.setItem(`note:${noteData.slug}`, JSON.stringify(noteData));
 
-			showToast('Success', 'Note saved successfully', 3000, 'success');
+			showToast('Success', 'Note saved successfully', 1000, 'success');
 		} catch (e) {
 			console.error(e);
 			showToast('Error', 'Failed to save note', 3000, 'error');
@@ -216,7 +212,7 @@
 					></button
 				>
 			</div>
-			<div class="editor dark">
+			<div class="editor dark overflow-scroll">
 				<Tipex
 					body={noteData.notescontent}
 					floating
@@ -224,7 +220,7 @@
 					{extensions}
 					bind:tipex={editor}
 					class="p-2"
-					style="height: calc(100vh - 200px)"
+					style="height: calc(100vh - 360px)"
 					oncreate={() => {
 						// console.log('editor created');
 						editor.commands.insertContent(noteData.notescontent);
@@ -514,6 +510,10 @@
 </div>
 
 <style>
+	.editor {
+		min-height: 400px;
+		max-height: calc(100vh - 340px);
+	}
 	.share-link {
 		text-decoration: underline;
 		color: #4a90e2;

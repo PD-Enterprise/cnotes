@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import InAppNavbar from '../components/inAppNavbar.svelte';
 	// import auth from '$lib/utils/authService';
-	import { isAuthenticated, user, auth0Client } from '$lib/stores/store.svelte';
+	import { isAuthenticated, user, auth0Client, sync, autoLogin } from '$lib/stores/store.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
 
@@ -25,6 +25,10 @@
 						// console.log('user', user.value);
 						isAuthenticated.subscribe(async (value) => {
 							localStorage.setItem('isAuthenticated', JSON.stringify(value));
+							if (value) {
+								autoLogin.value = true;
+								sync.set(true);
+							}
 						});
 						const encryptedUser = btoa(JSON.stringify(user.value));
 						// console.log(encryptedUser);

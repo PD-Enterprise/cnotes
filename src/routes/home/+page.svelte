@@ -17,86 +17,124 @@
 	// let userEmail: string;
 
 	// Functions
+	/**
+	 * Fetches notes from localStorage and, if a user is present, synchronizes with the server.
+	 * Documents each line of code for clarity.
+	 */
 	async function getNotes() {
+		// Initialize a flag to check if any notes exist in localStorage
 		let hasNotes = false;
+		// Create an array to store notes loaded from localStorage
 		const notes = [];
+		// Iterate over all keys in localStorage
 		for (let i = 0; i < localStorage.length; i++) {
+			// Get the key at the current index
 			const key = localStorage.key(i);
+			// Check if the key starts with 'note:'
 			if (key?.startsWith('note:')) {
+				// Set the flag to true since a note was found
 				hasNotes = true;
+				// Decode and parse the note data from localStorage
 				const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+				// Add the note data to the notes array
 				notes.push(noteData);
 			}
 		}
+		// If any notes were found in localStorage
 		if (hasNotes) {
+			// Update the notesStore with the loaded notes
 			notesStore.value = notes;
-			// console.log('notes:', notes);
+			// // console.log('notes:', notes);
 		}
-		// console.log(JSON.parse(atob(localStorage.getItem('user'))));
+		// // console.log(JSON.parse(atob(localStorage.getItem('user'))));
+		// Check if a user is present in localStorage
 		if (JSON.parse(atob(localStorage.getItem('user')))) {
 			// console.log(user.value);
 			try {
+				// Send a POST request to the server to fetch notes for the user
 				const request = await fetch(`${config.apiUrl}notes/notes`, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
+					// Include the user's email in the request body
 					body: JSON.stringify({
 						email: JSON.parse(atob(localStorage.getItem('user'))).email
 					})
 				});
+				// Parse the server's response as JSON
 				const result = await request.json();
 				// console.log(result);
+				// If the server responded with a success status
 				if (result.status == 200) {
+					// Extract the notes array from the server response
 					const serverNotes: note[] = result.data;
-					// console.log(serverNotes);
+					// // console.log(serverNotes);
+					// Create a set of slugs from the server notes
 					const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
+					// Create a set of slugs from the local notes
 					const localNoteSlugs = new Set(notesStore.value.map((n) => n.slug));
 
+					// Check if the sets of slugs are equal (same notes on server and local)
 					const areEqual =
 						serverNoteSlugs.size === localNoteSlugs.size &&
 						[...serverNoteSlugs].every((slug) => localNoteSlugs.has(slug));
 
+					// If the sets are not equal, there is data inconsistency
 					if (!areEqual) {
+						// Set the inconsistency flag to true
 						isDataInconsistent = true;
-						// Clean up local storage from notes that are not on the server anymore
+						// Remove local notes that are not present on the server
 						for (const slug of localNoteSlugs) {
 							if (!serverNoteSlugs.has(slug)) {
 								localStorage.removeItem(`note:${slug}`);
 							}
 						}
 					}
-					//
+					// For each note from the server
 					for (let i = 0; i < serverNotes.length; i++) {
-						// console.log(serverNotes[i]);
+						// // console.log(serverNotes[i]);
+						// Encrypt the note as a base64 string
 						const encryptedNote = btoa(
 							String.fromCharCode(...new TextEncoder().encode(JSON.stringify(serverNotes[i])))
 						);
-						// console.log(encryptedNote);
+						// // console.log(encryptedNote);
+						// Create an object with the key and value for localStorage
 						const storableNote: { key: string; value: string } = {
 							key: `note:${serverNotes[i].slug}`,
 							value: encryptedNote
 						};
+						// Store the encrypted note in localStorage
 						localStorage.setItem(storableNote.key, storableNote.value);
 					}
 
+					// Reload notes from localStorage after updating
 					const notes = [];
 					for (let i = 0; i < localStorage.length; i++) {
+						// Get the key at the current index
 						const key = localStorage.key(i);
+						// Check if the key starts with 'note:'
 						if (key?.startsWith('note:')) {
+							// Set the flag to true since a note was found
 							hasNotes = true;
+							// Decode and parse the note data from localStorage
 							const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+							// Add the note data to the notes array
 							notes.push(noteData);
 						}
 					}
+					// If any notes were found after syncing
 					if (hasNotes) {
+						// Update the notesStore with the refreshed notes
 						notesStore.value = notes;
 					}
-					// console.log('notesStore: ', notesStore.value);
+					// // console.log('notesStore: ', notesStore.value);
 				} else {
+					// Log an error if the server did not return a success status
 					console.error('Fetch call returned with status:', result.status);
 				}
 			} catch (error) {
+				// Log any errors that occurred during the fetch or processing
 				console.error('There was an error.', error);
 			}
 		}
@@ -114,7 +152,13 @@
 		});
 		loadingTimeout = setTimeout(() => {
 			if (!notesStore.value || notesStore.value.length === 0) {
-				error = 'No notes found.';
+				if (!localStorage.getItem('hasReloaded')) {
+					localStorage.setItem('hasReloaded', 'true');
+					location.reload();
+				} else {
+					error = `No notes found. Try reloading the page.`;
+					localStorage.removeItem('hasReloaded');
+				}
 			}
 		}, 5000);
 	});
@@ -198,7 +242,7 @@
 			<a class="addNoteButton btn bg-accent" href="/home/new-note">New Note</a>
 		</div>
 	</div>
-	<div class="notes h-screen p-5">
+	<div class="notes h-auto p-5">
 		{#if error}
 			<p class="error">{error}</p>
 		{:else if notesStore.value && notesStore.value.length > 0}

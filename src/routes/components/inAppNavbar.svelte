@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { theme, user, auth0Client } from '$lib/stores/store.svelte';
+	import { theme, user, auth0Client, isAuthenticated } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 	import auth from '$lib/utils/authService';
 	import AutoLogin from './autoLogin.svelte';
@@ -39,7 +39,9 @@
 			}
 		});
 	});
-
+	function login() {
+		auth.loginWithPopup($auth0Client, {});
+	}
 	function logout() {
 		auth.logout($auth0Client);
 		goto('/');
@@ -68,7 +70,7 @@
 				</svg>
 			</div>
 			<ul
-				class="dropdown-content menu menu-sm z-[1] mt-3 flex gap-2 rounded-box bg-base-100 p-2 shadow"
+				class="menu dropdown-content menu-sm z-[1] mt-3 flex gap-2 rounded-box bg-base-100 p-2 shadow"
 			>
 				<li>
 					<a
@@ -127,16 +129,28 @@
 				<AutoLogin type="inapp" />
 				<Sync />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
-					<li class="mb-2">
-						<a
-							class="btn btn-accent"
-							href="#form"
-							onclick={() => {
-								const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-								logout_modal.showModal();
-							}}>Log Out</a
-						>
-					</li>
+					{#if $isAuthenticated}
+						<li class="mb-2">
+							<a
+								class="btn btn-accent"
+								href="#form"
+								onclick={() => {
+									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
+									logout_modal.showModal();
+								}}>Log Out</a
+							>
+						</li>
+					{:else}
+						<li class="mb-2">
+							<a
+								class="btn btn-accent"
+								href="#form"
+								onclick={() => {
+									login();
+								}}>Log In</a
+							>
+						</li>
+					{/if}
 				</div>
 			</ul>
 		</div>

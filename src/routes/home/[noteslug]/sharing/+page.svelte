@@ -65,7 +65,7 @@
 		{error}
 	{:else if noteData}
 		<div class="content flex flex-col gap-3">
-			<div class="metadata-box flex flex-col gap-2 bg-base-200 p-2">
+			<div class="metadata-box flex flex-col gap-2 rounded-md bg-base-300 p-2">
 				<h1 class="w-full p-2 text-3xl font-bold">
 					{noteData.title}
 				</h1>
@@ -110,7 +110,7 @@
 					</button>
 				</div>
 			</div>
-			<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2">
+			<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-300 p-2">
 				<div class="ProseMirror dark p-1">
 					<!-- {console.log(noteData.notescontent)} -->
 					{@html addTailwindToHeadings(noteData.notescontent)}

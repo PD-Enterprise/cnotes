@@ -9,7 +9,7 @@
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { user } from '$lib/stores/store.svelte';
+	import { theme, user } from '$lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
 	import Underline from '@tiptap/extension-underline';
 	import Heading from '@tiptap/extension-heading';
@@ -24,6 +24,7 @@
 	import TableRow from '@tiptap/extension-table-row';
 	import TableHeader from '@tiptap/extension-table-header';
 	import TableCell from '@tiptap/extension-table-cell';
+	import { onMount } from 'svelte';
 
 	// Variables
 	let newNote: note = {
@@ -126,6 +127,17 @@
 		const result = await request.json();
 		console.log(result);
 	}
+	onMount(() => {
+		const editor = document.getElementById('editor') as HTMLDivElement;
+
+		$effect(() => {
+			if (theme.value) {
+				editor.classList.remove('dark');
+			} else {
+				editor.classList.add('dark');
+			}
+		});
+	});
 </script>
 
 <dialog id="meta_data_modal" class="modal">
@@ -188,7 +200,7 @@
 		</div>
 	</div>
 </dialog>
-<div class="main flex flex-col gap-3 p-1">
+<div class="main flex flex-col gap-3 bg-base-300 p-1">
 	<div class="header p-2">
 		<div class="header-box">
 			<h2 class="mb-6 text-3xl">Add a Text Note</h2>
@@ -204,7 +216,7 @@
 		</div>
 	</div>
 	<form class="flex flex-col gap-4">
-		<div class="editor dark overflow-scroll">
+		<div class="editor overflow-scroll" id="editor">
 			<Tipex
 				body=""
 				floating

@@ -23,6 +23,7 @@
 	import TableRow from '@tiptap/extension-table-row';
 	import TableHeader from '@tiptap/extension-table-header';
 	import TableCell from '@tiptap/extension-table-cell';
+	import { theme } from '$lib/stores/store.svelte';
 
 	// Variables
 	let noteData = $state<note>({
@@ -127,6 +128,15 @@
 		// console.log(noteData.slug);
 		getNote(noteData.slug);
 		window.addEventListener('keydown', handleSaveShortcut);
+		const editor = document.getElementById('editor') as HTMLDivElement;
+
+		$effect(() => {
+			if (theme.value) {
+				editor.classList.remove('dark');
+			} else {
+				editor.classList.add('dark');
+			}
+		});
 	});
 	onDestroy(() => {
 		window.removeEventListener('keydown', handleSaveShortcut);
@@ -185,7 +195,7 @@
 	{#if error}
 		{error}
 	{:else if noteData}
-		<div class="note flex flex-col gap-3">
+		<div class="note flex flex-col gap-3 bg-base-300">
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
 					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
@@ -220,7 +230,7 @@
 					></button
 				>
 			</div>
-			<div class="editor dark overflow-scroll">
+			<div class="editor dark overflow-scroll" id="editor">
 				<Tipex
 					body={noteData.notescontent}
 					floating

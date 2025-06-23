@@ -3,6 +3,7 @@
 	import type { note } from '../../../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import config from '$lib/utils/apiConfig';
+	import '../../app.css';
 
 	// Variables
 	let noteData: note = {

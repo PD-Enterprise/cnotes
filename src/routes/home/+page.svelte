@@ -34,8 +34,17 @@
 			if (key?.startsWith('note:')) {
 				// Set the flag to true since a note was found
 				hasNotes = true;
-				// Decode and parse the note data from localStorage
-				const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+				const encodedData = localStorage.getItem(key);
+				let noteData;
+				try {
+					// Decode using the same method as server notes
+					const decodedString = atob(encodedData || '');
+					const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
+					noteData = JSON.parse(new TextDecoder().decode(uint8Array));
+				} catch (e) {
+					// Fallback for any notes that might be stored in the old format
+					noteData = JSON.parse(encodedData || '{}');
+				}
 				// Add the note data to the notes array
 				notes.push(noteData);
 			}
@@ -117,8 +126,17 @@
 						if (key?.startsWith('note:')) {
 							// Set the flag to true since a note was found
 							hasNotes = true;
-							// Decode and parse the note data from localStorage
-							const noteData = JSON.parse(atob(localStorage.getItem(key)) || '{}');
+							const encodedData = localStorage.getItem(key);
+							let noteData;
+							try {
+								// Decode using the same method as server notes
+								const decodedString = atob(encodedData || '');
+								const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
+								noteData = JSON.parse(new TextDecoder().decode(uint8Array));
+							} catch (e) {
+								// Fallback for any notes that might be stored in the old format
+								noteData = JSON.parse(encodedData || '{}');
+							}
 							// Add the note data to the notes array
 							notes.push(noteData);
 						}

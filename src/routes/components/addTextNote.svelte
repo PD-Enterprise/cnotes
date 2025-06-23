@@ -19,7 +19,11 @@
 	import Subscript from '@tiptap/extension-subscript';
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
-	import "../../katex.min.css"
+	import '../../katex.min.css';
+	import Table from '@tiptap/extension-table';
+	import TableRow from '@tiptap/extension-table-row';
+	import TableHeader from '@tiptap/extension-table-header';
+	import TableCell from '@tiptap/extension-table-cell';
 
 	// Variables
 	let newNote: note = {
@@ -45,7 +49,13 @@
 		}),
 		Subscript,
 		Typography,
-		TextAlign
+		TextAlign,
+		Table.configure({
+			resizable: true
+		}),
+		TableRow,
+		TableHeader,
+		TableCell
 	];
 
 	// Functions
@@ -197,12 +207,13 @@
 				floating
 				focal
 				oncreate={() => {
-					console.log('editor created');
+					// console.log('editor created');
 				}}
 				onupdate={() => {
 					// console.log(editor.getHTML());
 				}}
 				bind:tipex={editor}
+				{extensions}
 				class="p-2"
 				style="height: calc(100vh - 200px)"
 			>
@@ -277,6 +288,114 @@
 									<Icon icon="fa6-solid:italic" />
 								</button>
 								<button
+									aria-label="Table"
+									onclick={() => {
+										editor
+											?.chain()
+											.focus()
+											.insertTable({ rows: 3, cols: 2, withHeaderRow: true })
+											.run();
+									}}
+									class="tipex-edit-button"
+									class:active={editor?.isActive('table')}
+								>
+									<Icon icon="fa6-solid:table" />
+								</button>
+								{#if editor?.isActive('table')}
+									<div class="table-controls flex gap-1">
+										<button
+											aria-label="Add Column Before"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().addColumnBefore().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Add Column Before"
+										>
+											<Icon icon="fa6-solid:table-columns" />
+										</button>
+
+										<button
+											aria-label="Add Column After"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().addColumnAfter().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Add Column After"
+										>
+											<Icon icon="fa6-solid:table-columns" />
+										</button>
+
+										<button
+											aria-label="Add Row Before"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().addRowBefore().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Add Row Before"
+										>
+											<Icon icon="fa6-solid:plus" />
+										</button>
+
+										<button
+											aria-label="Add Row After"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().addRowAfter().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Add Row After"
+										>
+											<Icon icon="fa6-solid:plus" />
+										</button>
+
+										<button
+											aria-label="Delete Column"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().deleteColumn().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Delete Column"
+										>
+											<Icon icon="fa6-solid:trash" />
+										</button>
+
+										<button
+											aria-label="Delete Row"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().deleteRow().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Delete Row"
+										>
+											<Icon icon="fa6-solid:trash" />
+										</button>
+
+										<button
+											aria-label="Delete Table"
+											onclick={() => {
+												if (editor) {
+													editor.chain().focus().deleteTable().run();
+												}
+											}}
+											class="tipex-edit-button"
+											title="Delete Table"
+										>
+											<Icon icon="fa6-solid:trash-can" />
+										</button>
+									</div>
+								{/if}
+								<button
 									aria-label="Subscript"
 									onclick={() => {
 										editor?.chain().focus().toggleSubscript().run();
@@ -299,6 +418,7 @@
 								<button
 									aria-label="Code"
 									onclick={() => {
+										// @ts-expect-error
 										editor?.chain().focus().toggleCode().run();
 									}}
 									class="tipex-edit-button"
@@ -532,5 +652,111 @@
 	.tipex-edit-button.active.dark,
 	:global(.dark) .tipex-edit-button.active {
 		background-color: #374151; /* dark:bg-gray-700 */
+	}
+
+	/* Table-specific styling */
+	.tiptap table {
+		border-collapse: collapse;
+		margin: 0;
+		overflow: hidden;
+		table-layout: fixed;
+		width: 100%;
+	}
+
+	.tiptap table td,
+	.tiptap table th {
+		border: 1px solid #e5e7eb; /* Using a Tailwind gray color instead of var(--gray-3) */
+		box-sizing: border-box;
+		min-width: 1em;
+		padding: 6px 8px;
+		position: relative;
+		vertical-align: top;
+	}
+
+	.tiptap table td > *,
+	.tiptap table th > * {
+		margin-bottom: 0;
+	}
+
+	.tiptap table th {
+		background-color: #f3f4f6; /* Using a Tailwind gray color instead of var(--gray-1) */
+		font-weight: bold;
+		text-align: left;
+	}
+
+	.tiptap table .selectedCell:after {
+		background: rgba(
+			200,
+			200,
+			200,
+			0.4
+		); /* Using a semi-transparent gray instead of var(--gray-2) */
+		content: '';
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		pointer-events: none;
+		position: absolute;
+		z-index: 2;
+	}
+
+	.tiptap table .column-resize-handle {
+		background-color: #8b5cf6; /* Using Tailwind purple color instead of var(--purple) */
+		bottom: -2px;
+		pointer-events: none;
+		position: absolute;
+		right: -2px;
+		top: 0;
+		width: 4px;
+	}
+
+	.tiptap .tableWrapper {
+		margin: 1.5rem 0;
+		overflow-x: auto;
+	}
+
+	.tiptap.resize-cursor {
+		cursor: ew-resize;
+		cursor: col-resize;
+	}
+
+	/* Add dark mode support */
+	:global(.dark) .tiptap table td,
+	:global(.dark) .tiptap table th {
+		border-color: #374151; /* Dark mode border color */
+	}
+
+	:global(.dark) .tiptap table th {
+		background-color: #1f2937; /* Dark mode header background */
+	}
+
+	:global(.dark) .tiptap table .selectedCell:after {
+		background: rgba(55, 65, 81, 0.4); /* Dark mode selection color */
+	}
+
+	.table-controls {
+		display: flex;
+		align-items: center;
+		padding: 2px;
+		border-radius: 4px;
+	}
+
+	/* Add tooltips for the buttons */
+	.tipex-edit-button {
+		position: relative;
+	}
+
+	.tipex-edit-button:hover::after {
+		content: attr(title);
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		padding: 4px 8px;
+		border-radius: 4px;
+		z-index: 10;
 	}
 </style>

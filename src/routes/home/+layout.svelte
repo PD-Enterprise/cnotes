@@ -6,6 +6,7 @@
 	import { isAuthenticated, user, auth0Client, sync, autoLogin } from '$lib/stores/store.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
+	import './app.css';
 
 	let { children } = $props();
 

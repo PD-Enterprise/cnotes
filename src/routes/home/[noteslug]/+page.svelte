@@ -19,6 +19,10 @@
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
 	import '../../../katex.min.css';
+	import Table from '@tiptap/extension-table';
+	import TableRow from '@tiptap/extension-table-row';
+	import TableHeader from '@tiptap/extension-table-header';
+	import TableCell from '@tiptap/extension-table-cell';
 
 	// Variables
 	let noteData = $state<note>({
@@ -49,7 +53,11 @@
 		}),
 		Subscript,
 		Typography,
-		TextAlign
+		TextAlign,
+		Table,
+		TableRow,
+		TableHeader,
+		TableCell
 	];
 
 	// Functions
@@ -97,7 +105,7 @@
 				return;
 			}
 			const result = await response.json();
-			console.log(result);
+			// console.log(result);
 			originalNoteData = JSON.parse(JSON.stringify(noteData));
 
 			// Save to localStorage
@@ -215,7 +223,7 @@
 					class="p-2"
 					style="height: calc(100vh - 200px)"
 					oncreate={() => {
-						console.log('editor created');
+						// console.log('editor created');
 						editor.commands.insertContent(noteData.notescontent);
 					}}
 					onupdate={() => {
@@ -303,6 +311,114 @@
 									>
 										<Icon icon="fa6-solid:subscript" />
 									</button>
+									<button
+										aria-label="Table"
+										onclick={() => {
+											editor
+												?.chain()
+												.focus()
+												.insertTable({ rows: 3, cols: 2, withHeaderRow: true })
+												.run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('table')}
+									>
+										<Icon icon="fa6-solid:table" />
+									</button>
+									{#if editor?.isActive('table')}
+										<div class="table-controls flex gap-1">
+											<button
+												aria-label="Add Column Before"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addColumnBefore().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Column Before"
+											>
+												<Icon icon="fa6-solid:table-columns" />
+											</button>
+
+											<button
+												aria-label="Add Column After"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addColumnAfter().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Column After"
+											>
+												<Icon icon="fa6-solid:table-columns" />
+											</button>
+
+											<button
+												aria-label="Add Row Before"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addRowBefore().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Row Before"
+											>
+												<Icon icon="fa6-solid:plus" />
+											</button>
+
+											<button
+												aria-label="Add Row After"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addRowAfter().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Row After"
+											>
+												<Icon icon="fa6-solid:plus" />
+											</button>
+
+											<button
+												aria-label="Delete Column"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteColumn().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Column"
+											>
+												<Icon icon="fa6-solid:trash" />
+											</button>
+
+											<button
+												aria-label="Delete Row"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteRow().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Row"
+											>
+												<Icon icon="fa6-solid:trash" />
+											</button>
+
+											<button
+												aria-label="Delete Table"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteTable().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Table"
+											>
+												<Icon icon="fa6-solid:trash-can" />
+											</button>
+										</div>
+									{/if}
 									<!-- <button
 										aria-label="Center"
 										onclick={() => {
@@ -454,12 +570,11 @@
 			flex-direction: row;
 		}
 	}
-	/* 
+
 	.tipex-controller.dark,
 	:global(.dark) .tipex-controller {
 		background-color: #171717;
-	} 
-	*/
+	}
 
 	.tipex-controller-wrapper {
 		display: flex;
@@ -490,13 +605,12 @@
 		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
 		transition-duration: 100ms;
 	}
-	/* 
+
 	.tipex-edit-button.dark,
 	:global(.dark) .tipex-edit-button {
 		background-color: rgba(31, 41, 55, 0.8);
 		color: #e5e7eb;
 	}
-	*/
 
 	.tipex-edit-button.active {
 		background-color: #f3f4f6; /* bg-neutral-100 */
@@ -504,10 +618,9 @@
 			0 10px 15px -3px rgba(0, 0, 0, 0.1),
 			0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
 	}
-	/*
+
 	.tipex-edit-button.active.dark,
 	:global(.dark) .tipex-edit-button.active {
 		background-color: #374151;
 	}
-	*/
 </style>

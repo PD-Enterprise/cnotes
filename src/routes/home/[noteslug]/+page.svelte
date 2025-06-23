@@ -52,7 +52,10 @@
 			multicolor: true
 		}),
 		Subscript,
-		Typography,
+		Typography.configure({
+			openDoubleQuote: false,
+			closeDoubleQuote: false
+		}),
 		TextAlign,
 		Table,
 		TableRow,

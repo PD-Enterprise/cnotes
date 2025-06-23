@@ -49,59 +49,68 @@
 		// console.log(noteData.slug);
 		getNote(noteData.slug);
 	});
+
+	function addTailwindToHeadings(html: string): string {
+		return html
+			.replace(/<h1>/g, '<h1 class="text-4xl">')
+			.replace(/<h2>/g, '<h1 class="text-3xl">')
+			.replace(/<h3>/g, '<h1 class="text-2xl">')
+			.replace(/<h4>/g, '<h1 class="text-xl">')
+			.replace(/<u>/g, '<u class="font-bold">');
+	}
 </script>
 
 <div class="main p-2">
 	{#if error}
 		{error}
 	{:else if noteData}
-		<div class="note">
-			<h1 class="w-full text-3xl font-bold">
-				{noteData.title}
-			</h1>
-			<br />
-			<div class="meta-data flex flex-col flex-wrap">
-				{#each Object.keys(noteData) as noteDataKey}
-					{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-						<div class="mr-auto">
-							<div class="label">
-								<span class="label-text">{noteDataKey}:</span>
+		<div class="content flex flex-col gap-3">
+			<div class="metadata-box flex flex-col gap-2">
+				<h1 class="w-full text-3xl font-bold">
+					{noteData.title}
+				</h1>
+				<div class="meta-data flex flex-col flex-wrap">
+					{#each Object.keys(noteData) as noteDataKey}
+						{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+							<div class="mr-auto">
+								<div class="label">
+									<span class="label-text">{noteDataKey}:</span>
+								</div>
+								<h2 class="label-body">{noteData[noteDataKey]}</h2>
 							</div>
-							<h2 class="label-body">{noteData[noteDataKey]}</h2>
-						</div>
-					{/if}
-				{/each}
+						{/if}
+					{/each}
+				</div>
+				<div class="buttons">
+					<button
+						class="btn btn-success"
+						on:click={() => {
+							const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
+							share_modal.showModal();
+						}}
+					>
+						Share<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke-width="1.5"
+							stroke="currentColor"
+							class="size-6"
+							><path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+							/>
+						</svg>
+					</button>
+				</div>
 			</div>
-			<br />
-			<div class="buttons mt-2">
-				<button
-					class="btn btn-success"
-					on:click={() => {
-						const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-						share_modal.showModal();
-					}}
-				>
-					Share<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-						><path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-						/>
-					</svg>
-				</button>
+			<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2">
+				<div class="ProseMirror dark">
+					<!-- {console.log(noteData.notescontent)} -->
+					{@html addTailwindToHeadings(noteData.notescontent)}
+				</div>
 			</div>
-		</div>
-		<br />
-		<div
-			class="editor h-screen overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2"
-		>
-			{@html noteData.notescontent}
 		</div>
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">
@@ -157,8 +166,9 @@
 		gap: 10px;
 		flex-wrap: wrap;
 	}
-	.note {
-		padding: 5px;
+	.editor {
+		min-height: 400px;
+		max-height: calc(100vh - 420px);
 	}
 	.share-container {
 		display: flex;

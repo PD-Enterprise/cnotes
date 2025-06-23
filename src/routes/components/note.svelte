@@ -52,12 +52,16 @@
 <div
 	role="button"
 	tabindex="0"
-	class="note card flex bg-base-200 p-2 shadow-xl"
+	class="note card flex border border-base-content bg-base-200 p-1 shadow-2xl"
 	id={notes.note.slug}
 >
 	<div class="card-options">
 		<div class="dropdown">
-			<div tabindex="0" role="button" class="btn btn-circle m-1 hover:bg-base-100">
+			<div
+				tabindex="0"
+				role="button"
+				class="btn btn-circle m-1 border border-base-content bg-base-100 hover:bg-base-300"
+			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
@@ -75,7 +79,7 @@
 				</svg>
 			</div>
 			<ul
-				class="z-1 dropdown-content menu absolute right-3 flex flex-col gap-2 rounded-box bg-base-100 p-2 shadow-sm"
+				class="z-1 menu dropdown-content absolute right-3 flex flex-col gap-2 rounded-box bg-base-100 p-2 shadow-sm"
 			>
 				<li>
 					<a class="btn btn-success" href={`/home/${notes.note.slug}`}>
@@ -128,10 +132,12 @@
 	</div>
 	<div class="card-body flex flex-col p-2">
 		<a class="note-title card-title" href="/home/{notes.note.slug}/sharing">{notes.note.title}</a>
-		<div class="note-meta card-actions mt-1 justify-end">
-			<div class="badge badge-outline p-3">{notes.note.grade}th grade</div>
-			<div class="badge badge-outline p-3">{notes.note.subject}</div>
-			<div class="badge badge-outline p-3">
+		<div class="note-meta card-actions mt-2 justify-end p-1">
+			<div class="badge badge-outline border border-base-content p-3">
+				{notes.note.grade}th grade
+			</div>
+			<div class="badge badge-outline border-base-content p-3">{notes.note.subject}</div>
+			<div class="badge badge-outline border-base-content p-3">
 				{new Date(notes.note.dateCreated)
 					.toLocaleDateString('en-US', {
 						day: 'numeric',
@@ -142,9 +148,9 @@
 					.join('/')}
 			</div>
 		</div>
-		<p class="note-content">
+		<!-- <p class="note-content">
 			{@html notes.note.notescontent}
-		</p>
+		</p> -->
 	</div>
 </div>
 
@@ -182,30 +188,38 @@
 
 <style>
 	.note {
-		--note-width: 20em;
-		--note-height: 15em;
+		--note-width: 15.7em;
+		--note-height: 12.5em;
 		width: var(--note-width);
 		height: var(--note-height);
-		font-size: 1rem; /* Base font size */
+		font-size: 1rem;
 		flex-direction: column;
 		gap: 10px;
-		border: 1px solid #ccc;
 		overflow-y: hidden;
 		cursor: pointer;
-		box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
 	}
-	.note:hover {
-		border: 2px solid #4a90e2;
+	.note {
+		transition:
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+	}
+	.note:hover,
+	.note:focus {
+		transform: translateY(-1px) scale(1.025);
+		box-shadow:
+			0 8px 24px rgba(0, 0, 0, 0.13),
+			0 1.5px 4px rgba(0, 0, 0, 0.08);
 	}
 	.note:focus {
-		border: 2px solid #007bff;
+		border: 2px solid #4a90e2;
 	}
-	.note-meta {
-		font-size: 0.9rem;
+	.badge {
+		font-size: 0.75rem;
 		color: #aaaaaa;
+		padding: 0.25rem 0.5rem;
 	}
 	.note-title {
-		width: 11.2em;
+		width: 155px;
 	}
 	.card-options {
 		margin-left: auto;

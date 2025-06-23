@@ -184,43 +184,50 @@
 		clearTimeout(loadingTimeout);
 	});
 	function search() {
-		// 	if (searchQuery.length > 0 && notes.value) {
-		// 		shouldShowSearchResults = true;
-		// 		const matches = notes.value
-		// 			.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
-		// 			.map((note) => ({
-		// 				title: note.title,
-		// 				slug: note.slug
-		// 			}));
-		// 		searchResults = matches;
-		// 	} else {
-		// 		shouldShowSearchResults = false;
-		// 		searchResults = [];
-		// 	}
+		// console.log(searchQuery);
+		if (searchQuery.length > 0 && notesStore.value) {
+			shouldShowSearchResults = true;
+			setTimeout(() => {
+				const matches = notesStore.value
+					.filter((note) => note.title.toLowerCase().includes(searchQuery.toLowerCase()))
+					.map((note) => ({
+						title: note.title,
+						slug: note.slug
+					}));
+				searchResults = matches;
+				console.log(searchResults);
+			}, 500);
+		} else {
+			shouldShowSearchResults = false;
+			searchResults = [];
+		}
 	}
-	function handleKeyDown(event: any) {
+	$effect(() => {
 		search();
-	}
+	});
 </script>
 
-<div class="main">
-	<div class="header gap-3 p-1">
-		<div class="search-bar grow">
-			<label class="input-bordered input flex items-center gap-2 p-2">
+<div class="main p-2">
+	<div class="header flex gap-3 p-1">
+		<div class="search-bar grow rounded-md bg-base-200 p-2">
+			<label class="flex items-center gap-2 rounded-md border border-base-content p-1">
 				<input
 					type="text"
-					class="search-input grow"
+					class="search-input grow rounded-md bg-transparent"
 					placeholder="Search for a note"
-					onkeydown={handleKeyDown}
 					bind:value={searchQuery}
 				/>
 
-				<button onclick={search} class="search-button btn btn-ghost btn-circle" aria-label="Search">
+				<button
+					onclick={search}
+					class="search-button btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"
+					aria-label="Search"
+				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 16 16"
 						fill="currentColor"
-						class="h-4 w-4 opacity-70"
+						class="h-4 w-7"
 					>
 						<path
 							fill-rule="evenodd"
@@ -230,9 +237,8 @@
 					</svg>
 				</button>
 			</label>
-			<!--
 			{#if shouldShowSearchResults}
-				<div class="search-results mt-2 p-2">
+				<div class="search-results mt-2 flex flex-col gap-2 rounded-md bg-base-100 p-2">
 					{#if searchResults.length > 0}
 						{#each searchResults as searchResult}
 							<a
@@ -247,17 +253,20 @@
 									{searchResult.title}
 								</p>
 							</a>
-							<hr />
+							{#if searchResults.length > 1}
+								<hr />
+							{/if}
 						{/each}
 					{:else}
 						<p>No notes found.</p>
 					{/if}
 				</div>
 			{/if}
-			-->
 		</div>
 		<div class="add-note">
-			<a class="addNoteButton btn bg-accent" href="/home/new-note">New Note</a>
+			<a class="addNoteButton btn border border-base-content bg-accent" href="/home/new-note"
+				>New Note</a
+			>
 		</div>
 	</div>
 	<div class="notes h-auto p-5">
@@ -277,48 +286,44 @@
 
 <style>
 	.header {
-		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
-	/* Search bar styles with gradient and smooth animations */
 	.search-bar {
-		border-radius: 10px;
 		transition:
-			box-shadow 0.4s ease,
-			transform 0.4s ease;
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
 	.search-bar:hover {
 		box-shadow: 0 6px 15px rgba(77, 96, 116, 0.5);
 		transform: translateY(-2px);
 	}
-	/* Input styles */
 	.search-input {
-		width: 100%;
-		padding: 10px;
-		border: none;
-		border-radius: 8px;
-		font-size: 16px;
-		color: #fff;
-		outline: none;
-		transition: background 0.3s ease;
+		transition:
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
 	.search-input::placeholder {
 		color: rgba(255, 255, 255, 0.7);
 	}
-	/* Button styles with simpler gradient and animations */
 	.search-button {
-		color: white;
-		border: none;
-		border-radius: 8px;
-		font-size: 16px;
+		border-radius: 6px;
 		cursor: pointer;
 		transition:
-			transform 0.4s ease,
-			background-color 0.4s ease;
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
 	.search-button:hover {
 		transform: scale(1.05);
+	}
+	.search-results {
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		transition:
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+	}
+	.search-results a:hover {
+		transform: translateY(-3px);
 	}
 	.notes-grid {
 		display: flex;
@@ -328,27 +333,14 @@
 	}
 	/* Add Note button styles moved to the left for cleaner layout */
 	.addNoteButton {
-		border: none;
 		border-radius: 8px;
-		padding: 12px 20px;
 		font-size: 16px;
 		cursor: pointer;
 		transition:
-			transform 0.4s ease,
-			background 0.4s ease;
-		margin-right: 10px;
+			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
+			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
 	.addNoteButton:hover {
-		transform: translateY(-3px);
-		background-color: var(--fallback-a, oklch(var(--a) / var(--tw-bg-opacity, 1)));
+		transform: translateY(-1px) scale(1.025);
 	}
-	/* Search results container with smoother animations */
-	/* .search-results {
-		border-radius: 8px;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		padding: 10px;
-		margin-top: 10px;
-		transform: translateY(-5px);
-	} 
-	*/
 </style>

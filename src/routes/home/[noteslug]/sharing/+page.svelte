@@ -106,7 +106,7 @@
 				</div>
 			</div>
 			<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-200 p-2">
-				<div class="ProseMirror dark">
+				<div class="ProseMirror dark p-1">
 					<!-- {console.log(noteData.notescontent)} -->
 					{@html addTailwindToHeadings(noteData.notescontent)}
 				</div>

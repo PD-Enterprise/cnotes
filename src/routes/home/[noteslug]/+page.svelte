@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import type { note } from '../../types';
 	import { defaultExtensions, Tipex, type TipexEditor } from '@friendofsvelte/tipex';
 	import '@friendofsvelte/tipex/styles/Tipex.css';
@@ -116,10 +116,20 @@
 			showToast('Error', 'Failed to save note', 3000, 'error');
 		}
 	}
+	function handleSaveShortcut(event: KeyboardEvent) {
+		if (event.ctrlKey && event.key === 's') {
+			event.preventDefault();
+			saveNote();
+		}
+	}
 	onMount(async () => {
 		noteData.slug = window.location.href.split('/home/')[1];
 		// console.log(noteData.slug);
 		getNote(noteData.slug);
+		window.addEventListener('keydown', handleSaveShortcut);
+	});
+	onDestroy(() => {
+		window.removeEventListener('keydown', handleSaveShortcut);
 	});
 </script>
 

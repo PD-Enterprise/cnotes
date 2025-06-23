@@ -133,61 +133,59 @@
 	});
 </script>
 
+<dialog id="meta_data_modal" class="modal">
+	<div class="modal-box flex w-96 flex-col">
+		<div class="absolute right-2">
+			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
+				<button
+					class="btn btn-ghost btn-sm btn-circle top-2"
+					onclick={(e) => {
+						e.preventDefault();
+						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
+						meta_data_modal.close();
+						// console.log(newNote);
+					}}>✕</button
+				>
+			</form>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h3>Enter Metadata for your Note Here:</h3>
+			<div class="meta-data flex flex-row flex-wrap gap-3">
+				{#each Object.keys(noteData) as noteDataKey}
+					{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+						<label class="form-control w-full max-w-xs">
+							<div class="label">
+								<span class="label-text">{noteDataKey}:</span>
+							</div>
+							{#if noteDataKey == 'dateCreated'}
+								<input
+									type="date"
+									class="input-bordered input"
+									placeholder={noteDataKey}
+									required
+									bind:value={noteData[noteDataKey]}
+								/>
+							{:else}
+								<input
+									type="text"
+									class="input-bordered input"
+									placeholder={noteDataKey}
+									required
+									bind:value={noteData[noteDataKey]}
+								/>
+							{/if}
+						</label>
+					{/if}
+				{/each}
+			</div>
+		</div>
+	</div>
+</dialog>
 <div class="main p-2">
 	{#if error}
 		{error}
 	{:else if noteData}
 		<div class="note flex flex-col gap-3">
-			<dialog id="meta_data_modal" class="modal">
-				<div class="modal-box flex w-96 flex-col">
-					<div class="absolute right-2">
-						<form method="dialog" onsubmit={(e) => e.preventDefault()}>
-							<button
-								class="btn btn-ghost btn-sm btn-circle top-2"
-								onclick={(e) => {
-									e.preventDefault();
-									const meta_data_modal = document.getElementById(
-										'meta_data_modal'
-									) as HTMLDialogElement;
-									meta_data_modal.close();
-									// console.log(newNote);
-								}}>✕</button
-							>
-						</form>
-					</div>
-					<div class="flex flex-col gap-2">
-						<h3>Enter Metadata for your Note Here:</h3>
-						<div class="meta-data flex flex-row flex-wrap gap-3">
-							{#each Object.keys(noteData) as noteDataKey}
-								{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-									<label class="form-control w-full max-w-xs">
-										<div class="label">
-											<span class="label-text">{noteDataKey}:</span>
-										</div>
-										{#if noteDataKey == 'dateCreated'}
-											<input
-												type="date"
-												class="input-bordered input"
-												placeholder={noteDataKey}
-												required
-												bind:value={noteData[noteDataKey]}
-											/>
-										{:else}
-											<input
-												type="text"
-												class="input-bordered input"
-												placeholder={noteDataKey}
-												required
-												bind:value={noteData[noteDataKey]}
-											/>
-										{/if}
-									</label>
-								{/if}
-							{/each}
-						</div>
-					</div>
-				</div>
-			</dialog>
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
 					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
@@ -195,7 +193,7 @@
 					<button class="btn btn-accent btn-outline" disabled>Save</button>
 				{/if}
 				<button
-					class="btn btn-info"
+					class="btn btn-info border"
 					onclick={() => {
 						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
 						meta_data_modal.showModal();

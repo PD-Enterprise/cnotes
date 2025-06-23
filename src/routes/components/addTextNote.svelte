@@ -56,6 +56,7 @@
 		TableHeader,
 		TableCell
 	];
+	let isValid: boolean = $state(false);
 
 	// Functions
 	// $effect(() => {
@@ -127,79 +128,82 @@
 	}
 </script>
 
-<div class="main p-1">
-	<dialog id="meta_data_modal" class="modal">
-		<div class="modal-box flex w-96 flex-col">
-			<div class="absolute right-2">
-				<form method="dialog" onsubmit={(e) => e.preventDefault()}>
-					<button
-						class="btn btn-ghost btn-sm btn-circle top-2"
-						onclick={(e) => {
-							e.preventDefault();
-							if (validateNote(newNote)) {
-								const meta_data_modal = document.getElementById(
-									'meta_data_modal'
-								) as HTMLDialogElement;
-								meta_data_modal.close();
-							} else {
-								showToast(
-									'Data type error.',
-									'The note is not in correct form. Please recheck your data.',
-									3000,
-									'error'
-								);
-							}
-							// console.log(newNote);
-						}}>✕</button
-					>
-				</form>
-			</div>
-			<div class="flex flex-col gap-2">
-				<h3>Enter Metadata for your Note Here:</h3>
-				<div class="new-note-data flex flex-row flex-wrap gap-3">
-					{#each Object.keys(newNote) as newNoteKey}
-						{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(newNoteKey)}
-							<label class="form-control w-full max-w-xs">
-								<div class="label">
-									<span class="label-text">{newNoteKey}:</span>
-								</div>
-								{#if newNoteKey == 'dateCreated'}
-									<input
-										type="date"
-										class="input-bordered input w-full max-w-xs"
-										bind:value={newNote[newNoteKey]}
-										required
-										placeholder="Date Created"
-									/>
-								{:else}
-									<input
-										type="text"
-										class="input-bordered input w-full max-w-xs"
-										required
-										bind:value={newNote[newNoteKey]}
-										placeholder={newNoteKey}
-									/>
-								{/if}
-							</label>
-						{/if}
-					{/each}
-				</div>
+<dialog id="meta_data_modal" class="modal">
+	<div class="modal-box flex w-96 flex-col">
+		<div class="absolute right-2">
+			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
+				<button
+					class="btn btn-ghost btn-sm btn-circle top-2"
+					onclick={(e) => {
+						e.preventDefault();
+						isValid = validateNote(newNote);
+						if (isValid) {
+							const meta_data_modal = document.getElementById(
+								'meta_data_modal'
+							) as HTMLDialogElement;
+							meta_data_modal.close();
+						} else {
+							showToast(
+								'Data type error.',
+								'The note is not in correct form. Please recheck your data.',
+								3000,
+								'error'
+							);
+						}
+						// console.log(newNote);
+					}}>✕</button
+				>
+			</form>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h3>Enter Metadata for your Note Here:</h3>
+			<div class="new-note-data flex flex-row flex-wrap gap-3">
+				{#each Object.keys(newNote) as newNoteKey}
+					{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(newNoteKey)}
+						<label class="form-control w-full max-w-xs">
+							<div class="label">
+								<span class="label-text">{newNoteKey}:</span>
+							</div>
+							{#if newNoteKey == 'dateCreated'}
+								<input
+									type="date"
+									class="input-bordered input w-full max-w-xs"
+									bind:value={newNote[newNoteKey]}
+									required
+									placeholder="Date Created"
+								/>
+							{:else}
+								<input
+									type="text"
+									class="input-bordered input w-full max-w-xs"
+									required
+									bind:value={newNote[newNoteKey]}
+									placeholder={newNoteKey}
+								/>
+							{/if}
+						</label>
+					{/if}
+				{/each}
 			</div>
 		</div>
-	</dialog>
-	<div class="header-box">
-		<h2 class="mb-6 text-3xl">Add a Text Note</h2>
 	</div>
-	<form class="flex flex-col gap-4">
+</dialog>
+<div class="main flex flex-col gap-3 p-1">
+	<div class="header p-2">
+		<div class="header-box">
+			<h2 class="mb-6 text-3xl">Add a Text Note</h2>
+		</div>
 		<div class="metadata-btn w-40">
 			<button
-				class="btn h-12"
+				class="btn h-12 border border-base-content"
 				onclick={() => {
 					const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
 					meta_data_modal.showModal();
 				}}>Edit Metadata</button
 			>
 		</div>
+	</div>
+	<form class="flex flex-col gap-4">
 		<div class="editor dark overflow-scroll">
 			<Tipex
 				body=""
@@ -214,6 +218,7 @@
 				}}
 				onupdate={() => {
 					// console.log(editor.getHTML());
+					isValid = validateNote(newNote);
 				}}
 			>
 				{#snippet controlComponent(tipex)}
@@ -478,7 +483,13 @@
 				{/snippet}
 			</Tipex>
 		</div>
-		<button class="btn btn-accent btn-outline h-14" onclick={addNote}>Add Note</button>
+		{#if !isValid}
+			<button class="btn btn-disabled btn-accent btn-outline h-14" onclick={addNote}
+				>Add Note</button
+			>
+		{:else}
+			<button class="btn btn-accent btn-outline h-14" onclick={addNote}>Add Note</button>
+		{/if}
 	</form>
 </div>
 

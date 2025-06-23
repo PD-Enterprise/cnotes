@@ -264,8 +264,9 @@
 			{/if}
 		</div>
 		<div class="add-note">
-			<a class="addNoteButton btn border border-base-content bg-accent" href="/home/new-note"
-				>New Note</a
+			<a
+				class="addNoteButton btn border border-base-content bg-accent text-accent-content"
+				href="/home/new-note">New Note</a
 			>
 		</div>
 	</div>
@@ -333,7 +334,7 @@
 	}
 	/* Add Note button styles moved to the left for cleaner layout */
 	.addNoteButton {
-		border-radius: 8px;
+		border-radius: 6px;
 		font-size: 16px;
 		cursor: pointer;
 		transition:

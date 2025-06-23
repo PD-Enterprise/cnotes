@@ -65,31 +65,36 @@
 		{error}
 	{:else if noteData}
 		<div class="content flex flex-col gap-3">
-			<div class="metadata-box flex flex-col gap-2">
-				<h1 class="w-full text-3xl font-bold">
+			<div class="metadata-box flex flex-col gap-2 bg-base-200 p-2">
+				<h1 class="w-full p-2 text-3xl font-bold">
 					{noteData.title}
 				</h1>
-				<div class="meta-data flex flex-col flex-wrap">
+				<div class="meta-data flex flex-col flex-wrap items-center justify-center">
 					{#each Object.keys(noteData) as noteDataKey}
 						{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-							<div class="mr-auto">
-								<div class="label">
-									<span class="label-text">{noteDataKey}:</span>
+							<div class="mx-auto">
+								<div class="label text-center">
+									<span class="label-text">
+										{noteDataKey
+											.replace(/([A-Z])/g, ' $1')
+											.replace(/^./, (str) => str.toUpperCase())}:
+									</span>
 								</div>
-								<h2 class="label-body">{noteData[noteDataKey]}</h2>
+								<h2 class="label-body text-center">{noteData[noteDataKey]}</h2>
 							</div>
 						{/if}
 					{/each}
 				</div>
 				<div class="buttons">
 					<button
-						class="btn btn-success"
+						class="share-btn btn btn-success"
 						on:click={() => {
 							const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
 							share_modal.showModal();
 						}}
 					>
-						Share<svg
+						Share
+						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
@@ -159,6 +164,9 @@
 	.share-link {
 		text-decoration: underline;
 		color: #4a90e2;
+	}
+	.share-btn {
+		font-size: 16px;
 	}
 	.meta-data {
 		display: flex;

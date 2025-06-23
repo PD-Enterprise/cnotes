@@ -304,9 +304,6 @@
 			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
 			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
-	.search-input::placeholder {
-		color: rgba(255, 255, 255, 0.7);
-	}
 	.search-button {
 		border-radius: 6px;
 		cursor: pointer;

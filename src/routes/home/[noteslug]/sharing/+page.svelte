@@ -89,7 +89,7 @@
 	}
 </script>
 
-<div class="main p-2">
+<div class="main">
 	{#if error}
 		{error}
 	{:else if noteData}
@@ -139,9 +139,10 @@
 					</button>
 				</div>
 			</div>
-			<div class="editor overflow-scroll rounded-lg border-4 border-base-300 bg-base-300 p-2">
+			<div
+				class="editor-container h-full overflow-hidden rounded-lg border-4 border-base-300 bg-base-200 p-2"
+			>
 				<div class="ProseMirror dark p-1">
-					<!-- {console.log(noteData.notescontent)} -->
 					{@html addTailwindToHeadings(noteData.notescontent)}
 				</div>
 			</div>
@@ -190,6 +191,9 @@
 </div>
 
 <style>
+	.main {
+		height: calc(100vh - 65px);
+	}
 	.share-link {
 		text-decoration: underline;
 		color: #4a90e2;
@@ -202,10 +206,6 @@
 		flex-direction: row;
 		gap: 10px;
 		flex-wrap: wrap;
-	}
-	.editor {
-		min-height: 400px;
-		max-height: calc(100vh - 420px);
 	}
 	.share-container {
 		display: flex;

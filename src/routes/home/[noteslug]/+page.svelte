@@ -235,11 +235,11 @@
 		</div>
 	</div>
 </dialog>
-<div class="main p-2">
+<div class="main">
 	{#if error}
 		{error}
 	{:else if noteData}
-		<div class="note flex flex-col gap-3 bg-base-300">
+		<div class="note flex h-full flex-col gap-5 rounded-md">
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
 					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
@@ -274,15 +274,14 @@
 					></button
 				>
 			</div>
-			<div class="editor dark overflow-scroll" id="editor">
+			<div class="editor dark h-full overflow-hidden" id="editor">
 				<Tipex
 					body={noteData.notescontent}
 					floating
 					focal
 					{extensions}
 					bind:tipex={editor}
-					class="p-2"
-					style="height: calc(100vh - 360px)"
+					class="h-full p-2"
 					oncreate={() => {
 						// console.log('editor created');
 						editor.commands.insertContent(noteData.notescontent);
@@ -572,9 +571,8 @@
 </div>
 
 <style>
-	.editor {
-		min-height: 400px;
-		max-height: calc(100vh - 340px);
+	.main {
+		height: calc(100vh - 65px);
 	}
 	.share-link {
 		text-decoration: underline;

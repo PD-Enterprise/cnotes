@@ -8,7 +8,7 @@
 </script>
 
 <div class="main">
-	<div class="dropdown ml-2 p-2">
+	<div class="dropdown p-2">
 		<select bind:value={option} class="menu z-[1] m-1 w-52 bg-base-100 p-2 shadow">
 			<option value="text">Text</option>
 			<option value="diagram">Diagram</option>
@@ -48,3 +48,9 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	.main {
+		height: calc(100vh - 65px);
+	}
+</style>

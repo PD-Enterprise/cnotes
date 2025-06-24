@@ -74,7 +74,7 @@
 
 <SvelteToast />
 
-<div class="main">
+<div class="main h-screen">
 	<div class="navbar mb-5 mt-3">
 		<InAppNavbar />
 	</div>

@@ -200,228 +200,253 @@
 		</div>
 	</div>
 </dialog>
-<div class="main flex flex-col gap-3 bg-base-300 p-1">
-	<div class="header p-2">
-		<div class="header-box">
-			<h2 class="mb-6 text-3xl">Add a Text Note</h2>
+<div class="main-component">
+	<div class="content flex h-full flex-col gap-3 p-2">
+		<div class="header flex flex-col gap-3 p-2">
+			<div class="header-box flex flex-col items-center justify-center">
+				<div class="mb-2 flex items-center gap-3">
+					<svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-blue-600">
+						<rect x="2" y="4" width="20" height="16" rx="3" fill="#3B82F6" />
+						<rect x="5" y="7" width="14" height="10" rx="2" fill="#fff" />
+						<path d="M8 10h8M8 13h5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" />
+					</svg>
+					<h2 class="mb-0 text-4xl font-extrabold drop-shadow">Add a Text Note</h2>
+				</div>
+				<p class="text-lg font-medium italic">Create and customize your note below</p>
+			</div>
+			<div class="buttons flex flex-row gap-2">
+				<div class="metadata-btn w-40">
+					<button
+						class="btn h-12 border border-base-content"
+						onclick={() => {
+							const meta_data_modal = document.getElementById(
+								'meta_data_modal'
+							) as HTMLDialogElement;
+							meta_data_modal.showModal();
+						}}>Edit Metadata</button
+					>
+				</div>
+				<div class="save-button-container w-40">
+					{#if !isValid}
+						<button
+							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
+							onclick={addNote}>Add Note</button
+						>
+					{:else}
+						<button
+							class="btn btn-accent btn-outline h-12 border border-base-content"
+							onclick={addNote}>Add Note</button
+						>
+					{/if}
+				</div>
+			</div>
 		</div>
-		<div class="metadata-btn w-40">
-			<button
-				class="btn h-12 border border-base-content"
-				onclick={() => {
-					const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
-					meta_data_modal.showModal();
-				}}>Edit Metadata</button
-			>
-		</div>
-	</div>
-	<form class="flex flex-col gap-4">
-		<div class="editor overflow-scroll" id="editor">
-			<Tipex
-				body=""
-				floating
-				focal
-				{extensions}
-				bind:tipex={editor}
-				class="p-2"
-				style="height: calc(100vh - 440px)"
-				oncreate={() => {
-					// console.log('editor created');
-				}}
-				onupdate={() => {
-					// console.log(editor.getHTML());
-					isValid = validateNote(newNote);
-				}}
-			>
-				{#snippet controlComponent(tipex)}
-					<div class="tipex-controller">
-						<div class="tipex-controller-wrapper">
-							<div class="tipex-basic-controller-wrapper">
-								{#each { length: 4 } as _, index}
-									{@const level = index + 1}
+		<form class="editor-form-container flex h-full flex-col gap-3 bg-blue-500">
+			<div class="editor h-full overflow-hidden bg-yellow-500" id="editor">
+				<Tipex
+					body=""
+					floating
+					focal
+					{extensions}
+					bind:tipex={editor}
+					class=" h-full p-2"
+					oncreate={() => {
+						// console.log('editor created');
+					}}
+					onupdate={() => {
+						// console.log(editor.getHTML());
+						isValid = validateNote(newNote);
+					}}
+				>
+					{#snippet controlComponent(tipex)}
+						<div class="tipex-controller">
+							<div class="tipex-controller-wrapper">
+								<div class="tipex-basic-controller-wrapper">
+									{#each { length: 4 } as _, index}
+										{@const level = index + 1}
+										<button
+											class="tipex-edit-button"
+											onclick={() => {
+												// @ts-expect-error
+												editor?.chain().focus().toggleHeading({ level }).run();
+											}}
+											class:active={editor?.isActive('heading', { level })}
+										>
+											H{level}
+										</button>
+									{/each}
 									<button
-										class="tipex-edit-button"
+										aria-label="Paragraph"
 										onclick={() => {
 											// @ts-expect-error
-											editor?.chain().focus().toggleHeading({ level }).run();
+											editor?.chain().focus().setParagraph().run();
 										}}
-										class:active={editor?.isActive('heading', { level })}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('paragraph')}
 									>
-										H{level}
+										<Icon icon="fa6-solid:paragraph" />
 									</button>
-								{/each}
-								<button
-									aria-label="Paragraph"
-									onclick={() => {
-										// @ts-expect-error
-										editor?.chain().focus().setParagraph().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('paragraph')}
-								>
-									<Icon icon="fa6-solid:paragraph" />
-								</button>
-								<button
-									aria-label="Underline"
-									onclick={() => {
-										editor?.chain().focus().toggleUnderline().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('underline')}
-								>
-									<Icon icon="fa6-solid:underline" />
-								</button>
-								<button
-									aria-label="Highlight"
-									onclick={() => {
-										editor?.chain().focus().toggleHighlight().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('highlight')}
-								>
-									<Icon icon="fa6-solid:highlighter" />
-								</button>
-								<button
-									aria-label="Bold"
-									onclick={() => {
-										// @ts-expect-error
-										editor?.chain().focus().toggleBold().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('bold')}
-								>
-									<Icon icon="fa6-solid:bold" />
-								</button>
-								<button
-									aria-label="Italic"
-									onclick={() => {
-										// @ts-expect-error
-										editor?.chain().focus().toggleItalic().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('italic')}
-								>
-									<Icon icon="fa6-solid:italic" />
-								</button>
-								<button
-									aria-label="Table"
-									onclick={() => {
-										editor
-											?.chain()
-											.focus()
-											.insertTable({ rows: 3, cols: 2, withHeaderRow: true })
-											.run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('table')}
-								>
-									<Icon icon="fa6-solid:table" />
-								</button>
-								{#if editor?.isActive('table')}
-									<div class="table-controls flex gap-1">
-										<button
-											aria-label="Add Column Before"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().addColumnBefore().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Add Column Before"
-										>
-											<Icon icon="fa6-solid:table-columns" />
-										</button>
+									<button
+										aria-label="Underline"
+										onclick={() => {
+											editor?.chain().focus().toggleUnderline().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('underline')}
+									>
+										<Icon icon="fa6-solid:underline" />
+									</button>
+									<button
+										aria-label="Highlight"
+										onclick={() => {
+											editor?.chain().focus().toggleHighlight().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('highlight')}
+									>
+										<Icon icon="fa6-solid:highlighter" />
+									</button>
+									<button
+										aria-label="Bold"
+										onclick={() => {
+											// @ts-expect-error
+											editor?.chain().focus().toggleBold().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('bold')}
+									>
+										<Icon icon="fa6-solid:bold" />
+									</button>
+									<button
+										aria-label="Italic"
+										onclick={() => {
+											// @ts-expect-error
+											editor?.chain().focus().toggleItalic().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('italic')}
+									>
+										<Icon icon="fa6-solid:italic" />
+									</button>
+									<button
+										aria-label="Table"
+										onclick={() => {
+											editor
+												?.chain()
+												.focus()
+												.insertTable({ rows: 3, cols: 2, withHeaderRow: true })
+												.run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('table')}
+									>
+										<Icon icon="fa6-solid:table" />
+									</button>
+									{#if editor?.isActive('table')}
+										<div class="table-controls flex gap-1">
+											<button
+												aria-label="Add Column Before"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addColumnBefore().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Column Before"
+											>
+												<Icon icon="fa6-solid:table-columns" />
+											</button>
 
-										<button
-											aria-label="Add Column After"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().addColumnAfter().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Add Column After"
-										>
-											<Icon icon="fa6-solid:table-columns" />
-										</button>
+											<button
+												aria-label="Add Column After"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addColumnAfter().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Column After"
+											>
+												<Icon icon="fa6-solid:table-columns" />
+											</button>
 
-										<button
-											aria-label="Add Row Before"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().addRowBefore().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Add Row Before"
-										>
-											<Icon icon="fa6-solid:plus" />
-										</button>
+											<button
+												aria-label="Add Row Before"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addRowBefore().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Row Before"
+											>
+												<Icon icon="fa6-solid:plus" />
+											</button>
 
-										<button
-											aria-label="Add Row After"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().addRowAfter().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Add Row After"
-										>
-											<Icon icon="fa6-solid:plus" />
-										</button>
+											<button
+												aria-label="Add Row After"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().addRowAfter().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Add Row After"
+											>
+												<Icon icon="fa6-solid:plus" />
+											</button>
 
-										<button
-											aria-label="Delete Column"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().deleteColumn().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Delete Column"
-										>
-											<Icon icon="fa6-solid:trash" />
-										</button>
+											<button
+												aria-label="Delete Column"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteColumn().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Column"
+											>
+												<Icon icon="fa6-solid:trash" />
+											</button>
 
-										<button
-											aria-label="Delete Row"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().deleteRow().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Delete Row"
-										>
-											<Icon icon="fa6-solid:trash" />
-										</button>
+											<button
+												aria-label="Delete Row"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteRow().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Row"
+											>
+												<Icon icon="fa6-solid:trash" />
+											</button>
 
-										<button
-											aria-label="Delete Table"
-											onclick={() => {
-												if (editor) {
-													editor.chain().focus().deleteTable().run();
-												}
-											}}
-											class="tipex-edit-button"
-											title="Delete Table"
-										>
-											<Icon icon="fa6-solid:trash-can" />
-										</button>
-									</div>
-								{/if}
-								<button
-									aria-label="Subscript"
-									onclick={() => {
-										editor?.chain().focus().toggleSubscript().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('subscript')}
-								>
-									<Icon icon="fa6-solid:subscript" />
-								</button>
-								<!-- <button
+											<button
+												aria-label="Delete Table"
+												onclick={() => {
+													if (editor) {
+														editor.chain().focus().deleteTable().run();
+													}
+												}}
+												class="tipex-edit-button"
+												title="Delete Table"
+											>
+												<Icon icon="fa6-solid:trash-can" />
+											</button>
+										</div>
+									{/if}
+									<button
+										aria-label="Subscript"
+										onclick={() => {
+											editor?.chain().focus().toggleSubscript().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('subscript')}
+									>
+										<Icon icon="fa6-solid:subscript" />
+									</button>
+									<!-- <button
 							aria-label="Center"
 							onclick={() => {
 								editor?.chain().focus().setTextAlign('center').run();
@@ -431,18 +456,18 @@
 						>
 							<Icon icon="fa6-solid:align-center" />
 						</button> -->
-								<button
-									aria-label="Code"
-									onclick={() => {
-										// @ts-expect-error
-										editor?.chain().focus().toggleCode().run();
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('code')}
-								>
-									<Icon icon="fa6-solid:code" />
-								</button>
-								<!-- <button
+									<button
+										aria-label="Code"
+										onclick={() => {
+											// @ts-expect-error
+											editor?.chain().focus().toggleCode().run();
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('code')}
+									>
+										<Icon icon="fa6-solid:code" />
+									</button>
+									<!-- <button
 							aria-label="Table"
 							onclick={() => {
 								editor
@@ -456,72 +481,62 @@
 						>
 							<Icon icon="fa6-solid:table" />
 						</button> -->
-								<button
-									aria-label="Youtube"
-									onclick={() => {
-										const url = prompt('Enter Youtube URL');
-										if (url) {
-											editor
-												?.chain()
-												.focus()
-												.setYoutubeVideo({
-													src: url,
-													width: Math.max(320, 640),
-													height: Math.max(180, 480)
-												})
-												.run();
-										}
-									}}
-									class="tipex-edit-button"
-									class:active={editor?.isActive('Youtube')}
-								>
-									<svg
-										viewBox="0 0 256 180"
-										width="32"
-										height="22"
-										xmlns="http://www.w3.org/2000/svg"
-										preserveAspectRatio="xMidYMid"
+									<button
+										aria-label="Youtube"
+										onclick={() => {
+											const url = prompt('Enter Youtube URL');
+											if (url) {
+												editor
+													?.chain()
+													.focus()
+													.setYoutubeVideo({
+														src: url,
+														width: Math.max(320, 640),
+														height: Math.max(180, 480)
+													})
+													.run();
+											}
+										}}
+										class="tipex-edit-button"
+										class:active={editor?.isActive('Youtube')}
 									>
-										<path
-											d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
-											fill="red"
-										/>
-										<path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z" />
-									</svg>
-								</button>
+										<svg
+											viewBox="0 0 256 180"
+											width="32"
+											height="22"
+											xmlns="http://www.w3.org/2000/svg"
+											preserveAspectRatio="xMidYMid"
+										>
+											<path
+												d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
+												fill="red"
+											/>
+											<path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z" />
+										</svg>
+									</button>
+								</div>
 							</div>
 						</div>
-					</div>
-				{/snippet}
-			</Tipex>
-		</div>
-		{#if !isValid}
-			<button class="btn btn-disabled btn-accent btn-outline h-14" onclick={addNote}
-				>Add Note</button
-			>
-		{:else}
-			<button class="btn btn-accent btn-outline h-14" onclick={addNote}>Add Note</button>
-		{/if}
-	</form>
+					{/snippet}
+				</Tipex>
+			</div>
+		</form>
+	</div>
 </div>
 
 <style>
-	.editor {
-		min-height: 400px;
-		max-height: calc(100vh - 420px);
-	}
-	.main {
-		padding: 20px;
-		animation: fadeInDown 0.8s ease-in-out;
+	.main-component {
+		animation: fadeInDown 0.5s ease-in-out;
+		height: calc(100vh - 130px);
 	}
 	.header-box {
 		text-align: center;
-		animation: fadeInDown 0.6s ease-in-out;
+		animation: fadeInDown 0.5s ease-in-out;
 	}
 	.header-box h2 {
 		font-size: 2.5rem;
 		font-weight: bold;
-		animation: fadeInDown 0.8s ease-in-out;
+		animation: fadeInDown 0.5s ease-in-out;
 	}
 	/* Form container */
 	.new-note-data {
@@ -530,7 +545,7 @@
 		flex-wrap: wrap;
 		gap: 20px;
 		/* Space between fields */
-		animation: fadeInDown 1s ease-in-out;
+		animation: fadeInDown 0.5s ease-in-out;
 	}
 
 	/* Label styling */

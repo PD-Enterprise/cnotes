@@ -49,7 +49,7 @@
 	<div class="content">
 		{@render children()}
 	</div>
-	<div class="footer">
+	<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
 		<Footer />
 	</div>
 </div>

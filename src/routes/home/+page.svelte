@@ -22,142 +22,118 @@
 
 	// Functions
 	/**
-	 * Fetches notes from localStorage and, if a user is present, synchronizes with the server.
-	 * Documents each line of code for clarity.
+	 * Loads notes from localStorage, then tries to sync with cloud.
+	 * If cloud fails, falls back to localStorage.
+	 * If cloud is out of sync with local, updates localStorage.
 	 */
 	async function getNotes() {
-		// Initialize a flag to check if any notes exist in localStorage
-		let hasNotes = false;
-		// Create an array to store notes loaded from localStorage
-		const notes = [];
-		// Iterate over all keys in localStorage
+		let localNotes: note[] = [];
+		let hasLocalNotes = false;
+
+		// 1. Load from localStorage first
 		for (let i = 0; i < localStorage.length; i++) {
-			// Get the key at the current index
 			const key = localStorage.key(i);
-			// Check if the key starts with 'note:'
 			if (key?.startsWith('note:')) {
-				// Set the flag to true since a note was found
-				hasNotes = true;
+				hasLocalNotes = true;
 				const encodedData = localStorage.getItem(key);
 				let noteData;
 				try {
-					// Decode using the same method as server notes
 					const decodedString = atob(encodedData || '');
 					const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
 					noteData = JSON.parse(new TextDecoder().decode(uint8Array));
 				} catch (e) {
-					// Fallback for any notes that might be stored in the old format
-					noteData = JSON.parse(encodedData || '{}');
+					try {
+						noteData = JSON.parse(encodedData || '{}');
+					} catch {
+						continue; // skip corrupted note
+					}
 				}
-				// Add the note data to the notes array
-				notes.push(noteData);
+				localNotes.push(noteData);
 			}
 		}
-		// If any notes were found in localStorage
-		if (hasNotes) {
-			// Update the notesStore with the loaded notes
-			notesStore.value = notes;
-			// // console.log('notes:', notes);
+		if (hasLocalNotes) {
+			notesStore.value = localNotes;
 		}
-		// // console.log(JSON.parse(atob(localStorage.getItem('user'))));
-		// Check if a user is present in localStorage
-		if (JSON.parse(atob(localStorage.getItem('user')))) {
-			// console.log(user.value);
-			try {
-				// Send a POST request to the server to fetch notes for the user
-				const request = await fetch(`${config.apiUrl}notes/notes`, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					// Include the user's email in the request body
-					body: JSON.stringify({
-						email: JSON.parse(atob(localStorage.getItem('user'))).email
-					})
-				});
-				// Parse the server's response as JSON
-				const result = await request.json();
-				// console.log(result);
-				// If the server responded with a success status
-				if (result.status == 200) {
-					// Extract the notes array from the server response
-					const serverNotes: note[] = result.data;
-					// // console.log(serverNotes);
-					// Create a set of slugs from the server notes
-					const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
-					// Create a set of slugs from the local notes
-					const localNoteSlugs = new Set(notesStore.value.map((n) => n.slug));
 
-					// Check if the sets of slugs are equal (same notes on server and local)
-					const areEqual =
-						serverNoteSlugs.size === localNoteSlugs.size &&
-						[...serverNoteSlugs].every((slug) => localNoteSlugs.has(slug));
+		// 2. Try to load from cloud/server
+		let userData;
+		try {
+			userData = JSON.parse(atob(localStorage.getItem('user')));
+		} catch {
+			userData = null;
+		}
+		if (!userData) return; // No user, skip cloud sync
 
-					// If the sets are not equal, there is data inconsistency
-					if (!areEqual) {
-						// Set the inconsistency flag to true
-						isDataInconsistent = true;
-						// Remove local notes that are not present on the server
-						for (const slug of localNoteSlugs) {
-							if (!serverNoteSlugs.has(slug)) {
-								localStorage.removeItem(`note:${slug}`);
-							}
+		try {
+			const response = await fetch(`${config.apiUrl}notes/notes`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ email: userData.email })
+			});
+			const result = await response.json();
+
+			if (result.status === 200) {
+				const serverNotes: note[] = result.data;
+				const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
+				const localNoteSlugs = new Set(localNotes.map((n) => n.slug));
+
+				const areEqual =
+					serverNoteSlugs.size === localNoteSlugs.size &&
+					[...serverNoteSlugs].every((slug) => localNoteSlugs.has(slug));
+
+				if (!areEqual) {
+					// Out of sync: update localStorage with cloud data
+					isDataInconsistent = true;
+					// Remove local notes not on server
+					for (const slug of localNoteSlugs) {
+						if (!serverNoteSlugs.has(slug)) {
+							localStorage.removeItem(`note:${slug}`);
 						}
 					}
-					// For each note from the server
-					for (let i = 0; i < serverNotes.length; i++) {
-						// // console.log(serverNotes[i]);
-						// Encrypt the note as a base64 string
+					// Add/update notes from server
+					for (const note of serverNotes) {
 						const encryptedNote = btoa(
-							String.fromCharCode(...new TextEncoder().encode(JSON.stringify(serverNotes[i])))
+							String.fromCharCode(...new TextEncoder().encode(JSON.stringify(note)))
 						);
-						// // console.log(encryptedNote);
-						// Create an object with the key and value for localStorage
-						const storableNote: { key: string; value: string } = {
-							key: `note:${serverNotes[i].slug}`,
-							value: encryptedNote
-						};
-						// Store the encrypted note in localStorage
-						localStorage.setItem(storableNote.key, storableNote.value);
+						localStorage.setItem(`note:${note.slug}`, encryptedNote);
 					}
-
-					// Reload notes from localStorage after updating
-					const notes = [];
+					// Reload notes from localStorage
+					const updatedNotes: note[] = [];
 					for (let i = 0; i < localStorage.length; i++) {
-						// Get the key at the current index
 						const key = localStorage.key(i);
-						// Check if the key starts with 'note:'
 						if (key?.startsWith('note:')) {
-							// Set the flag to true since a note was found
-							hasNotes = true;
 							const encodedData = localStorage.getItem(key);
 							let noteData;
 							try {
-								// Decode using the same method as server notes
 								const decodedString = atob(encodedData || '');
 								const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
 								noteData = JSON.parse(new TextDecoder().decode(uint8Array));
 							} catch (e) {
-								// Fallback for any notes that might be stored in the old format
-								noteData = JSON.parse(encodedData || '{}');
+								try {
+									noteData = JSON.parse(encodedData || '{}');
+								} catch {
+									continue;
+								}
 							}
-							// Add the note data to the notes array
-							notes.push(noteData);
+							updatedNotes.push(noteData);
 						}
 					}
-					// If any notes were found after syncing
-					if (hasNotes) {
-						// Update the notesStore with the refreshed notes
-						notesStore.value = notes;
-					}
-					// // console.log('notesStore: ', notesStore.value);
+					notesStore.value = updatedNotes;
 				} else {
-					// Log an error if the server did not return a success status
-					console.error('Fetch call returned with status:', result.status);
+					// Already in sync, just use localNotes
+					notesStore.value = localNotes;
 				}
-			} catch (error) {
-				// Log any errors that occurred during the fetch or processing
-				console.error('There was an error.', error);
+			} else {
+				// Server error, fallback to localStorage
+				console.error('Cloud fetch error, using local notes. Status:', result.status);
+				notesStore.value = localNotes;
+			}
+		} catch (err) {
+			// Network or parsing error, fallback to localStorage
+			console.error('Cloud fetch failed, using local notes.', err);
+			notesStore.value = localNotes;
+			if (!hasLocalNotes) {
+				error = 'Failed to load notes from cloud and no local notes found.';
 			}
 		}
 	}
@@ -211,9 +187,6 @@
 	}
 	$effect(() => {
 		search();
-
-		console.log(selectedGrade);
-		console.log(selectedSubject);
 	});
 	function getFilteredAndSortedNotes() {
 		let filtered = notesStore.value;

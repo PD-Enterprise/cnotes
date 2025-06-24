@@ -63,17 +63,58 @@
 	// Functions
 	async function getNote(slug: string) {
 		if (!slug) {
+			error = 'No note slug provided.';
 			return;
 		}
-		// console.log(slug);
+		let localNote = null;
+		let hasLocalNote = false;
 		const storedNote = localStorage.getItem(`note:${slug}`);
-		// console.log(storedNote);
 		if (storedNote) {
-			const decrypedNote = atob(storedNote);
-			// console.log(decrypedNote);
-			noteData = JSON.parse(decrypedNote);
-			originalNoteData = JSON.parse(decrypedNote);
-			// console.log(noteData);
+			hasLocalNote = true;
+			try {
+				localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
+			} catch (e) {
+				try {
+					localNote = JSON.parse(storedNote);
+				} catch {
+					error = 'Corrupted local note data.';
+					return;
+				}
+			}
+			noteData = { ...localNote };
+			originalNoteData = { ...localNote };
+		}
+		// Try to load from cloud/server
+		try {
+			const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			const result = await response.json();
+			if (response.ok && result.status === 200 && result.data) {
+				const serverNote = result.data;
+				// If local note is missing or out of sync, update localStorage
+				if (!hasLocalNote || JSON.stringify(serverNote) !== JSON.stringify(localNote)) {
+					try {
+						const encryptedNote = btoa(unescape(encodeURIComponent(JSON.stringify(serverNote))));
+						localStorage.setItem(`note:${slug}`, encryptedNote);
+					} catch (e) {
+						console.error('Failed to update localStorage with cloud note.', e);
+					}
+					noteData = { ...serverNote };
+					originalNoteData = { ...serverNote };
+				} else {
+					noteData = { ...localNote };
+					originalNoteData = { ...localNote };
+				}
+			} else if (!hasLocalNote) {
+				error = 'Failed to load note from cloud and no local note found.';
+			}
+		} catch (err) {
+			console.error('Cloud fetch failed, using local note.', err);
+			if (!hasLocalNote) {
+				error = 'Failed to load note from cloud and no local note found.';
+			}
 		}
 	}
 	async function saveNote() {
@@ -109,7 +150,10 @@
 			originalNoteData = JSON.parse(JSON.stringify(noteData));
 
 			// Save to localStorage
-			localStorage.setItem(`note:${noteData.slug}`, JSON.stringify(noteData));
+			localStorage.setItem(
+				`note:${noteData.slug}`,
+				btoa(unescape(encodeURIComponent(JSON.stringify(noteData))))
+			);
 
 			showToast('Success', 'Note saved successfully', 1000, 'success');
 		} catch (e) {

@@ -215,8 +215,8 @@
 	}
 </script>
 
-<div class="main p-2">
-	<div class="header flex gap-3 p-1">
+<div class="main">
+	<div class="header flex gap-3 p-2">
 		<div class="search-bar grow rounded-md bg-base-200 p-2">
 			<label class="flex items-center gap-2 rounded-md border border-base-content p-1">
 				<input
@@ -348,7 +348,7 @@
 			>
 		</div>
 	</div>
-	<div class="notes h-auto p-5">
+	<div class="notes h-auto p-4">
 		{#if error}
 			<p class="error">{error}</p>
 		{:else if notesStore.value && notesStore.value.length > 0}
@@ -364,6 +364,9 @@
 </div>
 
 <style>
+	.main {
+		height: calc(100vh - 65px);
+	}
 	.header {
 		justify-content: space-between;
 		align-items: center;
@@ -381,6 +384,8 @@
 		transition:
 			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
 			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
+		min-width: 100px;
+		max-width: 100%;
 	}
 	.search-button,
 	.filter-notes {
@@ -408,6 +413,16 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		gap: 20px;
+	}
+	@media (max-width: 600px) {
+		.search-input {
+			width: 50%;
+		}
+		.notes-grid {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: nowrap;
+		}
 	}
 	/* Add Note button styles moved to the left for cleaner layout */
 	.addNoteButton {

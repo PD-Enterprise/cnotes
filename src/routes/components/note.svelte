@@ -8,8 +8,6 @@
 
 	let notes = $props();
 
-	// console.log(notes.note);
-
 	async function deleteNote(note: note) {
 		try {
 			localStorage.removeItem(`note:${notes.note.slug}`);
@@ -187,8 +185,8 @@
 
 <style>
 	.note {
-		--note-width: 15.7em;
-		--note-height: 12.5em;
+		--note-width: 16em;
+		--note-height: 11em;
 		width: var(--note-width);
 		height: var(--note-height);
 		font-size: 1rem;
@@ -225,64 +223,10 @@
 	.card-body {
 		margin-top: -58px;
 	}
-	@media (max-width: 768px) {
+	@media (max-width: 600px) {
 		.note {
-			--note-width: 18em;
-			--note-height: 12em;
-			font-size: 0.95rem;
-		}
-	}
-	@media (max-width: 635px) {
-		.note {
-			--note-width: 16em;
-			--note-height: 11em;
-			font-size: 0.9rem;
-		}
-		.card-body {
-			padding-left: 18px;
-		}
-	}
-	@media (max-width: 475px) {
-		.note {
-			/* This sets the width of the note to be between 8em and 13em, 
-			adjusting dynamically based on the viewport width (5vw + 6em). 
-			This ensures the note width is responsive and scales with the viewport. */
-			--note-width: clamp(13em, 5vw + 6em, 13em);
-			--note-height: 10em;
-		}
-		.card-body {
-			padding-left: 15px;
-		}
-		.note-meta {
-			display: none;
-		}
-		.note-content {
-			display: none;
-		}
-	}
-	@media (max-width: 445px) {
-		.note {
-			width: 12em;
-		}
-	}
-	@media (max-width: 411px) {
-		.note {
-			width: 11em;
-		}
-	}
-	@media (max-width: 380px) {
-		.note {
-			width: 10em;
-		}
-	}
-	@media (max-width: 349px) {
-		.note {
-			width: 9em;
-		}
-	}
-	@media (max-width: 318px) {
-		.note {
-			width: 8.9em;
+			width: 100%;
+			height: 100%;
 		}
 	}
 </style>

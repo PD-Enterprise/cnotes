@@ -6,15 +6,19 @@
 	import { notesStore, user } from '../../lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
 	import { isAuthenticated } from '../../lib/stores/store.svelte';
+	import Icon from '@iconify/svelte';
 
 	// Variables
 	let error: string = $state('');
 	let searchQuery: string = $state('');
-	let searchResults: searchResult[] = $state();
 	let shouldShowSearchResults: boolean = $state(false);
+	let searchResults: searchResult[] = $state();
+	let shouldShowFilterMenu: boolean = $state(false);
 	let isDataInconsistent: boolean = $state(false);
 	let loadingTimeout;
-	// let userEmail: string;
+	let selectedGrade = $state('all');
+	let selectedSubject = $state('all');
+	let selectedSort = $state('title');
 
 	// Functions
 	/**
@@ -202,9 +206,40 @@
 			searchResults = [];
 		}
 	}
+	function filter() {
+		shouldShowFilterMenu = !shouldShowFilterMenu;
+	}
 	$effect(() => {
 		search();
+
+		console.log(selectedGrade);
+		console.log(selectedSubject);
 	});
+	function getFilteredAndSortedNotes() {
+		let filtered = notesStore.value;
+
+		// Filter by grade
+		if (selectedGrade && selectedGrade !== 'all' && selectedGrade !== '') {
+			filtered = filtered.filter((note) => note.grade === Number(selectedGrade));
+		}
+		// Filter by subject
+		if (selectedSubject && selectedSubject !== 'all' && selectedSubject !== '') {
+			filtered = filtered.filter((note) => note.subject === selectedSubject);
+		}
+
+		// Sort
+		switch (selectedSort) {
+			case 'grade':
+				filtered = filtered.slice().sort((a, b) => (a.grade ?? 0) - (b.grade ?? 0));
+				break;
+			case 'subject':
+				filtered = filtered
+					.slice()
+					.sort((a, b) => (a.subject || '').localeCompare(b.subject || ''));
+				break;
+		}
+		return filtered;
+	}
 </script>
 
 <div class="main p-2">
@@ -217,11 +252,11 @@
 					placeholder="Search for a note"
 					bind:value={searchQuery}
 				/>
-
 				<button
 					onclick={search}
 					class="search-button btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"
 					aria-label="Search"
+					title="Search"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -236,7 +271,77 @@
 						/>
 					</svg>
 				</button>
+
+				<button
+					title="Filter Notes"
+					class="filter-notes btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"
+					onclick={filter}
+				>
+					<Icon icon="fa6-solid:filter" />
+				</button>
 			</label>
+			{#if shouldShowFilterMenu}
+				<div
+					class="filter-menu search-results mt-2 flex flex-row gap-16 rounded-md bg-base-100 p-3 shadow"
+				>
+					<div class="filter-section mb-2">
+						<label class="mb-1 block font-bold">Grade:</label>
+						<div class="flex flex-col gap-1">
+							{#each Array.from(new Set(notesStore.value.map((note) => note.grade))) as grade, i}
+								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+									<input
+										type="radio"
+										name="grade-filter"
+										value={grade}
+										class="radio radio-sm"
+										bind:group={selectedGrade}
+									/>
+									<span class="text-base">{grade}</span>
+								</label>
+							{/each}
+							<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+								<input
+									type="radio"
+									name="grade-filter"
+									value="all"
+									class="radio radio-sm"
+									checked
+									bind:group={selectedGrade}
+								/>
+								<span class="text-base">All Grades</span>
+							</label>
+						</div>
+					</div>
+					<div class="filter-section mb-2">
+						<label class="mb-1 block font-bold">Subject:</label>
+						<div class="flex flex-col gap-1">
+							{#each Array.from(new Set(notesStore.value.map((note) => note.subject))) as subject, i}
+								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+									<input
+										type="radio"
+										name="subject-filter"
+										value={subject}
+										class="radio radio-sm"
+										bind:group={selectedSubject}
+									/>
+									<span class="text-base">{subject}</span>
+								</label>
+							{/each}
+							<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+								<input
+									type="radio"
+									name="subject-filter"
+									value="all"
+									class="radio radio-sm"
+									checked
+									bind:group={selectedSubject}
+								/>
+								<span class="text-base">All Subjects</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			{/if}
 			{#if shouldShowSearchResults}
 				<div class="search-results mt-2 flex flex-col gap-2 rounded-md bg-base-100 p-2">
 					{#if searchResults.length > 0}
@@ -275,7 +380,7 @@
 			<p class="error">{error}</p>
 		{:else if notesStore.value && notesStore.value.length > 0}
 			<div class="notes-grid">
-				{#each notesStore.value as note}
+				{#each getFilteredAndSortedNotes() as note}
 					<Note {note} />
 				{/each}
 			</div>
@@ -304,14 +409,16 @@
 			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
 			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
-	.search-button {
+	.search-button,
+	.filter-notes {
 		border-radius: 6px;
 		cursor: pointer;
 		transition:
 			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
 			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
-	.search-button:hover {
+	.search-button:hover,
+	.filter-notes:hover {
 		transform: scale(1.05);
 	}
 	.search-results {

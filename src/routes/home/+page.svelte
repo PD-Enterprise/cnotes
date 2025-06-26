@@ -224,27 +224,16 @@
 					class="search-input grow rounded-md bg-transparent"
 					placeholder="Search for a note"
 					bind:value={searchQuery}
+					onkeydown={(e) => {
+						if (e.key === 'Enter' && searchResults && searchResults.length === 1) {
+							// Automatically select the only result
+							const onlyResult = searchResults[0];
+							if (onlyResult && onlyResult.slug) {
+								document.getElementById(onlyResult.slug).focus();
+							}
+						}
+					}}
 				/>
-				<button
-					onclick={search}
-					class="search-button btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"
-					aria-label="Search"
-					title="Search"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 16 16"
-						fill="currentColor"
-						class="h-4 w-7"
-					>
-						<path
-							fill-rule="evenodd"
-							d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-							clip-rule="evenodd"
-						/>
-					</svg>
-				</button>
-
 				<button
 					title="Filter Notes"
 					class="filter-notes btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"

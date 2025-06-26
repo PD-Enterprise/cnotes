@@ -258,7 +258,7 @@
 					class="filter-menu search-results mt-2 flex flex-row gap-16 rounded-md bg-base-100 p-3 shadow"
 				>
 					<div class="filter-section mb-2">
-						<label class="mb-1 block font-bold">Grade:</label>
+						<span class="mb-1 block font-bold">Grade:</span>
 						<div class="flex flex-col gap-1">
 							{#each Array.from(new Set(notesStore.value.map((note) => note.grade))) as grade, i}
 								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
@@ -286,7 +286,7 @@
 						</div>
 					</div>
 					<div class="filter-section mb-2">
-						<label class="mb-1 block font-bold">Subject:</label>
+						<span class="mb-1 block font-bold">Subject:</span>
 						<div class="flex flex-col gap-1">
 							{#each Array.from(new Set(notesStore.value.map((note) => note.subject))) as subject, i}
 								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">

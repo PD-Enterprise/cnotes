@@ -216,9 +216,9 @@
 </script>
 
 <div class="main">
-	<div class="header flex gap-3 p-2">
-		<div class="search-bar grow rounded-md bg-base-200 p-2">
-			<label class="flex items-center gap-2 rounded-md border border-base-content p-1">
+	<div class="header flex gap-3 bg-base-300 p-2">
+		<div class="search-bar grow rounded-md p-1">
+			<label class="flex items-center gap-2 rounded-md p-1">
 				<input
 					type="text"
 					class="search-input grow rounded-md bg-transparent"

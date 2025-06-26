@@ -204,15 +204,14 @@
 	<div class="content flex h-full flex-col gap-3 p-2">
 		<div class="header flex flex-col gap-3 p-2">
 			<div class="header-box flex flex-col items-center justify-center">
-				<div class="mb-2 flex items-center gap-3">
+				<div class="mb-1 flex items-center gap-3">
 					<svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-blue-600">
 						<rect x="2" y="4" width="20" height="16" rx="3" fill="#3B82F6" />
 						<rect x="5" y="7" width="14" height="10" rx="2" fill="#fff" />
 						<path d="M8 10h8M8 13h5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" />
 					</svg>
-					<h2 class="mb-0 text-4xl font-extrabold drop-shadow">Add a Text Note</h2>
+					<h2 class="component-title mb-0 text-4xl font-extrabold drop-shadow">Add a Text Note</h2>
 				</div>
-				<p class="text-lg font-medium italic">Create and customize your note below</p>
 			</div>
 			<div class="buttons flex flex-row gap-2">
 				<div class="metadata-btn w-40">
@@ -534,7 +533,6 @@
 		animation: fadeInDown 0.5s ease-in-out;
 	}
 	.header-box h2 {
-		font-size: 2.5rem;
 		font-weight: bold;
 		animation: fadeInDown 0.5s ease-in-out;
 	}
@@ -546,6 +544,11 @@
 		gap: 20px;
 		/* Space between fields */
 		animation: fadeInDown 0.5s ease-in-out;
+	}
+	@media (max-width: 600px) {
+		.component-title {
+			font-size: 1.5rem;
+		}
 	}
 
 	/* Label styling */
@@ -601,26 +604,6 @@
 		to {
 			opacity: 1;
 			transform: translateY(0);
-		}
-	}
-
-	/* Ensure responsiveness for both desktop and mobile */
-	@media (max-width: 768px) {
-		.main {
-			padding: 10px;
-		}
-
-		.new-note-data {
-			gap: 15px;
-		}
-
-		.header-box h2 {
-			font-size: 2rem;
-		}
-
-		.btn {
-			width: 100%;
-			/* Full-width button on smaller screens */
 		}
 	}
 	.tipex-controller {

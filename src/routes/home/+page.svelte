@@ -378,7 +378,6 @@
 	}
 	.search-bar:hover {
 		box-shadow: 0 6px 15px rgba(77, 96, 116, 0.5);
-		transform: translateY(-2px);
 	}
 	.search-input {
 		transition:
@@ -406,7 +405,7 @@
 			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
 	.search-results a:hover {
-		transform: translateY(-3px);
+		transform: scale(1.015);
 	}
 	.notes-grid {
 		display: flex;

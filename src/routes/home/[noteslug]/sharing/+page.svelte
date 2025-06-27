@@ -4,6 +4,11 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import config from '$lib/utils/apiConfig';
 	import '../../app.css';
+	import '@friendofsvelte/tipex/styles/Tipex.css';
+	import '@friendofsvelte/tipex/styles/ProseMirror.css';
+	import '@friendofsvelte/tipex/styles/Controls.css';
+	import '@friendofsvelte/tipex/styles/EditLink.css';
+	import '@friendofsvelte/tipex/styles/CodeBlock.css';
 
 	// Variables
 	let noteData: note = {

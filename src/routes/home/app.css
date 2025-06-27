@@ -8,16 +8,18 @@
 }
 
 .ProseMirror table td,
-.ProseMirror table th {
+.ProseMirror table th,
+table td,
+table th {
     border: 1px solid #e5e7eb;
     box-sizing: border-box;
     min-width: 1em;
     padding: 6px 8px;
     position: relative;
     vertical-align: top;
-    word-break: break-word;
-    white-space: pre-line;
-    overflow-wrap: break-word;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 .ProseMirror table th {
@@ -106,19 +108,6 @@ table {
     overflow: hidden;
     table-layout: fixed;
     width: 100%;
-}
-
-table td,
-table th {
-    border: 1px solid #374151;
-    box-sizing: border-box;
-    min-width: 1em;
-    padding: 6px 8px;
-    position: relative;
-    vertical-align: top;
-    word-break: break-word;
-    white-space: pre-line;
-    overflow-wrap: break-word;
 }
 
 table th {

@@ -24,6 +24,7 @@
 	import TableHeader from '@tiptap/extension-table-header';
 	import TableCell from '@tiptap/extension-table-cell';
 	import { isAuthenticated, theme } from '$lib/stores/store.svelte';
+	import DOMPurify from 'dompurify';
 
 	// Variables
 	let noteData = $state<note>({
@@ -313,7 +314,7 @@
 						}}
 						onupdate={() => {
 							// console.log(editor.getHTML());
-							noteData.notescontent = editor.getHTML();
+							noteData.notescontent = DOMPurify.sanitize(editor.getHTML());
 						}}
 					>
 						{#snippet controlComponent(tipex)}

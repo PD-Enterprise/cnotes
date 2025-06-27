@@ -10,6 +10,7 @@
 	import '@friendofsvelte/tipex/styles/EditLink.css';
 	import '@friendofsvelte/tipex/styles/CodeBlock.css';
 	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import DOMPurify from 'dompurify';
 
 	// Variables
 	let noteData: note = {
@@ -149,7 +150,7 @@
 				class="editor-container h-full overflow-hidden rounded-lg border-4 border-base-300 bg-base-200 p-2"
 			>
 				<div class="ProseMirror dark p-1">
-					{@html addTailwindToHeadings(noteData.notescontent)}
+					{@html DOMPurify.sanitize(addTailwindToHeadings(noteData.notescontent))}
 				</div>
 			</div>
 		</div>

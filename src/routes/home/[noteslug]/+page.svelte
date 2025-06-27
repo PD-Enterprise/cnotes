@@ -62,6 +62,11 @@
 
 	// Functions
 	async function getNote(slug: string) {
+		if (!$isAuthenticated) {
+			error = 'You must be logged in to access notes.';
+			showToast('Error', 'You must be logged in to access notes.', 3000, 'error');
+			return;
+		}
 		if (!slug) {
 			error = 'No note slug provided.';
 			return;

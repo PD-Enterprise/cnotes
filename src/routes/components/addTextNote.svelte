@@ -25,6 +25,7 @@
 	import TableHeader from '@tiptap/extension-table-header';
 	import TableCell from '@tiptap/extension-table-cell';
 	import { onMount } from 'svelte';
+	import { isAuthenticated } from '$lib/stores/store.svelte';
 
 	// Variables
 	let newNote: note = {
@@ -60,11 +61,11 @@
 	let isValid: boolean = $state(false);
 
 	// Functions
-	// $effect(() => {
-	// 	console.log(editor.getHTML());
-	// });
-	// Functions
 	async function addNote() {
+		if (!$isAuthenticated) {
+			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
+			return;
+		}
 		if (!validateNote(newNote)) {
 			console.error('Note is not in correct form to be added to database.');
 			showToast(

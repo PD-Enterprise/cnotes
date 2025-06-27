@@ -7,6 +7,7 @@
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
 	import './app.css';
+	import { page } from '$app/stores';
 
 	let { children } = $props();
 

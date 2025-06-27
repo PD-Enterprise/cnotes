@@ -9,6 +9,7 @@
 	import '@friendofsvelte/tipex/styles/Controls.css';
 	import '@friendofsvelte/tipex/styles/EditLink.css';
 	import '@friendofsvelte/tipex/styles/CodeBlock.css';
+	import { isAuthenticated } from '$lib/stores/store.svelte';
 
 	// Variables
 	let noteData: note = {

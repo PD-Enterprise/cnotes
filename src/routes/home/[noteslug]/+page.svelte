@@ -118,6 +118,23 @@
 		}
 	}
 	async function saveNote() {
+		// Auth check
+		if (!$isAuthenticated) {
+			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
+			return;
+		}
+		let userEmail = '';
+		try {
+			userEmail = JSON.parse(atob(localStorage.getItem('user') || '{}')).email;
+		} catch (e) {
+			showToast('Error', 'User authentication data is missing or corrupted.', 3000, 'error');
+			return;
+		}
+		if (!userEmail) {
+			showToast('Error', 'User email not found. Please log in again.', 3000, 'error');
+			return;
+		}
+
 		noteData.dateUpdated = new Date().toISOString();
 
 		try {
@@ -127,7 +144,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					email: JSON.parse(atob(localStorage.getItem('user') || '{}')).email,
+					email: userEmail,
 					data: noteData
 				})
 			});

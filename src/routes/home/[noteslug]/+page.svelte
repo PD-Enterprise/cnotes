@@ -603,6 +603,8 @@
 	</div>
 {/if}
 
+<div class="tipex-edit-button active tipex-controller dark hidden"></div>
+
 <style>
 	.main {
 		height: calc(100vh - 65px);

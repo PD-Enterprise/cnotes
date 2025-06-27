@@ -26,6 +26,7 @@
 	import TableCell from '@tiptap/extension-table-cell';
 	import { onMount } from 'svelte';
 	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import DOMPurify from 'dompurify';
 
 	// Variables
 	let newNote: note = {
@@ -76,7 +77,8 @@
 			);
 		} else {
 			try {
-				newNote.notescontent = editor.getHTML();
+				const rawHtml = editor.getHTML();
+				newNote.notescontent = DOMPurify.sanitize(rawHtml);
 				newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
 
 				if (user.value) {

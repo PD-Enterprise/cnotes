@@ -8,7 +8,7 @@
 					in or creating an account.
 				</p>
 				<div class="buttons">
-					<a class="loginButton btn btn-primary btn-outline" href="/home">Try it Out</a>
+					<!-- <a class="loginButton btn btn-primary btn-outline" href="/home">Try it Out</a> -->
 					<!-- <a
 						class="registerButton btn btn-outline btn-primary"
 						href="#form"

@@ -9,82 +9,84 @@
 	import '@friendofsvelte/tipex/styles/Controls.css';
 	import '@friendofsvelte/tipex/styles/EditLink.css';
 	import '@friendofsvelte/tipex/styles/CodeBlock.css';
-	import { isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
+	import { page } from '$app/stores';
 
 	// Variables
-	let noteData: note = {
+	let error: string = '';
+	let noteData: note = $state({
 		title: '',
 		board: '',
 		dateCreated: '',
 		grade: undefined,
 		subject: '',
-		notescontent: '',
 		slug: '',
-		email: ''
-	};
-	let error: string = '';
+		email: '',
+		notescontent: ''
+	});
+	let data = $props();
 
 	// Functions
-	async function getNote(slug: string) {
-		if (!slug) {
-			error = 'No note slug provided.';
-			return;
-		}
-		let localNote = null;
-		let hasLocalNote = false;
-		const storedNote = localStorage.getItem(`note:${slug}`);
-		if (storedNote) {
-			hasLocalNote = true;
-			try {
-				localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
-			} catch (e) {
-				try {
-					localNote = JSON.parse(storedNote);
-				} catch {
-					error = 'Corrupted local note data.';
-					return;
-				}
-			}
-			noteData = { ...localNote };
-		}
-		// Try to load from cloud/server
-		try {
-			const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
-				method: 'GET',
-				headers: { 'Content-Type': 'application/json' }
+	async function getNoteFromServer() {
+		const serverNote = data.data.data;
+		// console.log(serverNote);
+		if (serverNote && serverNote != undefined) {
+			noteData = { ...serverNote };
+		} else {
+			onMount(() => {
+				const slug = $page.url.pathname.split('/home/')[1].split('/sharing')[0];
+				getNoteFromLocalStorage(slug);
 			});
-			const result = await response.json();
-			if (response.ok && result.status === 200 && result.data) {
-				const serverNote = result.data;
-				// If local note is missing or out of sync, update localStorage
-				if (!hasLocalNote || JSON.stringify(serverNote) !== JSON.stringify(localNote)) {
-					try {
-						const encryptedNote = btoa(unescape(encodeURIComponent(JSON.stringify(serverNote))));
-						localStorage.setItem(`note:${slug}`, encryptedNote);
-					} catch (e) {
-						console.error('Failed to update localStorage with cloud note.', e);
-					}
-					noteData = { ...serverNote };
-				} else {
-					noteData = { ...localNote };
-				}
-			} else if (!hasLocalNote) {
-				error = 'Failed to load note from cloud and no local note found.';
-			}
-		} catch (err) {
-			console.error('Cloud fetch failed, using local note.', err);
-			if (!hasLocalNote) {
-				error = 'Failed to load note from cloud and no local note found.';
-			}
 		}
 	}
-
-	onMount(async () => {
-		noteData.slug = window.location.href.split('/home/')[1].split('/sharing')[0];
-		// console.log(noteData.slug);
-		getNote(noteData.slug);
-	});
+	async function getNoteFromLocalStorage(slug: string) {}
+	// let localNote = null;
+	// let hasLocalNote = false;
+	// const storedNote = localStorage.getItem(`note:${slug}`);
+	// if (storedNote) {
+	// 	hasLocalNote = true;
+	// 	try {
+	// 		localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
+	// 	} catch (e) {
+	// 		try {
+	// 			localNote = JSON.parse(storedNote);
+	// 		} catch {
+	// 			error = 'Corrupted local note data.';
+	// 			return;
+	// 		}
+	// 	}
+	// 	noteData = { ...localNote };
+	// }
+	// // Try to load from cloud/server
+	// try {
+	// 	const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
+	// 		method: 'GET',
+	// 		headers: { 'Content-Type': 'application/json' }
+	// 	});
+	// 	const result = await response.json();
+	// 	if (response.ok && result.status === 200 && result.data) {
+	// 		const serverNote = result.data;
+	// 		// If local note is missing or out of sync, update localStorage
+	// 		if (!hasLocalNote || JSON.stringify(serverNote) !== JSON.stringify(localNote)) {
+	// 			try {
+	// 				const encryptedNote = btoa(unescape(encodeURIComponent(JSON.stringify(serverNote))));
+	// 				localStorage.setItem(`note:${slug}`, encryptedNote);
+	// 			} catch (e) {
+	// 				console.error('Failed to update localStorage with cloud note.', e);
+	// 			}
+	// 			noteData = { ...serverNote };
+	// 		} else {
+	// 			noteData = { ...localNote };
+	// 		}
+	// 	} else if (!hasLocalNote) {
+	// 		error = 'Failed to load note from cloud and no local note found.';
+	// 	}
+	// } catch (err) {
+	// 	console.error('Cloud fetch failed, using local note.', err);
+	// 	if (!hasLocalNote) {
+	// 		error = 'Failed to load note from cloud and no local note found.';
+	// 	}
+	// }
 
 	function addTailwindToHeadings(html: string): string {
 		return html
@@ -94,6 +96,7 @@
 			.replace(/<h4>/g, '<h1 class="text-xl">')
 			.replace(/<u>/g, '<u class="font-bold">');
 	}
+	getNoteFromServer();
 </script>
 
 <div class="main">
@@ -124,7 +127,7 @@
 				<div class="buttons">
 					<button
 						class="share-btn btn btn-success"
-						on:click={() => {
+						onclick={() => {
 							const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
 							share_modal.showModal();
 						}}
@@ -150,7 +153,7 @@
 				class="editor-container h-full overflow-hidden rounded-lg border-4 border-base-300 bg-base-200 p-2"
 			>
 				<div class="ProseMirror dark p-1">
-					{@html DOMPurify.sanitize(addTailwindToHeadings(noteData.notescontent))}
+					{@html addTailwindToHeadings(noteData.notescontent)}
 				</div>
 			</div>
 		</div>
@@ -169,7 +172,7 @@
 					<button
 						class="btn btn-sm btn-square"
 						aria-label="Copy share link to clipboard"
-						on:click={() => {
+						onclick={() => {
 							navigator.clipboard.writeText(`https://cnotes.pages.dev/${noteData.slug}/sharing`);
 							showToast('success', 'Link copied to clipboard!', 2500, 'success');
 						}}

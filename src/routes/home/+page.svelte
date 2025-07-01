@@ -4,9 +4,9 @@
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
 	import { notesStore } from '../../lib/stores/store.svelte';
-	import config from '$lib/utils/apiConfig';
 	import Icon from '@iconify/svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import { navigating } from '$app/stores';
 
 	// Variables
 	let error: string = $state('');
@@ -19,33 +19,30 @@
 	let selectedGrade = $state('all');
 	let selectedSubject = $state('all');
 	let selectedSort = $state('title');
-	let { data } = $props();
 	let localNotes: note[] = [];
 	let hasLocalNotes = false;
 
 	// Functions
 	async function getNotes() {
-		console.log('Getting Notes From Server');
-		if (data.data && data.data != undefined && data.data.length > 0) {
-			const serverNotes: note[] = data.data.sort((a, b) => {
+		// console.log('Getting Notes From Server');
+		const response = await fetch('/home', {
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		});
+		const result = await response.json();
+		// console.log(result);
+
+		if (result.data && result.data != undefined && result.data.length > 0) {
+			const serverNotes: note[] = result.data.sort((a, b) => {
 				const dateA = new Date(a.dateCreated || 0).getTime();
 				const dateB = new Date(b.dateCreated || 0).getTime();
 				return dateB - dateA;
 			});
 			notesStore.value = serverNotes;
-		} else {
-			onMount(() => {
-				getNotesFromLocalStorage();
-			});
+			persistNotesInLocalStorage();
 		}
 	}
 	async function getNotesFromLocalStorage() {
-		showToast(
-			'Loading Notes From Local Storage',
-			"Couldn't get notes from the server, loading from local storage",
-			3000,
-			'info'
-		);
 		let tempNotes: note[] = [];
 		for (let i = 0; i < localStorage.length; i++) {
 			const key = localStorage.key(i);
@@ -78,7 +75,7 @@
 		}
 	}
 	async function persistNotesInLocalStorage() {
-		console.log('Persisting Notes In Local Storage');
+		// console.log('Persisting Notes In Local Storage');
 		for (const note of notesStore.value) {
 			// console.log(note);
 			const encryptedNote = btoa(
@@ -89,9 +86,8 @@
 		}
 	}
 	onMount(() => {
-		$effect(() => {
-			persistNotesInLocalStorage();
-		});
+		getNotesFromLocalStorage();
+		getNotes();
 		// Add click event listener to document to hide search results when clicking outside
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
@@ -153,7 +149,6 @@
 		}
 		return filtered;
 	}
-	getNotes();
 </script>
 
 <div class="main">

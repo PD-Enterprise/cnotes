@@ -63,6 +63,36 @@ self.addEventListener("fetch", event => {
         return;
     }
 
+    // Handle navigation requests (HTML pages)
+    if (event.request.mode === "navigate") {
+        event.respondWith(
+            (async () => {
+                const cache = await caches.open(CACHE);
+                try {
+                    // Try network first
+                    const response = await fetch(event.request);
+                    if (response.status === 200) {
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                } catch {
+                    // If offline, serve cached /home as fallback shell
+                    const cachedShell = await cache.match("/home");
+                    if (cachedShell) {
+                        return cachedShell;
+                    }
+                    // Or fallback to index.html or root
+                    const cachedRoot = await cache.match("/");
+                    if (cachedRoot) {
+                        return cachedRoot;
+                    }
+                    return new Response("Offline", { status: 503 });
+                }
+            })()
+        );
+        return;
+    }
+
     async function respond() {
         const cache = await caches.open(CACHE)
 

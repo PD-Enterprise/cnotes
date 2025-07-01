@@ -6,6 +6,7 @@
 	import { notesStore } from '../../lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
 	import Icon from '@iconify/svelte';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
 
 	// Variables
 	let error: string = $state('');
@@ -18,18 +19,34 @@
 	let selectedGrade = $state('all');
 	let selectedSubject = $state('all');
 	let selectedSort = $state('title');
+	let { data } = $props();
+	let localNotes: note[] = [];
+	let hasLocalNotes = false;
 
 	// Functions
-	/**
-	 * Loads notes from localStorage, then tries to sync with cloud.
-	 * If cloud fails, falls back to localStorage.
-	 * If cloud is out of sync with local, updates localStorage.
-	 */
 	async function getNotes() {
-		let localNotes: note[] = [];
-		let hasLocalNotes = false;
-
-		// 1. Load from localStorage first
+		console.log('Getting Notes From Server');
+		if (data.data && data.data != undefined && data.data.length > 0) {
+			const serverNotes: note[] = data.data.sort((a, b) => {
+				const dateA = new Date(a.dateCreated || 0).getTime();
+				const dateB = new Date(b.dateCreated || 0).getTime();
+				return dateB - dateA;
+			});
+			notesStore.value = serverNotes;
+		} else {
+			onMount(() => {
+				getNotesFromLocalStorage();
+			});
+		}
+	}
+	async function getNotesFromLocalStorage() {
+		showToast(
+			'Loading Notes From Local Storage',
+			"Couldn't get notes from the server, loading from local storage",
+			3000,
+			'info'
+		);
+		let tempNotes: note[] = [];
 		for (let i = 0; i < localStorage.length; i++) {
 			const key = localStorage.key(i);
 			if (key?.startsWith('note:')) {
@@ -44,103 +61,37 @@
 					try {
 						noteData = JSON.parse(encodedData || '{}');
 					} catch {
-						continue; // skip corrupted note
+						continue;
 					}
 				}
-				localNotes.push(noteData);
+				tempNotes.push(noteData);
 			}
 		}
+		// Sort notes by date (latest first)
+		localNotes = tempNotes.sort((a, b) => {
+			const dateA = new Date(a.dateCreated || a.dateCreated || 0).getTime();
+			const dateB = new Date(b.dateCreated || b.dateCreated || 0).getTime();
+			return dateB - dateA;
+		});
 		if (hasLocalNotes) {
 			notesStore.value = localNotes;
 		}
-
-		// 2. Try to load from cloud/server
-		let userData;
-		try {
-			userData = JSON.parse(atob(localStorage.getItem('user')));
-		} catch {
-			userData = null;
-		}
-		if (!userData) return; // No user, skip cloud sync
-
-		try {
-			const response = await fetch(`${config.apiUrl}notes/notes`, {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email: userData.email })
-			});
-			const result = await response.json();
-			// console.log(result);
-
-			if (result.status === 200) {
-				const serverNotes: note[] = result.data;
-				const serverNoteSlugs = new Set(serverNotes.map((n) => n.slug));
-				const localNoteSlugs = new Set(localNotes.map((n) => n.slug));
-
-				const areEqual =
-					serverNoteSlugs.size === localNoteSlugs.size &&
-					[...serverNoteSlugs].every((slug) => localNoteSlugs.has(slug));
-
-				if (!areEqual) {
-					// Out of sync: update localStorage with cloud data
-					isDataInconsistent = true;
-					// Remove local notes not on server
-					for (const slug of localNoteSlugs) {
-						if (!serverNoteSlugs.has(slug)) {
-							localStorage.removeItem(`note:${slug}`);
-						}
-					}
-					// Add/update notes from server
-					for (const note of serverNotes) {
-						const encryptedNote = btoa(
-							String.fromCharCode(...new TextEncoder().encode(JSON.stringify(note)))
-						);
-						localStorage.setItem(`note:${note.slug}`, encryptedNote);
-					}
-					// Reload notes from localStorage
-					const updatedNotes: note[] = [];
-					for (let i = 0; i < localStorage.length; i++) {
-						const key = localStorage.key(i);
-						if (key?.startsWith('note:')) {
-							const encodedData = localStorage.getItem(key);
-							let noteData;
-							try {
-								const decodedString = atob(encodedData || '');
-								const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
-								noteData = JSON.parse(new TextDecoder().decode(uint8Array));
-							} catch (e) {
-								try {
-									noteData = JSON.parse(encodedData || '{}');
-								} catch {
-									continue;
-								}
-							}
-							updatedNotes.push(noteData);
-						}
-					}
-					notesStore.value = updatedNotes;
-				} else {
-					// Already in sync, just use localNotes
-					notesStore.value = localNotes;
-				}
-			} else {
-				// Server error, fallback to localStorage
-				console.error('Cloud fetch error, using local notes. Status:', result.status);
-				notesStore.value = localNotes;
-			}
-		} catch (err) {
-			// Network or parsing error, fallback to localStorage
-			console.error('Cloud fetch failed, using local notes.', err);
-			notesStore.value = localNotes;
-			if (!hasLocalNotes) {
-				error = 'Failed to load notes from cloud and no local notes found.';
-			}
+	}
+	async function persistNotesInLocalStorage() {
+		console.log('Persisting Notes In Local Storage');
+		for (const note of notesStore.value) {
+			// console.log(note);
+			const encryptedNote = btoa(
+				String.fromCharCode(...new TextEncoder().encode(JSON.stringify(note)))
+			);
+			// console.log('encryptednote', encryptedNote);
+			localStorage.setItem(`note:${note.slug}`, encryptedNote);
 		}
 	}
 	onMount(() => {
-		// 	userEmail = JSON.parse(atob(localStorage.getItem('user'))).email;
-		// console.log(userEmail);
-		getNotes();
+		$effect(() => {
+			persistNotesInLocalStorage();
+		});
 		// Add click event listener to document to hide search results when clicking outside
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
@@ -148,17 +99,6 @@
 				shouldShowSearchResults = false;
 			}
 		});
-		loadingTimeout = setTimeout(() => {
-			if (!notesStore.value || notesStore.value.length === 0) {
-				if (!localStorage.getItem('hasReloaded')) {
-					localStorage.setItem('hasReloaded', 'true');
-					location.reload();
-				} else {
-					error = `No notes found. Try reloading the page.`;
-					localStorage.removeItem('hasReloaded');
-				}
-			}
-		}, 5000);
 	});
 	onDestroy(() => {
 		clearTimeout(loadingTimeout);
@@ -213,6 +153,7 @@
 		}
 		return filtered;
 	}
+	getNotes();
 </script>
 
 <div class="main">

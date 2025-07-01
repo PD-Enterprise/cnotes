@@ -60,7 +60,7 @@
 					/>
 				</svg>
 			</div>
-			<ul class="menu dropdown-content menu-sm z-[1] mt-3 gap-1 rounded-box bg-base-100 p-2 shadow">
+			<ul class="menu dropdown-content menu-sm z-[1] mt-3 gap-2 rounded-box bg-base-100 p-2 shadow">
 				<li><a href="#home">Home</a></li>
 				<li>
 					<a href="#features">Features</a>

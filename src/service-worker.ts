@@ -35,10 +35,35 @@ self.addEventListener("activate", event => {
 
 // Listen
 self.addEventListener("fetch", event => {
-    if (event.request.method !== "GET") return;
+    if (event.request.method !== "GET" && event.request.method !== "POST") return;
+
+    const url = new URL(event.request.url);
+
+    // Check if this is a notes API request
+    if (url.pathname.endsWith("/notes/notes")) {
+        event.respondWith(
+            (async () => {
+                const cache = await caches.open(CACHE);
+                try {
+                    const response = await fetch(event.request.clone());
+                    if (response.status === 200) {
+                        cache.put(event.request, response.clone());
+                    }
+                    return response;
+                } catch {
+                    // If offline, try to serve from cache
+                    const cachedResponse = await cache.match(event.request);
+                    if (cachedResponse) {
+                        return cachedResponse;
+                    }
+                    return new Response("Not Found", { status: 404 });
+                }
+            })()
+        );
+        return;
+    }
 
     async function respond() {
-        const url = new URL(event.request.url)
         const cache = await caches.open(CACHE)
 
         // serve build files from the cache

@@ -7,9 +7,6 @@ export const load = async ({ locals }) => {
         redirect(302, "/")
     }
 
-    const user = await clerkClient.users.getUser(userId)
-
     return {
-        user: JSON.parse(JSON.stringify(user))
     }
 }

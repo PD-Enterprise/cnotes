@@ -5,7 +5,7 @@
 	import AutoLogin from './autoLogin.svelte';
 	import SvelteToast from './svelteToast.svelte';
 	import Sync from './sync.svelte';
-	import { UserButton, SignOutButton } from 'svelte-clerk';
+	import { UserButton, SignOutButton, SignedIn, SignInButton, SignedOut } from 'svelte-clerk';
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -96,7 +96,12 @@
 				<AutoLogin type="inapp" />
 				<Sync />
 				<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
-					<SignOutButton class="btn btn-error w-full" />
+					<SignedIn>
+						<SignOutButton class="btn btn-error w-full" />
+					</SignedIn>
+					<SignedOut>
+						<SignInButton class="btn btn-accent w-full" />
+					</SignedOut>
 				</div>
 			</ul>
 		</div>

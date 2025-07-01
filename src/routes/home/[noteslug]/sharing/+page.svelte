@@ -25,6 +25,8 @@
 		notescontent: ''
 	});
 	let data = $props();
+	let localNote = null;
+	let hasLocalNote = false;
 
 	// Functions
 	async function getNoteFromServer() {
@@ -39,54 +41,16 @@
 			});
 		}
 	}
-	async function getNoteFromLocalStorage(slug: string) {}
-	// let localNote = null;
-	// let hasLocalNote = false;
-	// const storedNote = localStorage.getItem(`note:${slug}`);
-	// if (storedNote) {
-	// 	hasLocalNote = true;
-	// 	try {
-	// 		localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
-	// 	} catch (e) {
-	// 		try {
-	// 			localNote = JSON.parse(storedNote);
-	// 		} catch {
-	// 			error = 'Corrupted local note data.';
-	// 			return;
-	// 		}
-	// 	}
-	// 	noteData = { ...localNote };
-	// }
-	// // Try to load from cloud/server
-	// try {
-	// 	const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
-	// 		method: 'GET',
-	// 		headers: { 'Content-Type': 'application/json' }
-	// 	});
-	// 	const result = await response.json();
-	// 	if (response.ok && result.status === 200 && result.data) {
-	// 		const serverNote = result.data;
-	// 		// If local note is missing or out of sync, update localStorage
-	// 		if (!hasLocalNote || JSON.stringify(serverNote) !== JSON.stringify(localNote)) {
-	// 			try {
-	// 				const encryptedNote = btoa(unescape(encodeURIComponent(JSON.stringify(serverNote))));
-	// 				localStorage.setItem(`note:${slug}`, encryptedNote);
-	// 			} catch (e) {
-	// 				console.error('Failed to update localStorage with cloud note.', e);
-	// 			}
-	// 			noteData = { ...serverNote };
-	// 		} else {
-	// 			noteData = { ...localNote };
-	// 		}
-	// 	} else if (!hasLocalNote) {
-	// 		error = 'Failed to load note from cloud and no local note found.';
-	// 	}
-	// } catch (err) {
-	// 	console.error('Cloud fetch failed, using local note.', err);
-	// 	if (!hasLocalNote) {
-	// 		error = 'Failed to load note from cloud and no local note found.';
-	// 	}
-	// }
+	async function getNoteFromLocalStorage(slug: string) {
+		const storedNote = localStorage.getItem(`note:${slug}`);
+		if (storedNote) {
+			hasLocalNote = true;
+			try {
+				localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
+			} catch (e) {}
+			noteData = { ...localNote };
+		}
+	}
 
 	function addTailwindToHeadings(html: string): string {
 		return html

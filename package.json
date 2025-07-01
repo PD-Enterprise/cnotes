@@ -54,6 +54,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"string-hash": "^1.1.3",
+		"svelte-clerk": "^0.13.4",
 		"svelte-toasts": "^1.1.2",
 		"tinymce": "^7",
 		"uuid": "^11.0.3"

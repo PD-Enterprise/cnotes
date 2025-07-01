@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
 	import { isAuthenticated, auth0Client } from '$lib/stores/store.svelte'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import auth from '$lib/utils/authService';
+	import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
 
 	// Functions
 	onMount(async () => {
@@ -54,10 +54,6 @@
 			}
 		});
 	});
-
-	function login() {
-		auth.loginWithPopup($auth0Client, {});
-	}
 </script>
 
 <div class="navbar bg-base-300">
@@ -129,10 +125,12 @@
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
-						<button class="btn btn-accent" onclick={login}>Login</button>
-					</li>
-					<li>
-						<button class="btn" onclick={login}>Sign up</button>
+						<SignedIn>
+							<UserButton />
+						</SignedIn>
+						<SignedOut>
+							<SignInButton />
+						</SignedOut>
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
@@ -194,8 +192,12 @@
 		</ul>
 	</div>
 	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-2" id="navbar-login-buttons">
-		<button class="btn btn-accent" onclick={login}>Login</button>
-		<button class="btn" onclick={login}>Sign up</button>
+		<SignedIn>
+			<UserButton />
+		</SignedIn>
+		<SignedOut>
+			<SignInButton />
+		</SignedOut>
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
 		<a class="btn btn-accent" href="/home">Go to App</a>

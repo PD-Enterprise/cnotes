@@ -2,7 +2,6 @@
 	// Imports
 	import { theme, user, auth0Client, isAuthenticated } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
-	import auth from '$lib/utils/authService';
 	import AutoLogin from './autoLogin.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { goto } from '$app/navigation';
@@ -39,11 +38,8 @@
 			}
 		});
 	});
-	function login() {
-		auth.loginWithPopup($auth0Client, {});
-	}
+	function login() {}
 	function logout() {
-		auth.logout($auth0Client);
 		goto('/');
 	}
 </script>

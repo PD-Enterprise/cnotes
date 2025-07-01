@@ -71,6 +71,7 @@
 				body: JSON.stringify({ email: userData.email })
 			});
 			const result = await response.json();
+			// console.log(result);
 
 			if (result.status === 200) {
 				const serverNotes: note[] = result.data;

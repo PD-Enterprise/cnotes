@@ -1,4 +1,5 @@
 <script lang="ts">
+	// Imports
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
 	import Navbar from './components/navbar.svelte';
@@ -6,14 +7,30 @@
 	import '../app.css';
 	import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
+	import type { PageData } from './$types';
 	import { ClerkProvider } from 'svelte-clerk';
+	import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
 
-	let { children }: { children: Snippet } = $props();
+	let { children, data }: { children: Snippet; data: PageData } = $props();
+
+	if (data.initialState.sessionId) {
+		isAuthenticated.value = true;
+		// console.log('isAuth', isAuthenticated.value);
+		onMount(() => {
+			if (localStorage.getItem('AutoLogin') == 'true') {
+				autoLogin.value = true;
+				// console.log('autoLogin', autoLogin.value);
+			}
+			if (localStorage.getItem('syncState') == 'true') {
+				sync.set(true);
+				// console.log('sync', $sync);
+			}
+		});
+	}
 
 	const isAdminRoute = derived(page, ($page) => {
 		return $page.url.pathname.startsWith('/home');
 	});
-	onMount(async () => {});
 </script>
 
 <ClerkProvider>

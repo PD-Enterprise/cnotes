@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { theme, user, auth0Client, isAuthenticated } from '$lib/stores/store.svelte';
+	import { theme, isAuthenticated } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 	import AutoLogin from './autoLogin.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
@@ -26,15 +26,6 @@
 			} else {
 				localStorage.setItem('theme', 'dark');
 				document.documentElement.setAttribute('data-theme', 'dark');
-			}
-		});
-		$effect(() => {
-			// console.log(user.value);
-			if (user.value) {
-				// @ts-expect-error
-				userPictureUrl = user.value.picture;
-				// @ts-expect-error
-				userName = user.value.name;
 			}
 		});
 	});
@@ -124,30 +115,7 @@
 				</li>
 				<AutoLogin type="inapp" />
 				<Sync />
-				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
-					{#if $isAuthenticated}
-						<li class="mb-2">
-							<a
-								class="btn btn-accent"
-								href="#form"
-								onclick={() => {
-									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-									logout_modal.showModal();
-								}}>Log Out</a
-							>
-						</li>
-					{:else}
-						<li class="mb-2">
-							<a
-								class="btn btn-accent"
-								href="#form"
-								onclick={() => {
-									login();
-								}}>Log In</a
-							>
-						</li>
-					{/if}
-				</div>
+				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons"></div>
 			</ul>
 		</div>
 		<a class="btn btn-ghost text-2xl" href="/home">Home</a>

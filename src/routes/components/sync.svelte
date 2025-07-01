@@ -10,12 +10,6 @@
 		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
 
 		// Getting the autoLogin value from localStorage
-		let syncStateLocal = localStorage.getItem('syncState');
-		if (syncStateLocal == 'true') {
-			sync.set(true);
-		} else {
-			sync.set(false);
-		}
 		$effect(() => {
 			if ($sync == true) {
 				localStorage.setItem('syncState', 'true');
@@ -35,7 +29,7 @@
 			class="toggle"
 			checked={$sync}
 			onclick={() => {
-				if ($isAuthenticated) {
+				if (isAuthenticated.value) {
 					sync.set(!$sync);
 				} else {
 					showToast(

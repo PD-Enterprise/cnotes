@@ -3,9 +3,8 @@
 	import { onMount, onDestroy } from 'svelte';
 	import type { note, searchResult } from '../types';
 	import Note from '../components/note.svelte';
-	import { notesStore, user } from '../../lib/stores/store.svelte';
+	import { notesStore } from '../../lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
-	import { isAuthenticated } from '../../lib/stores/store.svelte';
 	import Icon from '@iconify/svelte';
 
 	// Variables
@@ -352,6 +351,8 @@
 		{/if}
 	</div>
 </div>
+
+<div class="search-button hidden"></div>
 
 <style>
 	.main {

@@ -10,10 +10,7 @@ export const isChanged = $state({ value: false });
 export const autoLogin = $state({ value: false });
 
 // Auth state
-export const auth0Client = writable<Auth0Client | null>(null);
-export const isAuthenticated = writable(null)
-export const user = $state({ value: {} });
-export const popupOpen = $state({ value: false });
+export const isAuthenticated = $state({ value: false });
 export const error = $state(null);
 
 export const sync = writable(false);

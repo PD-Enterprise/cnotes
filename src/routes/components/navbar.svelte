@@ -3,9 +3,8 @@
 	import icon from '../images/icon.png'; // Importing the icon image for the navbar
 	import { theme } from '$lib/stores/store.svelte'; // Importing the theme store for theme management
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
-	import { isAuthenticated, auth0Client } from '$lib/stores/store.svelte'; // Importing the loggedIn store to manage the user's login state
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import auth from '$lib/utils/authService';
+	import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
 
 	// Functions
 	onMount(async () => {
@@ -23,20 +22,6 @@
 
 		// Checking if the user is logged in and adjusting the visibility of buttons accordingly
 		// console.log('isAuthenticated: ', $isAuthenticated);
-		isAuthenticated.subscribe((value) => {
-			// console.log(value);
-			if (value) {
-				navbarLoginButtonsElement.classList.add('hidden');
-				menuLoginButtonsElement.classList.add('hidden');
-				navbarDashboardButtonsElement.classList.remove('hidden');
-				menuDashboardButtonsElement.classList.remove('hidden');
-			} else {
-				navbarLoginButtonsElement.classList.remove('hidden');
-				menuLoginButtonsElement.classList.remove('hidden');
-				navbarDashboardButtonsElement.classList.add('hidden');
-				menuDashboardButtonsElement.classList.add('hidden');
-			}
-		});
 		const localTheme = localStorage.getItem('theme');
 		if (localTheme === 'light') {
 			theme.value = true;
@@ -54,10 +39,6 @@
 			}
 		});
 	});
-
-	function login() {
-		auth.loginWithPopup($auth0Client, {});
-	}
 </script>
 
 <div class="navbar bg-base-300">
@@ -79,7 +60,7 @@
 					/>
 				</svg>
 			</div>
-			<ul class="menu dropdown-content menu-sm z-[1] mt-3 rounded-box bg-base-100 p-2 shadow">
+			<ul class="menu dropdown-content menu-sm z-[1] mt-3 gap-2 rounded-box bg-base-100 p-2 shadow">
 				<li><a href="#home">Home</a></li>
 				<li>
 					<a href="#features">Features</a>
@@ -129,10 +110,12 @@
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
-						<button class="btn btn-accent" onclick={login}>Login</button>
-					</li>
-					<li>
-						<button class="btn" onclick={login}>Sign up</button>
+						<SignedIn>
+							<a class="btn btn-accent" href="/home">Go to Home</a>
+						</SignedIn>
+						<SignedOut>
+							<SignInButton class="btn btn-accent" />
+						</SignedOut>
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
@@ -193,9 +176,14 @@
 			</li>
 		</ul>
 	</div>
-	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-2" id="navbar-login-buttons">
-		<button class="btn btn-accent" onclick={login}>Login</button>
-		<button class="btn" onclick={login}>Sign up</button>
+	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-3" id="navbar-login-buttons">
+		<SignedIn>
+			<a class="btn btn-accent" href="/home">Go to Home</a>
+			<UserButton />
+		</SignedIn>
+		<SignedOut>
+			<SignInButton class="btn btn-accent" />
+		</SignedOut>
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
 		<a class="btn btn-accent" href="/home">Go to App</a>

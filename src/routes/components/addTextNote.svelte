@@ -1,32 +1,12 @@
 <script lang="ts">
 	// Imports
-	import { Tipex, type TipexEditor, defaultExtensions } from '@friendofsvelte/tipex';
-	import '@friendofsvelte/tipex/styles/Tipex.css';
-	import '@friendofsvelte/tipex/styles/ProseMirror.css';
-	import '@friendofsvelte/tipex/styles/Controls.css';
-	import '@friendofsvelte/tipex/styles/EditLink.css';
-	import '@friendofsvelte/tipex/styles/CodeBlock.css';
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { theme, user } from '$lib/stores/store.svelte';
 	import config from '$lib/utils/apiConfig';
-	import Underline from '@tiptap/extension-underline';
-	import Heading from '@tiptap/extension-heading';
-	import Icon from '@iconify/svelte';
-	import Youtube from '@tiptap/extension-youtube';
-	import Highlight from '@tiptap/extension-highlight';
-	import Subscript from '@tiptap/extension-subscript';
-	import Typography from '@tiptap/extension-typography';
-	import TextAlign from '@tiptap/extension-text-align';
-	import '../../katex.min.css';
-	import Table from '@tiptap/extension-table';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableHeader from '@tiptap/extension-table-header';
-	import TableCell from '@tiptap/extension-table-cell';
-	import { onMount } from 'svelte';
 	import { isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
+	import Tiptap from './tiptap.svelte';
 
 	// Variables
 	let newNote: note = {
@@ -39,26 +19,6 @@
 		grade: undefined,
 		subject: ''
 	};
-	let editor: TipexEditor = $state();
-	let extensions = [
-		...defaultExtensions,
-		Heading.configure({
-			levels: [1, 2, 3, 4]
-		}),
-		Underline,
-		Youtube,
-		Highlight.configure({
-			multicolor: true
-		}),
-		Subscript,
-		TextAlign,
-		Table.configure({
-			resizable: true
-		}),
-		TableRow,
-		TableHeader,
-		TableCell
-	];
 	let isValid: boolean = $state(false);
 
 	// Functions
@@ -130,17 +90,6 @@
 		const result = await request.json();
 		console.log(result);
 	}
-	onMount(() => {
-		const editor = document.getElementById('editor') as HTMLDivElement;
-
-		$effect(() => {
-			if (theme.value) {
-				editor.classList.remove('dark');
-			} else {
-				editor.classList.add('dark');
-			}
-		});
-	});
 </script>
 
 <dialog id="meta_data_modal" class="modal">
@@ -148,7 +97,7 @@
 		<div class="absolute right-2">
 			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
 				<button
-					class="btn btn-ghost btn-sm btn-circle top-2"
+					class="btn btn-circle btn-ghost btn-sm top-2"
 					onclick={(e) => {
 						e.preventDefault();
 						isValid = validateNote(newNote);
@@ -182,7 +131,7 @@
 							{#if newNoteKey == 'dateCreated'}
 								<input
 									type="date"
-									class="input-bordered input w-full max-w-xs"
+									class="input input-bordered w-full max-w-xs"
 									bind:value={newNote[newNoteKey]}
 									required
 									placeholder="Date Created"
@@ -190,7 +139,7 @@
 							{:else}
 								<input
 									type="text"
-									class="input-bordered input w-full max-w-xs"
+									class="input input-bordered w-full max-w-xs"
 									required
 									bind:value={newNote[newNoteKey]}
 									placeholder={newNoteKey}
@@ -231,298 +180,21 @@
 				<div class="save-button-container w-40">
 					{#if !isValid}
 						<button
-							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-disabled btn-outline btn-accent h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{:else}
 						<button
-							class="btn btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-outline btn-accent h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{/if}
 				</div>
 			</div>
 		</div>
-		<form class="editor-form-container flex h-full flex-col gap-3 bg-blue-500">
-			<div class="editor h-full overflow-hidden bg-yellow-500" id="editor">
-				<Tipex
-					body=""
-					floating
-					focal
-					{extensions}
-					bind:tipex={editor}
-					class=" h-full p-2"
-					oncreate={() => {
-						// console.log('editor created');
-					}}
-					onupdate={() => {
-						// console.log(editor.getHTML());
-						isValid = validateNote(newNote);
-					}}
-				>
-					{#snippet controlComponent(tipex)}
-						<div class="tipex-controller">
-							<div class="tipex-controller-wrapper">
-								<div class="tipex-basic-controller-wrapper">
-									{#each { length: 4 } as _, index}
-										{@const level = index + 1}
-										<button
-											class="tipex-edit-button"
-											onclick={() => {
-												// @ts-expect-error
-												editor?.chain().focus().toggleHeading({ level }).run();
-											}}
-											class:active={editor?.isActive('heading', { level })}
-										>
-											H{level}
-										</button>
-									{/each}
-									<button
-										aria-label="Paragraph"
-										onclick={() => {
-											// @ts-expect-error
-											editor?.chain().focus().setParagraph().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('paragraph')}
-									>
-										<Icon icon="fa6-solid:paragraph" />
-									</button>
-									<button
-										aria-label="Underline"
-										onclick={() => {
-											editor?.chain().focus().toggleUnderline().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('underline')}
-									>
-										<Icon icon="fa6-solid:underline" />
-									</button>
-									<button
-										aria-label="Highlight"
-										onclick={() => {
-											editor?.chain().focus().toggleHighlight().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('highlight')}
-									>
-										<Icon icon="fa6-solid:highlighter" />
-									</button>
-									<button
-										aria-label="Bold"
-										onclick={() => {
-											// @ts-expect-error
-											editor?.chain().focus().toggleBold().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('bold')}
-									>
-										<Icon icon="fa6-solid:bold" />
-									</button>
-									<button
-										aria-label="Italic"
-										onclick={() => {
-											// @ts-expect-error
-											editor?.chain().focus().toggleItalic().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('italic')}
-									>
-										<Icon icon="fa6-solid:italic" />
-									</button>
-									<button
-										aria-label="Table"
-										onclick={() => {
-											editor
-												?.chain()
-												.focus()
-												.insertTable({ rows: 3, cols: 2, withHeaderRow: true })
-												.run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('table')}
-									>
-										<Icon icon="fa6-solid:table" />
-									</button>
-									{#if editor?.isActive('table')}
-										<div class="table-controls flex gap-1">
-											<button
-												aria-label="Add Column Before"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().addColumnBefore().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Add Column Before"
-											>
-												<Icon icon="fa6-solid:table-columns" />
-											</button>
-
-											<button
-												aria-label="Add Column After"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().addColumnAfter().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Add Column After"
-											>
-												<Icon icon="fa6-solid:table-columns" />
-											</button>
-
-											<button
-												aria-label="Add Row Before"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().addRowBefore().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Add Row Before"
-											>
-												<Icon icon="fa6-solid:plus" />
-											</button>
-
-											<button
-												aria-label="Add Row After"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().addRowAfter().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Add Row After"
-											>
-												<Icon icon="fa6-solid:plus" />
-											</button>
-
-											<button
-												aria-label="Delete Column"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().deleteColumn().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Delete Column"
-											>
-												<Icon icon="fa6-solid:trash" />
-											</button>
-
-											<button
-												aria-label="Delete Row"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().deleteRow().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Delete Row"
-											>
-												<Icon icon="fa6-solid:trash" />
-											</button>
-
-											<button
-												aria-label="Delete Table"
-												onclick={() => {
-													if (editor) {
-														editor.chain().focus().deleteTable().run();
-													}
-												}}
-												class="tipex-edit-button"
-												title="Delete Table"
-											>
-												<Icon icon="fa6-solid:trash-can" />
-											</button>
-										</div>
-									{/if}
-									<button
-										aria-label="Subscript"
-										onclick={() => {
-											editor?.chain().focus().toggleSubscript().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('subscript')}
-									>
-										<Icon icon="fa6-solid:subscript" />
-									</button>
-									<!-- <button
-							aria-label="Center"
-							onclick={() => {
-								editor?.chain().focus().setTextAlign('center').run();
-							}}
-							class="tipex-edit-button"
-							class:active={editor?.isActive({ textAlign: 'center' })}
-						>
-							<Icon icon="fa6-solid:align-center" />
-						</button> -->
-									<button
-										aria-label="Code"
-										onclick={() => {
-											// @ts-expect-error
-											editor?.chain().focus().toggleCode().run();
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('code')}
-									>
-										<Icon icon="fa6-solid:code" />
-									</button>
-									<!-- <button
-							aria-label="Table"
-							onclick={() => {
-								editor
-									?.chain()
-									.focus()
-									.insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-									.run();
-							}}
-							class="tipex-edit-button"
-							class:active={editor?.isActive('Table')}
-						>
-							<Icon icon="fa6-solid:table" />
-						</button> -->
-									<button
-										aria-label="Youtube"
-										onclick={() => {
-											const url = prompt('Enter Youtube URL');
-											if (url) {
-												editor
-													?.chain()
-													.focus()
-													.setYoutubeVideo({
-														src: url,
-														width: Math.max(320, 640),
-														height: Math.max(180, 480)
-													})
-													.run();
-											}
-										}}
-										class="tipex-edit-button"
-										class:active={editor?.isActive('Youtube')}
-									>
-										<svg
-											viewBox="0 0 256 180"
-											width="32"
-											height="22"
-											xmlns="http://www.w3.org/2000/svg"
-											preserveAspectRatio="xMidYMid"
-										>
-											<path
-												d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
-												fill="red"
-											/>
-											<path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z" />
-										</svg>
-									</button>
-								</div>
-							</div>
-						</div>
-					{/snippet}
-				</Tipex>
-			</div>
-		</form>
+		<div class="editor h-full">
+			<Tiptap></Tiptap>
+		</div>
 	</div>
 </div>
 
@@ -608,182 +280,5 @@
 			opacity: 1;
 			transform: translateY(0);
 		}
-	}
-	.tipex-controller {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		position: sticky;
-		bottom: 0;
-		z-index: 10;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem; /* gap-2 */
-		border-radius: 0; /* rounded-none */
-		padding-left: 0.75rem; /* px-3 */
-		padding-right: 0.75rem;
-		padding-top: 0.5rem; /* py-2 */
-		padding-bottom: 0.5rem;
-	}
-	@media (min-width: 768px) {
-		.tipex-controller {
-			flex-direction: row;
-		}
-	}
-	.tipex-controller.dark,
-	:global(.dark) .tipex-controller {
-		background-color: #171717; /* dark:bg-neutral-900 */
-	}
-
-	.tipex-controller-wrapper {
-		display: flex;
-		width: 100%;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.75rem; /* gap-3 */
-	}
-
-	.tipex-basic-controller-wrapper {
-		display: flex;
-		gap: 0.5rem; /* gap-2 */
-	}
-
-	.tipex-edit-button {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		color: #374151; /* text-neutral-700 */
-		display: flex;
-		height: 2.5rem;
-		width: 2.5rem;
-		cursor: pointer;
-		align-items: center;
-		justify-content: center;
-		border-radius: 0.375rem; /* rounded-md */
-		border: 0;
-		padding: 0;
-		font-size: 0.75rem; /* text-xs */
-		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-		transition-duration: 100ms;
-	}
-	.tipex-edit-button.dark,
-	:global(.dark) .tipex-edit-button {
-		background-color: rgba(31, 41, 55, 0.8); /* dark:bg-neutral-800/80 */
-		color: #e5e7eb; /* dark:text-gray-200 */
-	}
-
-	.tipex-edit-button.active {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
-	}
-	.tipex-edit-button.active.dark,
-	:global(.dark) .tipex-edit-button.active {
-		background-color: #374151; /* dark:bg-gray-700 */
-	}
-
-	/* Table-specific styling */
-	.tiptap table {
-		border-collapse: collapse;
-		margin: 0;
-		overflow: hidden;
-		table-layout: fixed;
-		width: 100%;
-	}
-
-	.tiptap table td,
-	.tiptap table th {
-		border: 1px solid #e5e7eb; /* Using a Tailwind gray color instead of var(--gray-3) */
-		box-sizing: border-box;
-		min-width: 1em;
-		padding: 6px 8px;
-		position: relative;
-		vertical-align: top;
-	}
-
-	.tiptap table td > *,
-	.tiptap table th > * {
-		margin-bottom: 0;
-	}
-
-	.tiptap table th {
-		background-color: #f3f4f6; /* Using a Tailwind gray color instead of var(--gray-1) */
-		font-weight: bold;
-		text-align: left;
-	}
-
-	.tiptap table .selectedCell:after {
-		background: rgba(
-			200,
-			200,
-			200,
-			0.4
-		); /* Using a semi-transparent gray instead of var(--gray-2) */
-		content: '';
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		pointer-events: none;
-		position: absolute;
-		z-index: 2;
-	}
-
-	.tiptap table .column-resize-handle {
-		background-color: #8b5cf6; /* Using Tailwind purple color instead of var(--purple) */
-		bottom: -2px;
-		pointer-events: none;
-		position: absolute;
-		right: -2px;
-		top: 0;
-		width: 4px;
-	}
-
-	.tiptap .tableWrapper {
-		margin: 1.5rem 0;
-		overflow-x: auto;
-	}
-
-	.tiptap.resize-cursor {
-		cursor: ew-resize;
-		cursor: col-resize;
-	}
-
-	/* Add dark mode support */
-	:global(.dark) .tiptap table td,
-	:global(.dark) .tiptap table th {
-		border-color: #374151; /* Dark mode border color */
-	}
-
-	:global(.dark) .tiptap table th {
-		background-color: #1f2937; /* Dark mode header background */
-	}
-
-	:global(.dark) .tiptap table .selectedCell:after {
-		background: rgba(55, 65, 81, 0.4); /* Dark mode selection color */
-	}
-
-	.table-controls {
-		display: flex;
-		align-items: center;
-		padding: 2px;
-		border-radius: 4px;
-	}
-
-	/* Add tooltips for the buttons */
-	.tipex-edit-button {
-		position: relative;
-	}
-
-	.tipex-edit-button:hover::after {
-		content: attr(title);
-		position: absolute;
-		bottom: 100%;
-		left: 50%;
-		transform: translateX(-50%);
-		background-color: rgba(0, 0, 0, 0.8);
-		color: #fff;
-		padding: 4px 8px;
-		border-radius: 4px;
-		z-index: 10;
 	}
 </style>

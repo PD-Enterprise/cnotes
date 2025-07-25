@@ -1,16 +1,11 @@
 <script lang="ts">
 	// Imports
-	import { theme, user, auth0Client, isAuthenticated } from '$lib/stores/store.svelte';
+	import { theme } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
-	import auth from '$lib/utils/authService';
 	import AutoLogin from './autoLogin.svelte';
-	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { goto } from '$app/navigation';
 	import SvelteToast from './svelteToast.svelte';
 	import Sync from './sync.svelte';
-
-	let userPictureUrl: string = $state('');
-	let userName: string = $state('');
+	import { UserButton, SignOutButton, SignedIn, SignInButton, SignedOut } from 'svelte-clerk';
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -29,23 +24,7 @@
 				document.documentElement.setAttribute('data-theme', 'dark');
 			}
 		});
-		$effect(() => {
-			// console.log(user.value);
-			if (user.value) {
-				// @ts-expect-error
-				userPictureUrl = user.value.picture;
-				// @ts-expect-error
-				userName = user.value.name;
-			}
-		});
 	});
-	function login() {
-		auth.loginWithPopup($auth0Client, {});
-	}
-	function logout() {
-		auth.logout($auth0Client);
-		goto('/');
-	}
 </script>
 
 <SvelteToast />
@@ -73,19 +52,7 @@
 				class="menu dropdown-content menu-sm z-[1] mt-3 flex gap-2 rounded-box bg-base-100 p-2 shadow"
 			>
 				<li>
-					<a
-						href="https://pd-enterprise.pages.dev/admin-dashboard"
-						title="Admin Dashboard"
-						class="flex justify-center"
-					>
-						<img
-							src={userPictureUrl}
-							alt="profile"
-							title={userName}
-							class="w-15 h-10 cursor-pointer rounded-full"
-						/>
-						{userName}
-					</a>
+					<UserButton />
 				</li>
 				<li>
 					<label class="flex cursor-pointer gap-2">
@@ -128,62 +95,16 @@
 				</li>
 				<AutoLogin type="inapp" />
 				<Sync />
-				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
-					{#if $isAuthenticated}
-						<li class="mb-2">
-							<a
-								class="btn btn-accent"
-								href="#form"
-								onclick={() => {
-									const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-									logout_modal.showModal();
-								}}>Log Out</a
-							>
-						</li>
-					{:else}
-						<li class="mb-2">
-							<a
-								class="btn btn-accent"
-								href="#form"
-								onclick={() => {
-									login();
-								}}>Log In</a
-							>
-						</li>
-					{/if}
+				<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
+					<SignedOut>
+						<SignInButton class="btn btn-accent w-full" />
+					</SignedOut>
 				</div>
 			</ul>
 		</div>
 		<a class="btn btn-ghost text-2xl" href="/home">Home</a>
 	</div>
 </div>
-<dialog id="logout_modal" class="modal">
-	<div class="modal-box">
-		<form method="dialog">
-			<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
-		</form>
-		<h1 class="text-2xl">Log out</h1>
-		<p class="py-4">Are you sure you want to log out?</p>
-		<div class="modal-action">
-			<button
-				class="btn btn-info"
-				onclick={() => {
-					const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-					logout_modal.close();
-				}}>Cancel</button
-			>
-			<button
-				class="btn btn-error"
-				onclick={() => {
-					logout();
-					const logout_modal = document.getElementById('logout_modal') as HTMLDialogElement;
-					logout_modal.close();
-				}}
-				>Log Out
-			</button>
-		</div>
-	</div>
-</dialog>
 
 <style>
 	.navbar {

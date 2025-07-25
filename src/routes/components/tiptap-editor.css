@@ -1,5 +1,4 @@
-/* Table styles */
-.ProseMirror table {
+Table styles .ProseMirror table {
     border-collapse: collapse;
     margin: 0;
     overflow: hidden;
@@ -79,26 +78,6 @@ table th {
     align-items: center;
     padding: 2px;
     border-radius: 4px;
-}
-
-/* Add tooltips for the buttons */
-.tipex-edit-button {
-    position: relative;
-}
-
-.tipex-edit-button:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 4px 8px;
-    background-color: #374151;
-    color: white;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 10;
 }
 
 /* Table styles */

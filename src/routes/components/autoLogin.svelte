@@ -13,13 +13,6 @@
 		// Getting the auto-login element
 		const autoLoginElement = document.getElementById('auto-login') as HTMLInputElement;
 
-		// Getting the autoLogin value from localStorage
-		let autoLoginLocal = localStorage.getItem('AutoLogin');
-		if (autoLoginLocal == 'true') {
-			autoLogin.value = true;
-		} else {
-			autoLogin.value = false;
-		}
 		$effect(() => {
 			if (autoLogin.value == true) {
 				localStorage.setItem('AutoLogin', 'true');

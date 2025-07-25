@@ -13,10 +13,6 @@ const showToast = (title: string, body: string, duration: number, type: string) 
         description: body,
         duration: duration,
         placement: 'bottom-right',
-        //@ts-ignore
-        type: 'info',
-        //@ts-ignore
-        placement: 'bottom-right',
         showProgress: true,
         //@ts-ignore
         type: type,

@@ -21,4 +21,6 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # lock-file
-yarn.lock
+pnpm-lock.yaml
+
+.vscode

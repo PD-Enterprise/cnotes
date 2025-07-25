@@ -14,11 +14,19 @@ export async function GET({ url, locals }) {
         const result = await response.json();
         // console.log(result);
 
-        return new Response(JSON.stringify(
-            {
-                data: result.data
-            }
-        ))
+        if (result.status == 200) {
+            return new Response(JSON.stringify(
+                {
+                    data: result.data
+                }
+            ))
+        } else {
+            return new Response(JSON.stringify(
+                {
+                    data: undefined
+                }
+            ))
+        }
     } else {
         return new Response(JSON.stringify(
             {

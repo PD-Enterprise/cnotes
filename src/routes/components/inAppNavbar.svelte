@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Imports
-	import { theme, isAuthenticated } from '$lib/stores/store.svelte';
+	import { theme } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
 	import AutoLogin from './autoLogin.svelte';
 	import SvelteToast from './svelteToast.svelte';
@@ -96,9 +96,6 @@
 				<AutoLogin type="inapp" />
 				<Sync />
 				<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
-					<SignedIn>
-						<SignOutButton class="btn btn-error w-full" />
-					</SignedIn>
 					<SignedOut>
 						<SignInButton class="btn btn-accent w-full" />
 					</SignedOut>

@@ -3,7 +3,6 @@
 	import type { note } from '../../../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import config from '$lib/utils/apiConfig';
-	import '../../app.css';
 	// import '@friendofsvelte/tipex/styles/Tipex.css';
 	// import '@friendofsvelte/tipex/styles/ProseMirror.css';
 	// import '@friendofsvelte/tipex/styles/Controls.css';

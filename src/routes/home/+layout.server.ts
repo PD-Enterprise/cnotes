@@ -9,7 +9,7 @@ export const load = async ({ locals, url }) => {
     // console.log(isSharingPage)
 
     if (!userId && !isSharingPage) {
-        redirect(302, "/")
+        // redirect(302, "/")
     }
 
     return {

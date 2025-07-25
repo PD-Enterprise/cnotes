@@ -4,7 +4,6 @@
 	import InAppNavbar from '../components/inAppNavbar.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
-	import './app.css';
 	import { ClerkProvider } from 'svelte-clerk';
 
 	let { children } = $props();

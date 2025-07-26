@@ -54,15 +54,13 @@
 		"@tiptap/extension-youtube": "^2.26.1",
 		"@tiptap/pm": "^3.0.7",
 		"@tiptap/starter-kit": "^3.0.7",
-		"cookie": "^1.0.2",
 		"dompurify": "^3.2.6",
 		"katex": "^0.16.22",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"svelte-clerk": "^0.13.4",
 		"svelte-toasts": "^1.1.2",
-		"tinymce": "^7.9.1",
-		"uuid": "^11.1.0"
+		"tinymce": "^7.9.1"
 	},
 	"packageManager": "pnpm@10.13.1"
 }

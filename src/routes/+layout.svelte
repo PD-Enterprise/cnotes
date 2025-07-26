@@ -5,47 +5,48 @@
 	import Navbar from './components/navbar.svelte';
 	import Footer from './components/footer.svelte';
 	import '../app.css';
-	import { onMount } from 'svelte';
+	// import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
-	import { ClerkProvider } from 'svelte-clerk';
-	import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
+	// import { ClerkProvider } from 'svelte-clerk';
+	// import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 
-	if (data.initialState.sessionId) {
-		isAuthenticated.value = true;
-		// console.log('isAuth', isAuthenticated.value);
-		onMount(() => {
-			if (localStorage.getItem('AutoLogin') == 'true') {
-				autoLogin.value = true;
-				// console.log('autoLogin', autoLogin.value);
-			}
-			if (localStorage.getItem('syncState') == 'true') {
-				sync.set(true);
-				// console.log('sync', $sync);
-			}
-		});
-	}
+	// if (data.initialState.sessionId) {
+	// 	isAuthenticated.value = true;
+	// 	// console.log('isAuth', isAuthenticated.value);
+	// 	onMount(() => {
+	// 		if (localStorage.getItem('AutoLogin') == 'true') {
+	// 			autoLogin.value = true;
+	// 			// console.log('autoLogin', autoLogin.value);
+	// 		}
+	// 		if (localStorage.getItem('syncState') == 'true') {
+	// 			sync.set(true);
+	// 			// console.log('sync', $sync);
+	// 		}
+	// 	});
+	// }
 
 	const isAdminRoute = derived(page, ($page) => {
 		return $page.url.pathname.startsWith('/home');
 	});
 </script>
 
-<ClerkProvider>
-	<div class="main">
-		<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
-			<Navbar />
-		</div>
-		<div class="content">
-			{@render children()}
-		</div>
-		<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
-			<Footer />
-		</div>
+<!-- <ClerkProvider> -->
+<div class="main">
+	<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
+		<Navbar />
 	</div>
-</ClerkProvider>
+	<div class="content">
+		{@render children()}
+	</div>
+	<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
+		<Footer />
+	</div>
+</div>
+
+<!-- </ClerkProvider> -->
 
 <style>
 	.navbar {

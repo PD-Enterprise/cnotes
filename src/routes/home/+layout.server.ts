@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit";
-import { clerkClient } from "svelte-clerk/server";
+// import { clerkClient } from "svelte-clerk/server";
 
 export const load = async ({ locals, url }) => {
     const { userId } = locals.auth()

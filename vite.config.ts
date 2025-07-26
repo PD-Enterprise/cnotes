@@ -7,8 +7,5 @@ export default defineConfig({
 	],
 	define: {
 		'process.env.IS_PREACT': JSON.stringify('true')
-	},
-	ssr: {
-		external: ['node:crypto']
 	}
 });

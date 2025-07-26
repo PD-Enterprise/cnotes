@@ -3,11 +3,5 @@
 	"compatibility_date": "2025-02-06",
 	"compatibility_flags": ["nodejs_compat"],
 	"pages_build_output_dir": "dist",
-	"vars": {},
-	"assets": {
-		"directory": "./build"
-	},
-	"build": {
-		"command": "npm run build"
-	}
+	"vars": {}
 }

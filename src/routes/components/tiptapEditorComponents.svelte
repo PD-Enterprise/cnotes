@@ -1,43 +1,4 @@
-<!-- <button
-	aria-label="Underline"
-	onclick={() => {
-		editor.chain().focus().toggleUnderline().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('underline')}
->
-	<Icon icon="fa6-solid:underline" />
-</button>
-<button
-	aria-label="Highlight"
-	onclick={() => {
-		editor?.chain().focus().toggleHighlight().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('highlight')}
->
-	<Icon icon="fa6-solid:highlighter" />
-</button>
-<button
-	aria-label="Bold"
-	onclick={() => {
-		editor?.chain().focus().toggleBold().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('bold')}
->
-	<Icon icon="fa6-solid:bold" />
-</button>
-<button
-	aria-label="Italic"
-	onclick={() => {
-		editor?.chain().focus().toggleItalic().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('italic')}
->
-	<Icon icon="fa6-solid:italic" />
-</button>
+<!--
 <button
 	aria-label="Table"
 	onclick={() => {
@@ -143,36 +104,26 @@
 	</div>
 {/if}
 <button
-	aria-label="Subscript"
-	onclick={() => {
-		editor?.chain().focus().toggleSubscript().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('subscript')}
->
-	<Icon icon="fa6-solid:subscript" />
-</button> -->
-<!-- <button
-							aria-label="Center"
-							onclick={() => {
-								editor?.chain().focus().setTextAlign('center').run();
-							}}
-							class="tipex-edit-button"
-							class:active={editor?.isActive({ textAlign: 'center' })}
-						>
-							<Icon icon="fa6-solid:align-center" />
-						</button> -->
-<!-- <button
-	aria-label="Code"
-	onclick={() => {
-		editor?.chain().focus().toggleCode().run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('code')}
->
-	<Icon icon="fa6-solid:code" />
-</button> -->
-<!-- <button
+					aria-label="Center"
+					onclick={() => {
+						editor.commands.setTextAlign('center').run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive({ textAlign: 'center' })}
+				>
+					<Icon icon="fa6-solid:align-center" />
+
+				<button
+					aria-label="Code"
+					onclick={() => {
+						editor?.chain().focus().toggleCode().run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive('code')}
+				>
+					<Icon icon="fa6-solid:code" />
+				</button> 
+<button
 							aria-label="Table"
 							onclick={() => {
 								editor

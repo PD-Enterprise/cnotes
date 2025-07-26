@@ -1,6 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
+	import { Placeholder } from '@tiptap/extensions';
 	import StarterKit from '@tiptap/starter-kit';
 	import Mathematics from '@tiptap/extension-mathematics';
 	import 'katex/dist/katex.min.css';
@@ -8,31 +9,19 @@
 	import './tiptap-editor.css';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
-	import Youtube from '@tiptap/extension-youtube';
+	// import Youtube from '@tiptap/extension-youtube';
 	import Subscript from '@tiptap/extension-subscript';
+	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
 	import TextAlign from '@tiptap/extension-text-align';
 	// import Table from '@tiptap/extension-table';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableHeader from '@tiptap/extension-table-header';
-	import TableCell from '@tiptap/extension-table-cell';
-	import TiptapEditorComponents from './tiptapEditorComponents.svelte';
+	// import TableRow from '@tiptap/extension-table-row';
+	// import TableHeader from '@tiptap/extension-table-header';
+	// import TableCell from '@tiptap/extension-table-cell';
 
 	let element;
-	let editor;
-	// Underline,
-	// Youtube,
-	// Highlight.configure({
-	// 	multicolor: true
-	// }),
-	// Subscript,
-	// TextAlign,
-	// Table.configure({
-	// 	resizable: true
-	// }),
-	// TableRow,
-	// TableHeader,
-	// TableCell,
+	let editor = $state();
+	let content = $props();
 
 	onMount(() => {
 		editor = new Editor({
@@ -76,6 +65,12 @@
 				Highlight.configure({
 					multicolor: true
 				}),
+				Subscript,
+				Superscript,
+				TextAlign.configure({
+					alignments: ['left', 'center', 'right'],
+					defaultAlignment: 'left'
+				}),
 				Mathematics.configure({
 					inlineOptions: {
 						onClick: (node) => {
@@ -92,13 +87,15 @@
 						}
 					}
 				})
+				// Youtube,
+				// Table.configure({
+				// 	resizable: true
+				// }),
+				// TableRow,
+				// TableHeader,
+				// TableCell,
 			],
-			content: `
-			<h1>This is a heading with first level</h1>
-			<h2>This is a heading with second level</h2>
-			<h3>This is a heading with third level</h3>
-			<p>This is a paragraph</p>
-			`,
+			content: content.content || '',
 			onTransaction: () => {
 				editor = editor;
 			},
@@ -130,6 +127,7 @@
 						onclick={() => {
 							editor.chain().focus().toggleHeading({ level }).run();
 						}}
+						class:active={editor?.isActive('heading', { level })}
 					>
 						H{level}
 					</button>
@@ -139,8 +137,65 @@
 					onclick={() => {
 						editor.chain().focus().setParagraph().run();
 					}}
+					class:active={editor?.isActive('paragraph')}
 					class="tipex-edit-button btn"><Icon icon="fa6-solid:paragraph" /></button
 				>
+				<button
+					aria-label="Underline"
+					class="tipex-edit-button btn"
+					onclick={() => {
+						editor.chain().focus().toggleUnderline().run();
+					}}
+					class:active={editor?.isActive('underline')}><Icon icon="fa6-solid:underline" /></button
+				>
+				<button
+					aria-label="Highlight"
+					class="tipex-edit-button btn"
+					onclick={() => {
+						editor.chain().focus().toggleHighlight().run();
+					}}
+					class:active={editor?.isActive('highlight')}><Icon icon="fa6-solid:highlighter" /></button
+				>
+				<button
+					aria-label="Bold"
+					onclick={() => {
+						editor?.chain().focus().toggleBold().run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive('bold')}
+				>
+					<Icon icon="fa6-solid:bold" />
+				</button>
+				<button
+					aria-label="Italic"
+					onclick={() => {
+						editor?.chain().focus().toggleItalic().run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive('italic')}
+				>
+					<Icon icon="fa6-solid:italic" />
+				</button>
+				<button
+					aria-label="Subscript"
+					onclick={() => {
+						editor?.chain().focus().toggleSubscript().run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive('subscript')}
+				>
+					<Icon icon="fa6-solid:subscript" />
+				</button>
+				<button
+					aria-label="Subscript"
+					onclick={() => {
+						editor?.chain().focus().toggleSuperscript().run();
+					}}
+					class="tipex-edit-button"
+					class:active={editor?.isActive('superscript')}
+				>
+					<Icon icon="fa6-solid:superscript" />
+				</button>
 				<button
 					aria-label="Insert Math Formula"
 					onclick={() => {
@@ -165,20 +220,6 @@
 						/></svg
 					></button
 				>
-				<button
-					aria-label="Underline"
-					class="tipex-edit-button btn"
-					onclick={() => {
-						editor.chain().focus().toggleUnderline().run();
-					}}><Icon icon="fa6-solid:underline" /></button
-				>
-				<button
-					aria-label="Highlight"
-					class="tipex-edit-button btn"
-					onclick={() => {
-						editor.chain().focus().toggleHighlight().run();
-					}}><Icon icon="fa6-solid:highlighter" /></button
-				>
 			</div>
 		</div>
 	</div>
@@ -187,6 +228,20 @@
 <style>
 	.editor {
 		height: 100%;
+	}
+	.tiptap p.is-editor-empty:first-child::before {
+		color: #adb5bd;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
+	}
+	.tiptap p.is-empty::before {
+		color: #adb5bd;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
 	}
 	.tipex-controller {
 		background-color: #f3f4f6;

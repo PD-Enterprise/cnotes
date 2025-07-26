@@ -50,7 +50,7 @@
 		// console.log(result);
 
 		const serverNote = result.data;
-		console.log('server note', serverNote);
+		// console.log('server note', serverNote);
 
 		if (serverNote && serverNote != undefined) {
 			noteData = { ...serverNote };
@@ -163,9 +163,6 @@
 			}
 		});
 	});
-	onDestroy(() => {
-		window.removeEventListener('keydown', handleSaveShortcut);
-	});
 </script>
 
 <dialog id="meta_data_modal" class="modal">
@@ -256,7 +253,7 @@
 				>
 			</div>
 			<div class="editor h-full">
-				<Tiptap />
+				<Tiptap content={noteData.notescontent} />
 				<!-- <Tipex
 					body={noteData.notescontent}
 					floating

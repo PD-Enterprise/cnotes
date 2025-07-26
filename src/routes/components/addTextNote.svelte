@@ -23,7 +23,7 @@
 
 	// Functions
 	async function addNote() {
-		if (!$isAuthenticated) {
+		if (!isAuthenticated.value) {
 			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
 			return;
 		}
@@ -76,7 +76,7 @@
 		}
 	}
 	async function addToDB(note: note) {
-		console.log(note);
+		// console.log(note);
 		const request = await fetch(`${config.apiUrl}notes/new-note/text`, {
 			method: 'POST',
 			headers: {
@@ -88,7 +88,7 @@
 			})
 		});
 		const result = await request.json();
-		console.log(result);
+		// console.log(result);
 	}
 </script>
 
@@ -97,7 +97,7 @@
 		<div class="absolute right-2">
 			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
 				<button
-					class="btn btn-circle btn-ghost btn-sm top-2"
+					class="btn btn-ghost btn-sm btn-circle top-2"
 					onclick={(e) => {
 						e.preventDefault();
 						isValid = validateNote(newNote);
@@ -131,7 +131,7 @@
 							{#if newNoteKey == 'dateCreated'}
 								<input
 									type="date"
-									class="input input-bordered w-full max-w-xs"
+									class="input-bordered input w-full max-w-xs"
 									bind:value={newNote[newNoteKey]}
 									required
 									placeholder="Date Created"
@@ -139,7 +139,7 @@
 							{:else}
 								<input
 									type="text"
-									class="input input-bordered w-full max-w-xs"
+									class="input-bordered input w-full max-w-xs"
 									required
 									bind:value={newNote[newNoteKey]}
 									placeholder={newNoteKey}
@@ -180,12 +180,12 @@
 				<div class="save-button-container w-40">
 					{#if !isValid}
 						<button
-							class="btn btn-disabled btn-outline btn-accent h-12 border border-base-content"
+							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{:else}
 						<button
-							class="btn btn-outline btn-accent h-12 border border-base-content"
+							class="btn btn-accent btn-outline h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{/if}
@@ -193,7 +193,7 @@
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Tiptap></Tiptap>
+			<Tiptap />
 		</div>
 	</div>
 </div>

@@ -16,7 +16,7 @@ export const handle: Handle = sequence(
 
         // Otherwise, proceed with the Clerk handler
         return handleClerk(CLERK_SECRET_KEY, {
-            debug: true,
+            // debug: true,
             protectedPaths: ['/home'], // Or more specific paths if you have them
             signInUrl: '/sign-in',
         })({ event, resolve });

@@ -1,1 +1,0 @@
-import{t as s}from"./CPScdUsq.js";import"./Bzak7iHL.js";import"./CfIfVLxy.js";import{t as m}from"./DxeMKRv2.js";const n=(t,o,e,r)=>{s.add({title:t,description:o,duration:e,placement:"bottom-right",showProgress:!0,type:r,theme:m.value?"light":"dark",onClick:()=>{},onRemove:()=>{}})};export{n as s};

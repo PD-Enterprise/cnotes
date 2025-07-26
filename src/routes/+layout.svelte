@@ -11,7 +11,6 @@
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	// console.log(data);
-	// @ts-expect-error
 	if (data.session && data.session.userId) {
 		isAuthenticated.value = true;
 		// console.log('isAuth', isAuthenticated.value);

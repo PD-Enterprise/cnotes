@@ -72,6 +72,10 @@
 						];
 					}
 				}),
+				Underline,
+				Highlight.configure({
+					multicolor: true
+				}),
 				Mathematics.configure({
 					inlineOptions: {
 						onClick: (node) => {
@@ -160,6 +164,20 @@
 							d="M19 5h-7L8 19l-3-6H3m11 0l6 6m-6 0l6-6"
 						/></svg
 					></button
+				>
+				<button
+					aria-label="Underline"
+					class="tipex-edit-button btn"
+					onclick={() => {
+						editor.chain().focus().toggleUnderline().run();
+					}}><Icon icon="fa6-solid:underline" /></button
+				>
+				<button
+					aria-label="Highlight"
+					class="tipex-edit-button btn"
+					onclick={() => {
+						editor.chain().focus().toggleHighlight().run();
+					}}><Icon icon="fa6-solid:highlighter" /></button
 				>
 			</div>
 		</div>

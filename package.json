@@ -31,7 +31,6 @@
 		"wrangler": "^4.26.0"
 	},
 	"dependencies": {
-		"@auth0/auth0-spa-js": "^2.3.0",
 		"@excalidraw/excalidraw": "^0.17.6",
 		"@friendofsvelte/tipex": "^0.0.8",
 		"@iconify/svelte": "^5.0.1",

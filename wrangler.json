@@ -1,0 +1,12 @@
+{
+	"name": "cnotes",
+	"compatibility_date": "2025-02-06",
+	"compatibility_flags": ["nodejs_compat"],
+	"vars": {},
+	"assets": {
+		"directory": "./build"
+	},
+	"build": {
+		"command": "npm run build"
+	}
+}

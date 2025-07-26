@@ -1,0 +1,1 @@
+This folder contains the built output assets for the worker "cnotes" generated at 2025-07-26T07:53:09.259Z.

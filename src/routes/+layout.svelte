@@ -33,20 +33,19 @@
 	});
 </script>
 
-<!-- <ClerkProvider> -->
-<div class="main">
-	<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
-		<Navbar />
+<ClerkProvider>
+	<div class="main">
+		<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
+			<Navbar />
+		</div>
+		<div class="content">
+			{@render children()}
+		</div>
+		<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
+			<Footer />
+		</div>
 	</div>
-	<div class="content">
-		{@render children()}
-	</div>
-	<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
-		<Footer />
-	</div>
-</div>
-
-<!-- </ClerkProvider> -->
+</ClerkProvider>
 
 <style>
 	.navbar {

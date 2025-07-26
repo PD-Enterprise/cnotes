@@ -14,10 +14,10 @@
 	import Typography from '@tiptap/extension-typography';
 	import TextAlign from '@tiptap/extension-text-align';
 	import '../../../katex.min.css';
-	import Table from '@tiptap/extension-table';
-	import TableRow from '@tiptap/extension-table-row';
-	import TableHeader from '@tiptap/extension-table-header';
-	import TableCell from '@tiptap/extension-table-cell';
+	// import Table from '@tiptap/extension-table';
+	// import TableRow from '@tiptap/extension-table-row';
+	// import TableHeader from '@tiptap/extension-table-header';
+	// import TableCell from '@tiptap/extension-table-cell';
 	import { theme } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
@@ -190,7 +190,7 @@
 		<div class="absolute right-2">
 			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
 				<button
-					class="btn btn-circle btn-ghost btn-sm top-2"
+					class="btn btn-ghost btn-sm btn-circle top-2"
 					onclick={(e) => {
 						e.preventDefault();
 						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
@@ -212,7 +212,7 @@
 							{#if noteDataKey == 'dateCreated'}
 								<input
 									type="date"
-									class="input input-bordered"
+									class="input-bordered input"
 									placeholder={noteDataKey}
 									required
 									bind:value={noteData[noteDataKey]}
@@ -220,7 +220,7 @@
 							{:else}
 								<input
 									type="text"
-									class="input input-bordered"
+									class="input-bordered input"
 									placeholder={noteDataKey}
 									required
 									bind:value={noteData[noteDataKey]}
@@ -240,9 +240,9 @@
 		<div class="note flex h-full flex-col gap-5 rounded-md">
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
-					<button class="btn btn-outline btn-accent" onclick={saveNote}>Save</button>
+					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
 				{:else}
-					<button class="btn btn-outline btn-accent" disabled>Save</button>
+					<button class="btn btn-accent btn-outline" disabled>Save</button>
 				{/if}
 				<button
 					class="btn btn-info border"
@@ -555,7 +555,7 @@
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
-					<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">✕</button>
+					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 				</form>
 				<span>Link:</span>
 				<a href="/home/{noteData.slug}/sharing" class="share-link">
@@ -568,7 +568,7 @@
 	{/if}
 </div>
 
-<div class="dark active hidden"></div>
+<div class="active dark hidden"></div>
 
 <style>
 	.main {

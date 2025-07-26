@@ -5,14 +5,14 @@
 	import { defaultExtensions, Tipex, type TipexEditor } from '@friendofsvelte/tipex';
 	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import Underline from '@tiptap/extension-underline';
-	import Heading from '@tiptap/extension-heading';
-	import Icon from '@iconify/svelte';
-	import Youtube from '@tiptap/extension-youtube';
-	import Highlight from '@tiptap/extension-highlight';
-	import Subscript from '@tiptap/extension-subscript';
-	import Typography from '@tiptap/extension-typography';
-	import TextAlign from '@tiptap/extension-text-align';
+	// import Underline from '@tiptap/extension-underline';
+	// import Heading from '@tiptap/extension-heading';
+	// import Icon from '@iconify/svelte';
+	// import Youtube from '@tiptap/extension-youtube';
+	// import Highlight from '@tiptap/extension-highlight';
+	// import Subscript from '@tiptap/extension-subscript';
+	// import Typography from '@tiptap/extension-typography';
+	// import TextAlign from '@tiptap/extension-text-align';
 	import '../../../katex.min.css';
 	// import Table from '@tiptap/extension-table';
 	// import TableRow from '@tiptap/extension-table-row';
@@ -38,24 +38,24 @@
 	const isChanged = $derived(
 		originalNoteData && JSON.stringify(noteData) !== JSON.stringify(originalNoteData)
 	);
-	let editor: TipexEditor = $state();
-	let extensions = [
-		...defaultExtensions,
-		Heading.configure({
-			levels: [1, 2, 3, 4]
-		}),
-		Underline,
-		Youtube,
-		Highlight.configure({
-			multicolor: true
-		}),
-		Subscript,
-		TextAlign,
-		Table,
-		TableRow,
-		TableHeader,
-		TableCell
-	];
+	// let editor: TipexEditor = $state();
+	// let extensions = [
+	// 	...defaultExtensions,
+	// 	Heading.configure({
+	// 		levels: [1, 2, 3, 4]
+	// 	}),
+	// 	Underline,
+	// 	Youtube,
+	// 	Highlight.configure({
+	// 		multicolor: true
+	// 	}),
+	// 	Subscript,
+	// 	TextAlign,
+	// 	Table,
+	// 	TableRow,
+	// 	TableHeader,
+	// 	TableCell
+	// ];
 
 	// Functions
 	async function getNote(slug: string) {
@@ -273,7 +273,7 @@
 				>
 			</div>
 			<div class="editor dark h-full overflow-hidden" id="editor">
-				<Tipex
+				<!-- <Tipex
 					body={noteData.notescontent}
 					floating
 					focal
@@ -487,7 +487,7 @@
 									>
 										<Icon icon="fa6-solid:align-center" />
 									</button> -->
-									<button
+				<!-- <button
 										aria-label="Code"
 										onclick={() => {
 											// @ts-expect-error
@@ -497,8 +497,8 @@
 										class:active={editor?.isActive('code')}
 									>
 										<Icon icon="fa6-solid:code" />
-									</button>
-									<!-- <button
+									</button> -->
+				<!-- <button
 										aria-label="Table"
 										onclick={() => {
 											editor
@@ -512,7 +512,7 @@
 									>
 										<Icon icon="fa6-solid:table" />
 									</button> -->
-									<button
+				<!-- <button
 										aria-label="Youtube"
 										onclick={() => {
 											const url = prompt('Enter Youtube URL');
@@ -548,8 +548,8 @@
 								</div>
 							</div>
 						</div>
-					{/snippet}
-				</Tipex>
+					{/snippet} -->
+				<!-- </Tipex> -->
 			</div>
 		</div>
 		<dialog id="share_modal" class="modal">

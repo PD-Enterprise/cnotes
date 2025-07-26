@@ -1,5 +1,4 @@
 import { redirect } from "@sveltejs/kit";
-// import { clerkClient } from "svelte-clerk/server";
 
 export const load = async ({ locals, url }) => {
     const { userId } = locals.auth()
@@ -9,7 +8,7 @@ export const load = async ({ locals, url }) => {
     // console.log(isSharingPage)
 
     if (!userId && !isSharingPage) {
-        // redirect(302, "/")
+        redirect(302, "/")
     }
 
     return {

@@ -9,7 +9,6 @@
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
 	import { ClerkProvider } from 'svelte-clerk';
-	// import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 

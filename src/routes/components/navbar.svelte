@@ -4,7 +4,7 @@
 	import { theme } from '$lib/stores/store.svelte'; // Importing the theme store for theme management
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	// import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+	import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
 
 	// Functions
 	onMount(async () => {

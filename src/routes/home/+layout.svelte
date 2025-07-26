@@ -1,11 +1,12 @@
 <script lang="ts">
 	// Imports
-	import { onMount } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import InAppNavbar from '../components/inAppNavbar.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
+	import type { PageData } from '../$types';
 
-	let { children } = $props();
+	let { children, data }: { children: Snippet; data: PageData } = $props();
 
 	async function fetchRole(email: string) {
 		try {

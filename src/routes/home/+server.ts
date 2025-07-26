@@ -34,3 +34,51 @@ export async function GET({ url, locals }) {
         ))
     }
 }
+export async function DELETE({ locals, request }) {
+    const body = await request.json();
+    if (!body) {
+        return new Response(JSON.stringify(
+            {
+                status: 400
+            }
+        ))
+    }
+    const slug = body.note.title.replaceAll(' ', '-').toLowerCase();
+
+    try {
+        const deleteNoteRequest = await fetch(
+            `${config.apiUrl}notes/note/${slug}/delete`,
+            {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: locals.session.claims.userEmail })
+            }
+        );
+
+        const result = await deleteNoteRequest.json();
+        // console.log(result);
+
+        if (result.status == 200) {
+            return new Response(JSON.stringify(
+                {
+                    status: 200
+                }
+            ))
+        } else {
+            return new Response(JSON.stringify(
+                {
+                    status: 500
+                }
+            ))
+        }
+    } catch (error) {
+        console.error(error);
+        return new Response(JSON.stringify(
+            {
+                status: 500
+            }
+        ))
+    }
+}

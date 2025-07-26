@@ -3,22 +3,20 @@
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import config from '$lib/utils/apiConfig';
-	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import { editor, isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import Tiptap from './tiptap.svelte';
+	import { onMount } from 'svelte';
 
 	// Variables
-	let newNote: note = {
+	let newNote: note = $state({
 		title: '',
-		slug: '',
 		notescontent: '',
 		board: '',
 		dateCreated: '',
-		email: '',
-		grade: undefined,
+		grade: '',
 		subject: ''
-	};
+	});
 	let isValid: boolean = $state(false);
 
 	// Functions
@@ -35,60 +33,61 @@
 				3000,
 				'error'
 			);
-		} else {
-			try {
-				const rawHtml = editor.getHTML();
-				newNote.notescontent = DOMPurify.sanitize(rawHtml);
-				newNote.slug = newNote.title.replaceAll(' ', '-').toLowerCase();
+			return;
+		}
+		try {
+			const rawHtml = editor.value.getHTML();
+			newNote.notescontent = DOMPurify.sanitize(rawHtml);
+			const slug = newNote.title.replaceAll(' ', '-').toLowerCase();
+			// console.log(newNote);
 
-				if (user.value) {
-					// @ts-expect-error
-					newNote.email = user.value.email;
-				} else {
-					newNote.email = null;
-				}
+			const encryptedNote = btoa(JSON.stringify(newNote));
+			// console.log(encryptedNote);
+			const storableNote: { key: string; value: string } = {
+				key: `note:${slug}`,
+				value: encryptedNote
+			};
 
-				// console.log(newNote);
-				const encryptedNote = btoa(JSON.stringify(newNote));
-				// console.log(encryptedNote);
-				const storableNote: { key: string; value: string } = {
-					key: `note:${newNote.slug}`,
-					value: encryptedNote
-				};
-
-				if (localStorage.getItem(`note:${newNote.slug}`)) {
-					console.error('Another note with that name already exists.');
-					showToast(
-						'Title name Conflict',
-						'Another note with that name already exists, please choose another name',
-						3000,
-						'error'
-					);
-				} else {
-					localStorage.setItem(storableNote.key, storableNote.value);
-					await addToDB(newNote);
-					showToast('Successfully added note', 'Note added successfully', 1000, 'success');
-					window.location.href = '/home';
-				}
-			} catch (error) {
-				console.error('There was an error:', error);
+			if (localStorage.getItem(`note:${slug}`)) {
+				console.error('Another note with that name already exists.');
+				showToast(
+					'Title name Conflict',
+					'Another note with that name already exists, please choose another name',
+					3000,
+					'error'
+				);
+			} else {
+				localStorage.setItem(storableNote.key, storableNote.value);
+				await addToDB(newNote);
+				showToast('Successfully added note', 'Note added successfully', 1000, 'success');
+				window.location.href = '/home';
 			}
+		} catch (error) {
+			console.error('There was an error:', error);
 		}
 	}
-	async function addToDB(note: note) {
-		// console.log(note);
-		const request = await fetch(`${config.apiUrl}notes/new-note/text`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				email: JSON.parse(atob(localStorage.getItem('user'))).email,
-				note: note
-			})
-		});
-		const result = await request.json();
-		// console.log(result);
+	async function addToDB(note: note): Promise<boolean> {
+		try {
+			const request = await fetch('/home/new-note', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					note: note
+				})
+			});
+			const result = await request.json();
+			console.log(result);
+			if (result.status == 200) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (error) {
+			console.error('There was an error:', error);
+			return false;
+		}
 	}
 </script>
 
@@ -178,14 +177,14 @@
 					>
 				</div>
 				<div class="save-button-container w-40">
-					{#if !isValid}
+					{#if validateNote(newNote)}
 						<button
-							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-accent btn-outline h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{:else}
 						<button
-							class="btn btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
 							onclick={addNote}>Add Note</button
 						>
 					{/if}
@@ -193,7 +192,7 @@
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Tiptap />
+			<Tiptap content={newNote.notescontent} />
 		</div>
 	</div>
 </div>

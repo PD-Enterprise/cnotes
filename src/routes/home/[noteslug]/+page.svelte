@@ -31,8 +31,7 @@
 		grade: undefined,
 		subject: '',
 		notescontent: '',
-		slug: '',
-		email: ''
+		slug: ''
 	});
 	let originalNoteData: note | null = $state(null);
 	let error: string = $state('');
@@ -254,22 +253,6 @@
 			</div>
 			<div class="editor h-full">
 				<Tiptap content={noteData.notescontent} />
-				<!-- <Tipex
-					body={noteData.notescontent}
-					floating
-					focal
-					{extensions}
-					bind:tipex={editor}
-					class="h-full p-2"
-					oncreate={() => {
-						// console.log('editor created');
-						editor.commands.insertContent(noteData.notescontent);
-					}}
-					onupdate={() => {
-						// console.log(editor.getHTML());
-						noteData.notescontent = DOMPurify.sanitize(editor.getHTML());
-					}}
-				></Tipex> -->
 			</div>
 		</div>
 		<dialog id="share_modal" class="modal">

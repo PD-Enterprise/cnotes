@@ -11,25 +11,15 @@
 
 	async function deleteNote(note: note) {
 		try {
-			localStorage.removeItem(`note:${notes.note.slug}`);
-			for (let i = 0; i < notesStore.value.length; i++) {
-				if (notesStore.value[i].slug == notes.note.slug) {
-					notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
-				}
-			}
-			const user = JSON.parse(atob(localStorage.getItem('user') || '{}'));
-			if (!user.email) {
-				showToast('Error', 'You must be logged in to delete a note', 3000, 'error');
-				return;
-			}
-			const request = await fetch(`${config.apiUrl}notes/note/${note.slug}/delete`, {
+			const request = await fetch(`/home`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ email: user.email })
+				body: JSON.stringify({
+					note: note
+				})
 			});
-
 			const result = await request.json();
 
 			if (result.status !== 200) {
@@ -40,6 +30,14 @@
 					'error'
 				);
 				return;
+			}
+			localStorage.removeItem(`note:${notes.note.slug}`);
+			for (let i = 0; i < notesStore.value.length; i++) {
+				if (notesStore.value[i].title.replaceAll(' ', '-').toLowerCase() == notes.note.slug) {
+					notesStore.value = notesStore.value.filter(
+						(note) => note.title.replaceAll(' ', '-').toLowerCase() !== notes.note.slug
+					);
+				}
 			}
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
 		} catch (error) {

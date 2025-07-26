@@ -104,24 +104,6 @@ self.addEventListener("fetch", event => {
             }
         }
 
-        try {
-            const response = await fetch(event.request)
-
-            const isNotExtention = url.protocol == "http:"
-            const ifSuccess = response.status == 200
-
-            if (isNotExtention && ifSuccess) {
-                cache.put(event.request, response.clone())
-            }
-
-            return response
-        } catch {
-            const cachedResponse = await cache.match(url.pathname)
-            if (cachedResponse) {
-                return cachedResponse
-            }
-        }
-
         return new Response("Not Found", { status: 404 })
     }
 

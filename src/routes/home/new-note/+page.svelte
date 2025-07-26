@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	// import { onMount } from 'svelte';
 	import AddTextNote from '../../components/addTextNote.svelte';
-	import Diagram from '../../components/diagram.svelte';
+	// import Diagram from '../../components/diagram.svelte';
 
 	// Variables
 	let option = $state('text');

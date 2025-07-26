@@ -1,13 +1,11 @@
 type note = {
 	noteId?: number;
 	title: string;
-	slug: string;
 	notescontent: string;
 	board: string;
 	dateCreated: string;
 	dateUpdated?: string;
-	email: string;
-	grade: number;
+	grade: string;
 	subject: string;
 };
 

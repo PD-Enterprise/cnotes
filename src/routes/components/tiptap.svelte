@@ -1,7 +1,8 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
+	import { editor } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
-	import { Placeholder } from '@tiptap/extensions';
+	// import { Placeholder } from '@tiptap/extensions';
 	import StarterKit from '@tiptap/starter-kit';
 	import Mathematics from '@tiptap/extension-mathematics';
 	import 'katex/dist/katex.min.css';
@@ -20,11 +21,10 @@
 	// import TableCell from '@tiptap/extension-table-cell';
 
 	let element;
-	let editor = $state();
 	let content = $props();
 
 	onMount(() => {
-		editor = new Editor({
+		editor.value = new Editor({
 			element: element,
 			extensions: [
 				StarterKit,
@@ -76,7 +76,7 @@
 						onClick: (node) => {
 							const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
 							if (newCalculation) {
-								editor
+								editor.value
 									.chain()
 									// @ts-expect-error
 									.setNodeSelection(node.pos)
@@ -97,7 +97,7 @@
 			],
 			content: content.content || '',
 			onTransaction: () => {
-				editor = editor;
+				editor.value = editor.value;
 			},
 			editorProps: {
 				attributes: {
@@ -109,8 +109,8 @@
 	});
 
 	onDestroy(() => {
-		if (editor) {
-			editor.destroy();
+		if (editor.value) {
+			editor.value.destroy();
 		}
 	});
 </script>
@@ -125,9 +125,9 @@
 					<button
 						class="tipex-edit-button"
 						onclick={() => {
-							editor.chain().focus().toggleHeading({ level }).run();
+							editor.value.chain().focus().toggleHeading({ level }).run();
 						}}
-						class:active={editor?.isActive('heading', { level })}
+						class:active={editor.value?.isActive('heading', { level })}
 					>
 						H{level}
 					</button>
@@ -135,78 +135,80 @@
 				<button
 					aria-label="Paragraph"
 					onclick={() => {
-						editor.chain().focus().setParagraph().run();
+						editor.value.chain().focus().setParagraph().run();
 					}}
-					class:active={editor?.isActive('paragraph')}
+					class:active={editor.value?.isActive('paragraph')}
 					class="tipex-edit-button btn"><Icon icon="fa6-solid:paragraph" /></button
 				>
 				<button
 					aria-label="Underline"
 					class="tipex-edit-button btn"
 					onclick={() => {
-						editor.chain().focus().toggleUnderline().run();
+						editor.value.chain().focus().toggleUnderline().run();
 					}}
-					class:active={editor?.isActive('underline')}><Icon icon="fa6-solid:underline" /></button
+					class:active={editor.value?.isActive('underline')}
+					><Icon icon="fa6-solid:underline" /></button
 				>
 				<button
 					aria-label="Highlight"
 					class="tipex-edit-button btn"
 					onclick={() => {
-						editor.chain().focus().toggleHighlight().run();
+						editor.value.chain().focus().toggleHighlight().run();
 					}}
-					class:active={editor?.isActive('highlight')}><Icon icon="fa6-solid:highlighter" /></button
+					class:active={editor.value?.isActive('highlight')}
+					><Icon icon="fa6-solid:highlighter" /></button
 				>
 				<button
 					aria-label="Bold"
 					onclick={() => {
-						editor?.chain().focus().toggleBold().run();
+						editor.value?.chain().focus().toggleBold().run();
 					}}
 					class="tipex-edit-button"
-					class:active={editor?.isActive('bold')}
+					class:active={editor.value?.isActive('bold')}
 				>
 					<Icon icon="fa6-solid:bold" />
 				</button>
 				<button
 					aria-label="Italic"
 					onclick={() => {
-						editor?.chain().focus().toggleItalic().run();
+						editor.value?.chain().focus().toggleItalic().run();
 					}}
 					class="tipex-edit-button"
-					class:active={editor?.isActive('italic')}
+					class:active={editor.value?.isActive('italic')}
 				>
 					<Icon icon="fa6-solid:italic" />
 				</button>
 				<button
 					aria-label="Subscript"
 					onclick={() => {
-						editor?.chain().focus().toggleSubscript().run();
+						editor.value?.chain().focus().toggleSubscript().run();
 					}}
 					class="tipex-edit-button"
-					class:active={editor?.isActive('subscript')}
+					class:active={editor.value?.isActive('subscript')}
 				>
 					<Icon icon="fa6-solid:subscript" />
 				</button>
 				<button
 					aria-label="Subscript"
 					onclick={() => {
-						editor?.chain().focus().toggleSuperscript().run();
+						editor.value?.chain().focus().toggleSuperscript().run();
 					}}
 					class="tipex-edit-button"
-					class:active={editor?.isActive('superscript')}
+					class:active={editor.value?.isActive('superscript')}
 				>
 					<Icon icon="fa6-solid:superscript" />
 				</button>
 				<button
 					aria-label="Insert Math Formula"
 					onclick={() => {
-						const hasSelection = !editor.state.selection.empty;
+						const hasSelection = !editor.value.state.selection.empty;
 
 						if (hasSelection) {
-							return editor.chain().setInlineMath().focus().run();
+							return editor.value.chain().setInlineMath().focus().run();
 						}
 
 						const latex = prompt('Enter inline math expression:', '');
-						return editor.chain().insertInlineMath({ latex }).focus().run();
+						return editor.value.chain().insertInlineMath({ latex }).focus().run();
 					}}
 					class="tipex-edit-button btn"
 					><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"

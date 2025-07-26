@@ -2,6 +2,5 @@
 	"name": "cnotes",
 	"compatibility_date": "2025-02-06",
 	"compatibility_flags": ["nodejs_compat"],
-	"pages_build_output_dir": "dist",
-	"vars": {}
+	"pages_build_output_dir": "dist"
 }

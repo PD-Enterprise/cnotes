@@ -1,7 +1,7 @@
-import { buildClerkProps } from 'svelte-clerk/server';
+// import { buildClerkProps } from 'svelte-clerk/server';
 
-export const load = async ({ locals }) => {
-    return {
-        ...buildClerkProps(locals.auth())
-    };
-};
+// export const load = async ({ locals }) => {
+//     return {
+//         ...buildClerkProps(locals.auth())
+//     };
+// };

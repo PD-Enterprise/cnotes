@@ -4,7 +4,7 @@
 	import { theme } from '$lib/stores/store.svelte'; // Importing the theme store for theme management
 	import { onMount } from 'svelte'; // Importing onMount lifecycle method from Svelte
 	import AutoLogin from './autoLogin.svelte'; // Importing the AutoLogin component for auto-login functionality
-	import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
+	// import { SignedIn, SignedOut, SignInButton, UserButton } from 'svelte-clerk';
 
 	// Functions
 	onMount(async () => {
@@ -110,12 +110,12 @@
 				<AutoLogin type="nav" />
 				<div class="menu-buttons menu-login-buttons" id="menu-login-buttons">
 					<li class="mb-2">
-						<SignedIn>
+						<!-- <SignedIn>
 							<a class="btn btn-accent" href="/home">Go to Home</a>
 						</SignedIn>
 						<SignedOut>
 							<SignInButton class="btn btn-accent" />
-						</SignedOut>
+						</SignedOut> -->
 					</li>
 				</div>
 				<div class="menu-button-dashboard hidden" id="menu-button-dashboard">
@@ -177,13 +177,13 @@
 		</ul>
 	</div>
 	<div class="navbar-buttons navbar-login-buttons navbar-end mr-2 gap-3" id="navbar-login-buttons">
-		<SignedIn>
+		<!-- <SignedIn>
 			<a class="btn btn-accent" href="/home">Go to Home</a>
 			<UserButton />
 		</SignedIn>
 		<SignedOut>
 			<SignInButton class="btn btn-accent" />
-		</SignedOut>
+		</SignedOut> -->
 	</div>
 	<div class="navbar-buttons navbar-end mr-2 hidden gap-2" id="navbar-button-dashboard">
 		<a class="btn btn-accent" href="/home">Go to App</a>

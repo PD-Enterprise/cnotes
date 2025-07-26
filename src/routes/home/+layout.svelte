@@ -4,7 +4,6 @@
 	import InAppNavbar from '../components/inAppNavbar.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
-	// import { ClerkProvider } from 'svelte-clerk';
 
 	let { children } = $props();
 
@@ -30,7 +29,6 @@
 
 <SvelteToast />
 
-<!-- <ClerkProvider> -->
 <div class="main h-screen">
 	<div class="navbar mb-5 mt-3">
 		<InAppNavbar />
@@ -39,8 +37,6 @@
 		{@render children()}
 	</div>
 </div>
-
-<!-- </ClerkProvider> -->
 
 <style>
 	.navbar {

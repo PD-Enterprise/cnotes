@@ -5,33 +5,33 @@
 	import Navbar from './components/navbar.svelte';
 	import Footer from './components/footer.svelte';
 	import '../app.css';
-	// import { onMount } from 'svelte';
-	import type { Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import type { PageData } from './$types';
+	import { autoLogin, isAuthenticated, sync } from '$lib/stores/store.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	// console.log(data);
-	// if (data.initialState.sessionId) {
-	// 	isAuthenticated.value = true;
-	// 	// console.log('isAuth', isAuthenticated.value);
-	// 	onMount(() => {
-	// 		if (localStorage.getItem('AutoLogin') == 'true') {
-	// 			autoLogin.value = true;
-	// 			// console.log('autoLogin', autoLogin.value);
-	// 		}
-	// 		if (localStorage.getItem('syncState') == 'true') {
-	// 			sync.set(true);
-	// 			// console.log('sync', $sync);
-	// 		}
-	// 	});
-	// }
+	// @ts-expect-error
+	if (data.session && data.session.userId) {
+		isAuthenticated.value = true;
+		// console.log('isAuth', isAuthenticated.value);
+		onMount(() => {
+			if (localStorage.getItem('AutoLogin') == 'true') {
+				autoLogin.value = true;
+				// console.log('autoLogin', autoLogin.value);
+			}
+			if (localStorage.getItem('syncState') == 'true') {
+				sync.set(true);
+				// console.log('sync', $sync);
+			}
+		});
+	}
 
 	const isAdminRoute = derived(page, ($page) => {
 		return $page.url.pathname.startsWith('/home');
 	});
 </script>
 
-<!-- <ClerkProvider> -->
 <div class="main">
 	<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
 		<Navbar />
@@ -43,8 +43,6 @@
 		<Footer />
 	</div>
 </div>
-
-<!-- </ClerkProvider> -->
 
 <style>
 	.navbar {

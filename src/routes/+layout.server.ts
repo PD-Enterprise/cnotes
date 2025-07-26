@@ -1,7 +1,10 @@
-// import { buildClerkProps } from 'svelte-clerk/server';
+import { CLERK_SECRET_KEY } from "$env/static/private";
+import jwt from "jsonwebtoken"
 
-// export const load = async ({ locals }) => {
-//     return {
-//         ...buildClerkProps(locals.auth())
-//     };
-// };
+export const load = async ({ locals }) => {
+    // console.log(locals)
+
+    return {
+        session: locals.session
+    }
+}

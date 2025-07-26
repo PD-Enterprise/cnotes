@@ -1,9 +1,8 @@
 import config from "$lib/utils/apiConfig";
 
 export async function GET({ url, locals }) {
-    if (locals.auth().userId) {
-        const user = await locals.currentUser()
-        const email = user.emailAddresses[0].emailAddress
+    if (locals.session.userId) {
+        const email = locals.session.claims.userEmail
         // console.log(email)
 
         const response = await fetch(`${config.apiUrl}notes/notes`, {

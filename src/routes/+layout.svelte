@@ -8,7 +8,6 @@
 	// import { onMount } from 'svelte';
 	import type { Snippet } from 'svelte';
 	import type { PageData } from './$types';
-	import { ClerkProvider } from 'svelte-clerk';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	// console.log(data);
@@ -32,19 +31,20 @@
 	});
 </script>
 
-<ClerkProvider>
-	<div class="main">
-		<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
-			<Navbar />
-		</div>
-		<div class="content">
-			{@render children()}
-		</div>
-		<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
-			<Footer />
-		</div>
+<!-- <ClerkProvider> -->
+<div class="main">
+	<div class="navbar" style:display={$isAdminRoute ? 'none' : 'block'}>
+		<Navbar />
 	</div>
-</ClerkProvider>
+	<div class="content">
+		{@render children()}
+	</div>
+	<div class="footer" style:display={$isAdminRoute ? 'none' : 'block'}>
+		<Footer />
+	</div>
+</div>
+
+<!-- </ClerkProvider> -->
 
 <style>
 	.navbar {

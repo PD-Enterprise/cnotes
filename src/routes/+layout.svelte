@@ -11,7 +11,7 @@
 	import { ClerkProvider } from 'svelte-clerk';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
-
+	// console.log(data);
 	// if (data.initialState.sessionId) {
 	// 	isAuthenticated.value = true;
 	// 	// console.log('isAuth', isAuthenticated.value);

@@ -5,24 +5,10 @@
 	import { defaultExtensions, Tipex, type TipexEditor } from '@friendofsvelte/tipex';
 	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	// import Underline from '@tiptap/extension-underline';
-	// import Heading from '@tiptap/extension-heading';
-	// import Icon from '@iconify/svelte';
-	// import Youtube from '@tiptap/extension-youtube';
-	// import Highlight from '@tiptap/extension-highlight';
-	// import Subscript from '@tiptap/extension-subscript';
-	// import Typography from '@tiptap/extension-typography';
-	// import TextAlign from '@tiptap/extension-text-align';
-	import '../../../katex.min.css';
-	// import Table from '@tiptap/extension-table';
-	// import TableRow from '@tiptap/extension-table-row';
-	// import TableHeader from '@tiptap/extension-table-header';
-	// import TableCell from '@tiptap/extension-table-cell';
 	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
-	import { Editor } from '@tiptap/core';
 
 	// Variables
 	let error: string = $state('');
@@ -101,8 +87,8 @@
 				})
 			});
 			const result = await response.json();
+			// console.log(result);
 
-			console.log(result);
 			if (result.status !== 200) {
 				console.error('Failed to save note.');
 				showToast('Error', 'Failed to save note', 3000, 'error');

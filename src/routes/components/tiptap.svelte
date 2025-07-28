@@ -1,6 +1,6 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { editor } from '$lib/stores/store.svelte';
+	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
 	// import { Placeholder } from '@tiptap/extensions';
 	import StarterKit from '@tiptap/starter-kit';
@@ -22,6 +22,8 @@
 
 	let element;
 	let content = $props();
+
+	// console.log(content);
 
 	onMount(() => {
 		editor.value = new Editor({
@@ -95,19 +97,29 @@
 				// TableHeader,
 				// TableCell,
 			],
-			content: content.content || '',
+			content: 'Loading...',
 			onTransaction: () => {
 				editor.value = editor.value;
 			},
+			onUpdate() {
+				// console.log(editor.value.getHTML());
+				EditorNoteData.value.notescontent = editor.value.getHTML();
+			},
 			editorProps: {
 				attributes: {
-					class: 'p-2 focus:outline-none',
+					class: 'p-2 focus:outline-none overflow-y-scroll',
 					style: 'height: 100%'
 				}
 			}
 		});
 	});
-
+	$effect(() => {
+		if (editor.value && content !== undefined && content !== null) {
+			if (editor.value.getHTML() !== content.content) {
+				editor.value.commands.setContent(content.content);
+			}
+		}
+	});
 	onDestroy(() => {
 		if (editor.value) {
 			editor.value.destroy();
@@ -116,7 +128,10 @@
 </script>
 
 <div class="editor-container flex h-full flex-col gap-3 overflow-hidden p-1">
-	<div bind:this={element} class="editor min-h-96 border-2 border-gray-500 bg-base-300"></div>
+	<div
+		bind:this={element}
+		class="editor min-h-96 rounded-md border-2 border-gray-500 bg-base-300"
+	></div>
 	<div class="tipex-controller dark">
 		<div class="tipex-controller-wrapper">
 			<div class="tipex-basic-controller-wrapper rounded-md">
@@ -125,6 +140,7 @@
 					<button
 						class="tipex-edit-button"
 						onclick={() => {
+							// @ts-expect-error
 							editor.value.chain().focus().toggleHeading({ level }).run();
 						}}
 						class:active={editor.value?.isActive('heading', { level })}
@@ -201,12 +217,6 @@
 				<button
 					aria-label="Insert Math Formula"
 					onclick={() => {
-						const hasSelection = !editor.value.state.selection.empty;
-
-						if (hasSelection) {
-							return editor.value.chain().setInlineMath().focus().run();
-						}
-
 						const latex = prompt('Enter inline math expression:', '');
 						return editor.value.chain().insertInlineMath({ latex }).focus().run();
 					}}
@@ -229,7 +239,7 @@
 
 <style>
 	.editor {
-		height: 100%;
+		height: calc(100vh - 220px);
 	}
 	.tiptap p.is-editor-empty:first-child::before {
 		color: #adb5bd;
@@ -259,6 +269,7 @@
 		padding-right: 0.75rem;
 		padding-top: 0.5rem;
 		padding-bottom: 0.5rem;
+		border-radius: 0.4rem;
 	}
 	/* @media (min-width: 768px) {
 		.tipex-controller {

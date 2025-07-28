@@ -9,7 +9,7 @@ export async function GET({ url, locals }) {
             headers: { 'Content-Type': 'application/json' }
         });
         const result = await response.json();
-        // console.log(result);
+        // console.log(result.data);
 
         if (result.status == 200) {
             return new Response(JSON.stringify(
@@ -32,4 +32,44 @@ export async function GET({ url, locals }) {
             }
         ))
     }
+}
+
+export async function POST({ locals, request }) {
+    const body = await request.json();
+    if (!body) {
+        return new Response(JSON.stringify(
+            {
+                status: 400
+            }
+        ))
+    }
+    const noteData = body.data;
+    const userEmail = locals.session.claims.userEmail;
+
+    const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email: userEmail,
+            data: noteData
+        })
+    });
+    const result = await response.json();
+    // console.log(result);
+
+    if (result.status !== 200) {
+        return new Response(JSON.stringify(
+            {
+                status: result.status
+            }
+        ))
+    }
+
+    return new Response(JSON.stringify(
+        {
+            status: 200
+        }
+    ))
 }

@@ -13,14 +13,12 @@
 
 	// Variables
 	let error: string = '';
-	let noteData: note = $state({
+	let noteData = $state<note>({
 		title: '',
 		board: '',
 		dateCreated: '',
 		grade: undefined,
 		subject: '',
-		slug: '',
-		email: '',
 		notescontent: ''
 	});
 	let data = $props();
@@ -129,8 +127,8 @@
 				<div class="share-container">
 					<a
 						id="share-link"
-						href="https://cnotes.pages.dev/{noteData.slug}/sharing"
-						class="share-link">https://cnotes.pages.dev/{noteData.slug}/sharing</a
+						href="https://cnotes.pages.dev/home/{noteData.slug}/sharing"
+						class="share-link">https://cnotes.pages.dev/home/{noteData.slug}/sharing</a
 					>
 					<button
 						class="btn btn-sm btn-square"

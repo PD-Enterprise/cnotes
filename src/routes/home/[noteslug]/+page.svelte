@@ -18,29 +18,26 @@
 	// import TableRow from '@tiptap/extension-table-row';
 	// import TableHeader from '@tiptap/extension-table-header';
 	// import TableCell from '@tiptap/extension-table-cell';
-	import { theme } from '$lib/stores/store.svelte';
+	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
+	import { Editor } from '@tiptap/core';
 
 	// Variables
-	let noteData = $state<note>({
-		title: '',
-		board: '',
-		dateCreated: '',
-		grade: undefined,
-		subject: '',
-		notescontent: '',
-		slug: ''
-	});
-	let originalNoteData: note | null = $state(null);
 	let error: string = $state('');
-	const isChanged = $derived(
-		originalNoteData && JSON.stringify(noteData) !== JSON.stringify(originalNoteData)
+	let originalNote = $state(null);
+	let isChanged = $derived(
+		originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote)
 	);
 
 	// Functions
 	async function getNote(slug: string) {
+		if (!slug) {
+			console.error('No note slug provided.');
+			return;
+		}
+
 		const response = await fetch(`/home/${slug}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
@@ -48,21 +45,25 @@
 		const result = await response.json();
 		// console.log(result);
 
-		const serverNote = result.data;
+		if (!result.data) {
+			console.error('Failed to fetch note data.');
+			return;
+		}
+
+		const serverNote: note = result.data;
+		originalNote = result.data;
 		// console.log('server note', serverNote);
 
 		if (serverNote && serverNote != undefined) {
-			noteData = { ...serverNote };
+			EditorNoteData.value = { ...serverNote };
+			// console.log(noteData);
 		}
-		// if (!isAuthenticated.value) {
-		// 	error = 'You must be logged in to access notes.';
-		// 	showToast('Error', 'You must be logged in to access notes.', 3000, 'error');
-		// 	return;
-		// }
-		// if (!slug) {
-		// 	error = 'No note slug provided.';
-		// 	return;
-		// }
+	}
+	function getNotesFromLocalStorage(slug: string) {
+		if (!slug) {
+			console.error('No note slug provided.');
+			return;
+		}
 		// let localNote = null;
 		// let hasLocalNote = false;
 		// const storedNote = localStorage.getItem(`note:${slug}`);
@@ -81,64 +82,44 @@
 		// 	noteData = { ...localNote };
 		// 	originalNoteData = { ...localNote };
 		// }
-		// Try to load from cloud/server
 	}
-	function getNotesFromLocalStorage(slug: string) {}
 	async function saveNote() {
 		// Auth check
-		// if (!isAuthenticated.value) {
-		// 	showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
-		// 	return;
-		// }
-		// let userEmail = '';
-		// try {
-		// 	userEmail = JSON.parse(atob(localStorage.getItem('user') || '{}')).email;
-		// } catch (e) {
-		// 	showToast('Error', 'User authentication data is missing or corrupted.', 3000, 'error');
-		// 	return;
-		// }
-		// if (!userEmail) {
-		// 	showToast('Error', 'User email not found. Please log in again.', 3000, 'error');
-		// 	return;
-		// }
-		// noteData.dateUpdated = new Date().toISOString();
-		// try {
-		// 	const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify({
-		// 			email: userEmail,
-		// 			data: noteData
-		// 		})
-		// 	});
-		// 	if (!response.ok) {
-		// 		const contentType = response.headers.get('content-type');
-		// 		if (contentType && contentType.indexOf('application/json') !== -1) {
-		// 			const errorData = await response.json();
-		// 			console.error('Failed to save note:', errorData);
-		// 			showToast('Error', 'Failed to save note', 3000, 'error');
-		// 		} else {
-		// 			const errorText = await response.text();
-		// 			console.error('Failed to save note. Server returned non-JSON response:', errorText);
-		// 			showToast('Error', 'Failed to save note: Server error', 3000, 'error');
-		// 		}
-		// 		return;
-		// 	}
-		// 	const result = await response.json();
-		// 	// console.log(result);
-		// 	originalNoteData = JSON.parse(JSON.stringify(noteData));
-		// 	// Save to localStorage
-		// 	localStorage.setItem(
-		// 		`note:${noteData.slug}`,
-		// 		btoa(unescape(encodeURIComponent(JSON.stringify(noteData))))
-		// 	);
-		// 	showToast('Success', 'Note saved successfully', 1000, 'success');
-		// } catch (e) {
-		// 	console.error(e);
-		// 	showToast('Error', 'Failed to save note', 3000, 'error');
-		// }
+		if (!isAuthenticated.value) {
+			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
+			return;
+		}
+		EditorNoteData.value.dateUpdated = new Date().toISOString();
+		try {
+			const response = await fetch(`/home/${EditorNoteData.value.slug}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					data: EditorNoteData.value
+				})
+			});
+			const result = await response.json();
+
+			console.log(result);
+			if (result.status !== 200) {
+				console.error('Failed to save note.');
+				showToast('Error', 'Failed to save note', 3000, 'error');
+				return;
+			}
+			originalNote = JSON.parse(JSON.stringify(EditorNoteData.value));
+
+			// Save to localStorage
+			localStorage.setItem(
+				`note:${EditorNoteData.value.slug}`,
+				btoa(unescape(encodeURIComponent(JSON.stringify(EditorNoteData.value))))
+			);
+			showToast('Success', 'Note saved successfully', 1000, 'success');
+		} catch (error) {
+			console.error(error);
+			showToast('Error', 'Failed to save note', 3000, 'error');
+		}
 	}
 	function handleSaveShortcut(event: KeyboardEvent) {
 		if (event.ctrlKey && event.key === 's') {
@@ -155,6 +136,9 @@
 		const editor = document.getElementById('editor') as HTMLDivElement;
 
 		$effect(() => {
+			if (!editor) {
+				return;
+			}
 			if (theme.value) {
 				editor.classList.remove('dark');
 			} else {
@@ -182,7 +166,7 @@
 		<div class="flex flex-col gap-2">
 			<h3>Enter Metadata for your Note Here:</h3>
 			<div class="meta-data flex flex-row flex-wrap gap-3">
-				{#each Object.keys(noteData) as noteDataKey}
+				{#each Object.keys(EditorNoteData.value) as noteDataKey}
 					{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
 						<label class="form-control w-full max-w-xs">
 							<div class="label">
@@ -194,7 +178,7 @@
 									class="input-bordered input"
 									placeholder={noteDataKey}
 									required
-									bind:value={noteData[noteDataKey]}
+									bind:value={EditorNoteData.value[noteDataKey]}
 								/>
 							{:else}
 								<input
@@ -202,7 +186,7 @@
 									class="input-bordered input"
 									placeholder={noteDataKey}
 									required
-									bind:value={noteData[noteDataKey]}
+									bind:value={EditorNoteData.value[noteDataKey]}
 								/>
 							{/if}
 						</label>
@@ -215,7 +199,7 @@
 <div class="main">
 	{#if error}
 		{error}
-	{:else if noteData}
+	{:else if EditorNoteData.value}
 		<div class="note flex h-full flex-col gap-5 rounded-md">
 			<div class="buttons mt-2 flex gap-2">
 				{#if isChanged}
@@ -252,7 +236,8 @@
 				>
 			</div>
 			<div class="editor h-full">
-				<Tiptap content={noteData.notescontent} />
+				<!-- {console.log('notedata', noteData.notescontent)} -->
+				<Tiptap content={EditorNoteData.value.notescontent} />
 			</div>
 		</div>
 		<dialog id="share_modal" class="modal">
@@ -261,8 +246,8 @@
 					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
 				</form>
 				<span>Link:</span>
-				<a href="/home/{noteData.slug}/sharing" class="share-link">
-					https://cnotes.pages.dev/{noteData.slug}/sharing
+				<a href="/home/{EditorNoteData.value.slug}/sharing" class="share-link">
+					https://cnotes.pages.dev/{EditorNoteData.value.slug}/sharing
 				</a>
 			</div>
 		</dialog>

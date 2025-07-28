@@ -1,14 +1,4 @@
 <!--
-<button
-	aria-label="Table"
-	onclick={() => {
-		editor?.chain().focus().insertTable({ rows: 3, cols: 2, withHeaderRow: true }).run();
-	}}
-	class="tipex-edit-button"
-	class:active={editor?.isActive('table')}
->
-	<Icon icon="fa6-solid:table" />
-</button>
 {#if editor?.isActive('table')}
 	<div class="table-controls flex gap-1">
 		<button
@@ -50,18 +40,7 @@
 			<Icon icon="fa6-solid:plus" />
 		</button>
 
-		<button
-			aria-label="Add Row After"
-			onclick={() => {
-				if (editor) {
-					editor.chain().focus().addRowAfter().run();
-				}
-			}}
-			class="tipex-edit-button"
-			title="Add Row After"
-		>
-			<Icon icon="fa6-solid:plus" />
-		</button>
+		
 
 		<button
 			aria-label="Delete Column"
@@ -72,19 +51,6 @@
 			}}
 			class="tipex-edit-button"
 			title="Delete Column"
-		>
-			<Icon icon="fa6-solid:trash" />
-		</button>
-
-		<button
-			aria-label="Delete Row"
-			onclick={() => {
-				if (editor) {
-					editor.chain().focus().deleteRow().run();
-				}
-			}}
-			class="tipex-edit-button"
-			title="Delete Row"
 		>
 			<Icon icon="fa6-solid:trash" />
 		</button>

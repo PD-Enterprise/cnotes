@@ -2,14 +2,9 @@
 	import { onMount } from 'svelte';
 	import type { note } from '../../../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import config from '$lib/utils/apiConfig';
-	// import '@friendofsvelte/tipex/styles/Tipex.css';
-	// import '@friendofsvelte/tipex/styles/ProseMirror.css';
-	// import '@friendofsvelte/tipex/styles/Controls.css';
-	// import '@friendofsvelte/tipex/styles/EditLink.css';
-	// import '@friendofsvelte/tipex/styles/CodeBlock.css';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
+	import Tiptap from '../../../components/tiptap.svelte';
 
 	// Variables
 	let error: string = '';
@@ -47,15 +42,6 @@
 			} catch (e) {}
 			noteData = { ...localNote };
 		}
-	}
-
-	function addTailwindToHeadings(html: string): string {
-		return html
-			.replace(/<h1>/g, '<h1 class="text-4xl">')
-			.replace(/<h2>/g, '<h1 class="text-3xl">')
-			.replace(/<h3>/g, '<h1 class="text-2xl">')
-			.replace(/<h4>/g, '<h1 class="text-xl">')
-			.replace(/<u>/g, '<u class="font-bold">');
 	}
 	getNoteFromServer();
 </script>
@@ -113,8 +99,8 @@
 			<div
 				class="editor-container h-full overflow-hidden rounded-lg border-4 border-base-300 bg-base-200 p-2"
 			>
-				<div class="ProseMirror dark p-1">
-					{@html addTailwindToHeadings(noteData.notescontent)}
+				<div class="editor dark p-1">
+					<Tiptap content={noteData.notescontent} editable={false} />
 				</div>
 			</div>
 		</div>

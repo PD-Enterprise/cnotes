@@ -223,7 +223,7 @@
 			</div>
 			<div class="editor h-full">
 				<!-- {console.log('notedata', noteData.notescontent)} -->
-				<Tiptap content={EditorNoteData.value.notescontent} />
+				<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
 			</div>
 		</div>
 		<dialog id="share_modal" class="modal">

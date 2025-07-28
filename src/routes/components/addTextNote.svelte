@@ -192,7 +192,7 @@
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Tiptap content={newNote.notescontent} />
+			<Tiptap content={newNote.notescontent} editable={true} />
 		</div>
 	</div>
 </div>

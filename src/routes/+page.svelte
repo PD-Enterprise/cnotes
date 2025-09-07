@@ -90,7 +90,6 @@
 	}
 	onMount(() => {
 		getNotesFromLocalStorage();
-		getNotes();
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
 			if (searchBar && !searchBar.contains(event.target as Node)) {

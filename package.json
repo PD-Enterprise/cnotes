@@ -32,7 +32,6 @@
 	"dependencies": {
 		"@auth/sveltekit": "^1.10.0",
 		"@excalidraw/excalidraw": "^0.18.0",
-		"@friendofsvelte/tipex": "^0.0.8",
 		"@iconify/svelte": "^5.0.1",
 		"@tailwindcss/vite": "^4.1.13",
 		"@tinymce/tinymce-svelte": "^3.2.0",
@@ -55,7 +54,6 @@
 		"@tiptap/extensions": "^3.4.1",
 		"@tiptap/pm": "^3.4.1",
 		"@tiptap/starter-kit": "^3.4.1",
-		"clerk-sveltekit": "^0.4.3",
 		"dompurify": "^3.2.6",
 		"jsonwebtoken": "^9.0.2",
 		"katex": "^0.16.22",

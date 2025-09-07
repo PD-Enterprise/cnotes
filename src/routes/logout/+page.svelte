@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { signOut } from '@auth/sveltekit/client';
 
 	function cleanupAndSignOut() {
@@ -10,7 +9,6 @@
 			}
 		}
 		signOut({ redirectTo: '/' });
-		goto('/');
 	}
 </script>
 

@@ -60,16 +60,9 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 
 		if (result.status == 401) {
-			showToast(
-				'Not Authenticated',
-				'You are not logged in. Please login to continue.',
-				3000,
-				'error'
-			);
-			error = 'You are not logged in. Please login to continue.';
 			return;
 		}
 
@@ -282,17 +275,19 @@
 		</div>
 	</div>
 	<div class="notes h-auto overflow-y-auto p-4">
-		{#if error}
-			<p class="error">{error}</p>
-		{:else if notesStore.value && notesStore.value.length > 0}
-			<div class="notes-grid">
-				{#each getFilteredAndSortedNotes() as note}
-					<Note {note} />
-				{/each}
-			</div>
-		{:else}
+		{#await getNotes()}
 			<p class="loadingNotes">Loading your Notes...</p>
-		{/if}
+		{:then}
+			{#if notesStore.value && notesStore.value.length > 0}
+				<div class="notes-grid">
+					{#each getFilteredAndSortedNotes() as note}
+						<Note {note} />
+					{/each}
+				</div>
+			{:else}
+				<p class="loadingNotes">Loading your Notes...</p>
+			{/if}
+		{/await}
 	</div>
 </div>
 

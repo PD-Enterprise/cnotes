@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
 	import AutoLogin from './autoLogin.svelte';
 	import SvelteToast from './svelteToast.svelte';
-	import Sync from './sync.svelte';
 	import type { PageData } from '../$types';
 	import { SignIn, SignOut } from '@auth/sveltekit/components';
 
@@ -96,7 +95,6 @@
 						</svg>
 					</label>
 				</li>
-				<Sync />
 				<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
 					{#if data.session}
 						<a href="/logout" class="btn btn-error w-full">Logout</a>

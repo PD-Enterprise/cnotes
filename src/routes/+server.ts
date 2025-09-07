@@ -2,6 +2,13 @@ import config from "$lib/utils/apiConfig";
 
 export async function GET({ url, locals, event }) {
     const session = await locals.getSession()
+    if (!session) {
+        return new Response(JSON.stringify(
+            {
+                status: 401
+            }
+        ))
+    }
 
     const email = session.user.email
 
@@ -25,7 +32,6 @@ export async function GET({ url, locals, event }) {
                 data: undefined
             }
         ))
-        // }
     }
 }
 
@@ -48,7 +54,7 @@ export async function DELETE({ locals, request }) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: locals.session.claims.userEmail })
+                body: JSON.stringify({ email: locals.getSession().user.email })
             }
         );
 

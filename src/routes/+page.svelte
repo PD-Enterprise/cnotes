@@ -277,7 +277,7 @@
 		<div class="add-note">
 			<a
 				class="addNoteButton btn border-base-content bg-accent text-accent-content border"
-				href="/home/new-note">New Note</a
+				href="/new-note">New Note</a
 			>
 		</div>
 	</div>

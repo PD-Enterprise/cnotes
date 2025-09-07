@@ -21,10 +21,6 @@
 
 	// Functions
 	async function addNote() {
-		if (!isAuthenticated.value) {
-			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
-			return;
-		}
 		if (!validateNote(newNote)) {
 			console.error('Note is not in correct form to be added to database.');
 			showToast(
@@ -60,7 +56,7 @@
 				localStorage.setItem(storableNote.key, storableNote.value);
 				await addToDB(newNote);
 				showToast('Successfully added note', 'Note added successfully', 1000, 'success');
-				window.location.href = '/home';
+				window.location.href = '/';
 			}
 		} catch (error) {
 			console.error('There was an error:', error);
@@ -68,7 +64,7 @@
 	}
 	async function addToDB(note: note): Promise<boolean> {
 		try {
-			const request = await fetch('/home/new-note', {
+			const request = await fetch('/new-note', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -79,6 +75,10 @@
 			});
 			const result = await request.json();
 			console.log(result);
+			if (result.status == 401) {
+				showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
+				return false;
+			}
 			if (result.status == 200) {
 				return true;
 			} else {
@@ -167,7 +167,7 @@
 			<div class="buttons flex flex-row gap-2">
 				<div class="metadata-btn w-40">
 					<button
-						class="btn h-12 border border-base-content"
+						class="btn border-base-content h-12 border"
 						onclick={() => {
 							const meta_data_modal = document.getElementById(
 								'meta_data_modal'
@@ -179,12 +179,12 @@
 				<div class="save-button-container w-40">
 					{#if validateNote(newNote)}
 						<button
-							class="btn btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-accent btn-outline border-base-content h-12 border"
 							onclick={addNote}>Add Note</button
 						>
 					{:else}
 						<button
-							class="btn btn-disabled btn-accent btn-outline h-12 border border-base-content"
+							class="btn btn-disabled btn-accent btn-outline border-base-content h-12 border"
 							onclick={addNote}>Add Note</button
 						>
 					{/if}

@@ -226,7 +226,7 @@
 					<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
 				</form>
 				<span>Link:</span>
-				<a href="/home/{EditorNoteData.value.slug}/sharing" class="share-link">
+				<a href="/{EditorNoteData.value.slug}/sharing" class="share-link">
 					https://cnotes.pages.dev/{EditorNoteData.value.slug}/sharing
 				</a>
 			</div>

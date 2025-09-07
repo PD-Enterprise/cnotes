@@ -138,7 +138,7 @@
 <div class="editor-container flex h-full flex-col gap-3 overflow-hidden p-1">
 	<div
 		bind:this={element}
-		class="editor min-h-96 rounded-md border-2 border-gray-500 bg-base-300"
+		class="editor bg-base-300 min-h-96 rounded-md border-2 border-gray-500"
 	></div>
 	{#if editable}
 		<div class="tipex-controller dark">
@@ -273,6 +273,18 @@
 							onclick={() => {
 								if (editor) {
 									editor.value.chain().focus().addRowAfter().run();
+								}
+							}}
+							class="tipex-edit-button"
+						>
+							<Icon icon="fa6-solid:plus" />
+						</button>
+						<button
+							aria-label="Add Column After"
+							title="Add Column After"
+							onclick={() => {
+								if (editor) {
+									editor.value.chain().focus().addColumnAfter().run();
 								}
 							}}
 							class="tipex-edit-button"

@@ -54,8 +54,7 @@
 >
 	<div class="card-body bg-base-300 flex flex-col p-1">
 		<div class="title-and-options flex flex-row justify-between gap-1">
-			<a class="note-title card-title w-full" href="/home/{notes.note.slug}/sharing"
-				>{notes.note.title}</a
+			<a class="note-title card-title w-full" href="{notes.note.slug}/sharing">{notes.note.title}</a
 			>
 			<div class="card-options">
 				<div class="dropdown">

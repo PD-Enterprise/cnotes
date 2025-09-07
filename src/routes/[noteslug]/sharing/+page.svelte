@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { note } from '../../../types';
+	import type { note } from '../../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
-	import Tiptap from '../../../components/tiptap.svelte';
+	import Tiptap from '../../components/tiptap.svelte';
 
 	// Variables
 	let error: string = '';
@@ -51,7 +51,7 @@
 		{error}
 	{:else if noteData}
 		<div class="content flex flex-col gap-3">
-			<div class="metadata-box flex flex-col gap-2 rounded-md bg-base-300 p-2">
+			<div class="metadata-box bg-base-300 flex flex-col gap-2 rounded-md p-2">
 				<h1 class="w-full p-2 text-3xl font-bold">
 					{noteData.title}
 				</h1>
@@ -97,7 +97,7 @@
 				</div>
 			</div>
 			<div
-				class="editor-container h-full overflow-hidden rounded-lg border-4 border-base-300 bg-base-200 p-2"
+				class="editor-container border-base-300 bg-base-200 h-full overflow-hidden rounded-lg border-4 p-2"
 			>
 				<div class="editor dark p-1">
 					<Tiptap content={noteData.notescontent} editable={false} />
@@ -107,14 +107,14 @@
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
-					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
+					<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
 				</form>
 				<label for="share-link">Link:</label>
 				<div class="share-container">
 					<a
 						id="share-link"
-						href="https://cnotes.pages.dev/home/{noteData.slug}/sharing"
-						class="share-link">https://cnotes.pages.dev/home/{noteData.slug}/sharing</a
+						href="https://cnotes.pages.dev/{noteData.slug}/sharing"
+						class="share-link">https://cnotes.pages.dev/{noteData.slug}/sharing</a
 					>
 					<button
 						class="btn btn-sm btn-square"

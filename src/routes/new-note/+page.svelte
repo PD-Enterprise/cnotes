@@ -1,6 +1,6 @@
 <script lang="ts">
 	// import { onMount } from 'svelte';
-	import AddTextNote from '../../components/addTextNote.svelte';
+	import AddTextNote from '../components/addTextNote.svelte';
 	// import Diagram from '../../components/diagram.svelte';
 
 	// Variables
@@ -9,7 +9,7 @@
 
 <div class="main">
 	<div class="dropdown p-2">
-		<select bind:value={option} class="menu z-[1] m-1 w-52 bg-base-100 p-2 shadow">
+		<select bind:value={option} class="menu bg-base-100 z-[1] m-1 w-52 p-2 shadow">
 			<option value="text">Text</option>
 			<option value="diagram">Diagram</option>
 		</select>
@@ -30,7 +30,7 @@
 				></path>
 			</svg>
 		</div>
-		<div class="compact dropdown-content card z-[1] w-64 rounded-box bg-base-100 shadow">
+		<div class="compact dropdown-content card rounded-box bg-base-100 z-[1] w-64 shadow">
 			<div class="card-body">
 				<h2 class="card-title">component state is not held!!</h2>
 				<p>Save your work before switching</p>

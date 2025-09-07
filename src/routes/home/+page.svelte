@@ -129,7 +129,7 @@
 
 		// Filter by grade
 		if (selectedGrade && selectedGrade !== 'all' && selectedGrade !== '') {
-			filtered = filtered.filter((note) => note.grade === Number(selectedGrade));
+			filtered = filtered.filter((note) => Number(note.grade) === Number(selectedGrade));
 		}
 		// Filter by subject
 		if (selectedSubject && selectedSubject !== 'all' && selectedSubject !== '') {
@@ -139,7 +139,7 @@
 		// Sort
 		switch (selectedSort) {
 			case 'grade':
-				filtered = filtered.slice().sort((a, b) => (a.grade ?? 0) - (b.grade ?? 0));
+				filtered = filtered.slice().sort((a, b) => (Number(a.grade) ?? 0) - (Number(b.grade) ?? 0));
 				break;
 			case 'subject':
 				filtered = filtered
@@ -152,12 +152,12 @@
 </script>
 
 <div class="main">
-	<div class="header flex gap-3 bg-base-300 p-2">
-		<div class="search-bar grow rounded-md p-1">
-			<label class="flex items-center gap-2 rounded-md p-1">
+	<div class="header bg-base-200 flex gap-3 p-2">
+		<div class="search-bar bg-base-100 grow rounded-md p-1">
+			<div class="flex items-center gap-2 rounded-md p-1">
 				<input
 					type="text"
-					class="search-input grow rounded-md bg-transparent"
+					class="search-input grow focus:border-none focus:outline-none"
 					placeholder="Search for a note"
 					bind:value={searchQuery}
 					onkeydown={(e) => {
@@ -172,21 +172,21 @@
 				/>
 				<button
 					title="Filter Notes"
-					class="filter-notes btn btn-circle border border-base-content bg-base-100 hover:bg-base-300"
+					class="filter-notes btn btn-circle border-base-content bg-base-100 hover:bg-base-300 border"
 					onclick={filter}
 				>
 					<Icon icon="fa6-solid:filter" />
 				</button>
-			</label>
+			</div>
 			{#if shouldShowFilterMenu}
 				<div
-					class="filter-menu search-results mt-2 flex flex-row gap-16 rounded-md bg-base-100 p-3 shadow"
+					class="filter-menu search-results bg-base-100 mt-2 flex flex-row gap-16 rounded-md p-3 shadow"
 				>
 					<div class="filter-section mb-2">
 						<span class="mb-1 block font-bold">Grade:</span>
 						<div class="flex flex-col gap-1">
 							{#each Array.from(new Set(notesStore.value.map((note) => note.grade))) as grade, i}
-								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+								<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 									<input
 										type="radio"
 										name="grade-filter"
@@ -197,7 +197,7 @@
 									<span class="text-base">{grade}</span>
 								</label>
 							{/each}
-							<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+							<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 								<input
 									type="radio"
 									name="grade-filter"
@@ -214,7 +214,7 @@
 						<span class="mb-1 block font-bold">Subject:</span>
 						<div class="flex flex-col gap-1">
 							{#each Array.from(new Set(notesStore.value.map((note) => note.subject))) as subject, i}
-								<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+								<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 									<input
 										type="radio"
 										name="subject-filter"
@@ -225,7 +225,7 @@
 									<span class="text-base">{subject}</span>
 								</label>
 							{/each}
-							<label class="flex cursor-pointer items-center gap-2 rounded p-1 hover:bg-base-200">
+							<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 								<input
 									type="radio"
 									name="subject-filter"
@@ -241,7 +241,7 @@
 				</div>
 			{/if}
 			{#if shouldShowSearchResults}
-				<div class="search-results mt-2 flex flex-col gap-2 rounded-md bg-base-100 p-2">
+				<div class="search-results bg-base-100 mt-2 flex flex-col gap-2 rounded-md p-2">
 					{#if searchResults.length > 0}
 						{#each searchResults as searchResult}
 							<a
@@ -268,12 +268,12 @@
 		</div>
 		<div class="add-note">
 			<a
-				class="addNoteButton btn border border-base-content bg-accent text-accent-content"
+				class="addNoteButton btn border-base-content bg-accent text-accent-content border"
 				href="/home/new-note">New Note</a
 			>
 		</div>
 	</div>
-	<div class="notes h-auto p-4">
+	<div class="notes h-auto overflow-y-auto p-4">
 		{#if error}
 			<p class="error">{error}</p>
 		{:else if notesStore.value && notesStore.value.length > 0}

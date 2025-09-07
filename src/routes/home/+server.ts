@@ -1,39 +1,34 @@
 import config from "$lib/utils/apiConfig";
 
-export async function GET({ url, locals }) {
-    if (locals.session.userId) {
-        const email = locals.session.claims.userEmail
-        // console.log(email)
+export async function GET({ url, locals, event }) {
+    const session = await locals.getSession()
 
-        const response = await fetch(`${config.apiUrl}notes/notes`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: email })
-        });
-        const result = await response.json();
-        // console.log(result);
+    const email = session.user.email
 
-        if (result.status == 200) {
-            return new Response(JSON.stringify(
-                {
-                    data: result.data
-                }
-            ))
-        } else {
-            return new Response(JSON.stringify(
-                {
-                    data: undefined
-                }
-            ))
-        }
+    const response = await fetch(`${config.apiUrl}notes/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+    });
+    const result = await response.json();
+    // console.log(result);
+
+    if (result.status == 200) {
+        return new Response(JSON.stringify(
+            {
+                data: result.data
+            }
+        ))
     } else {
         return new Response(JSON.stringify(
             {
                 data: undefined
             }
         ))
+        // }
     }
 }
+
 export async function DELETE({ locals, request }) {
     const body = await request.json();
     if (!body) {

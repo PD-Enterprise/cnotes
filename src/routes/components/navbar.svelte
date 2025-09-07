@@ -5,6 +5,10 @@
 	import AutoLogin from './autoLogin.svelte';
 	import SvelteToast from './svelteToast.svelte';
 	import Sync from './sync.svelte';
+	import type { PageData } from '../$types';
+	import { SignIn, SignOut } from '@auth/sveltekit/components';
+
+	let { data }: { data: PageData } = $props();
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -50,9 +54,9 @@
 			<ul
 				class="menu dropdown-content menu-sm rounded-box bg-base-100 z-[1] mt-3 flex gap-2 p-2 shadow"
 			>
-				<li>
-					<!-- <UserButton /> -->
-				</li>
+				<!-- <li>
+					<UserButton />
+				</li> -->
 				<li>
 					<label class="flex cursor-pointer gap-2">
 						<svg
@@ -92,19 +96,17 @@
 						</svg>
 					</label>
 				</li>
-				<AutoLogin type="inapp" />
 				<Sync />
 				<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
-					<!-- <SignedIn>
-						<SignOutButton class="btn btn-error w-full" />
-					</SignedIn>
-					<SignedOut>
-						<SignInButton class="btn btn-accent w-full" mode="modal" />
-					</SignedOut> -->
+					{#if data.session}
+						<a href="/logout" class="btn btn-error w-full">Logout</a>
+					{:else}
+						<a href="/login" class="btn btn-accent w-full">Login</a>
+					{/if}
 				</div>
 			</ul>
 		</div>
-		<a class="btn btn-ghost text-2xl" href="/home">Home</a>
+		<a class="btn btn-ghost text-2xl" href="/">Home</a>
 	</div>
 </div>
 
@@ -113,8 +115,6 @@
 		cursor: default;
 		position: fixed;
 		z-index: 1000;
-		background-color: var(--base-300);
-		backdrop-filter: blur(30px);
 	}
 	@media (max-width: 466px) {
 		.menu-buttons {

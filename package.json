@@ -30,6 +30,7 @@
 		"wrangler": "^4.34.0"
 	},
 	"dependencies": {
+		"@auth/core": "^0.40.0",
 		"@auth/sveltekit": "^1.10.0",
 		"@excalidraw/excalidraw": "^0.18.0",
 		"@iconify/svelte": "^5.0.1",

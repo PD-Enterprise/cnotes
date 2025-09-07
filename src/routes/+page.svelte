@@ -16,6 +16,15 @@
 			)}</pre>
 		<button class="btn" onclick={() => signOut()}>Sign Out</button>
 	{:else}
-		<button class="btn" onclick={() => signIn('google')}>Sign In</button>
+		<button
+			class="btn"
+			onclick={() => {
+				console.log('Button clicked! Calling signIn...');
+				console.log('The signIn function:', signIn); // This is key!
+				signIn('google');
+			}}
+		>
+			Sign in with Google
+		</button>
 	{/if}
 </div>

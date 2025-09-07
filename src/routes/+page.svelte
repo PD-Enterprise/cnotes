@@ -8,7 +8,7 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 
 	// Variables
-	let error: string = $state('');
+	let errorMessage: string = $state('');
 	let searchQuery: string = $state('');
 	let shouldShowSearchResults: boolean = $state(false);
 	let searchResults: searchResult[] = $state();
@@ -63,6 +63,7 @@
 		// console.log(result);
 
 		if (result.status == 401) {
+			errorMessage = 'You are not logged in. Please login to continue.';
 			return;
 		}
 
@@ -284,6 +285,8 @@
 						<Note {note} />
 					{/each}
 				</div>
+			{:else if errorMessage}
+				<p class="errorMessage">{errorMessage}</p>
 			{:else}
 				<p class="loadingNotes">Loading your Notes...</p>
 			{/if}

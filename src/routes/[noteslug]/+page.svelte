@@ -1,13 +1,13 @@
 <script lang="ts">
 	// Imports
 	import { onDestroy, onMount } from 'svelte';
-	import type { note } from '../../types';
+	import type { note } from '../types';
 	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
-	import Tiptap from '../../components/tiptap.svelte';
+	import Tiptap from '../components/tiptap.svelte';
 
 	// Variables
 	let error: string = $state('');
@@ -23,12 +23,12 @@
 			return;
 		}
 
-		const response = await fetch(`/home/${slug}`, {
+		const response = await fetch(`${slug}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		// console.log(result);
+		console.log(result);
 
 		if (!result.data) {
 			console.error('Failed to fetch note data.');
@@ -69,14 +69,9 @@
 		// }
 	}
 	async function saveNote() {
-		// Auth check
-		if (!isAuthenticated.value) {
-			showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
-			return;
-		}
 		EditorNoteData.value.dateUpdated = new Date().toISOString();
 		try {
-			const response = await fetch(`/home/${EditorNoteData.value.slug}`, {
+			const response = await fetch(`${EditorNoteData.value.slug}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -113,7 +108,7 @@
 		}
 	}
 	onMount(async () => {
-		const slug = $page.url.pathname.split('/home/')[1].split('/sharing')[0];
+		const slug = $page.url.pathname;
 		getNotesFromLocalStorage(slug);
 		getNote(slug);
 

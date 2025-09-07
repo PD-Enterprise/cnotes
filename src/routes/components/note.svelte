@@ -49,10 +49,10 @@
 <div
 	role="button"
 	tabindex="0"
-	class="note card flex border border-base-content p-1 shadow-2xl"
+	class="note card border-base-content flex border p-1 shadow-2xl"
 	id={notes.note.slug}
 >
-	<div class="card-body flex flex-col bg-base-300 p-1">
+	<div class="card-body bg-base-300 flex flex-col p-1">
 		<div class="title-and-options flex flex-row justify-between gap-1">
 			<a class="note-title card-title w-full" href="/home/{notes.note.slug}/sharing"
 				>{notes.note.title}</a
@@ -62,7 +62,7 @@
 					<div
 						tabindex="0"
 						role="button"
-						class="btn btn-circle m-1 border border-base-content hover:bg-base-300"
+						class="btn btn-circle border-base-content hover:bg-base-300 m-1 border"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -81,10 +81,10 @@
 						</svg>
 					</div>
 					<ul
-						class="menu dropdown-content absolute right-8 top-8 flex flex-col gap-2 rounded-box bg-base-100 p-2 shadow-sm"
+						class="menu dropdown-content rounded-box bg-base-100 absolute top-8 right-8 flex flex-col gap-2 p-2 shadow-sm"
 					>
 						<li>
-							<a class="btn btn-success" href={`/home/${notes.note.slug}`}>
+							<a class="btn btn-success" href={`/${notes.note.slug}`}>
 								Edit
 								<svg
 									viewBox="0 0 24 24"
@@ -141,7 +141,7 @@
 			</div>
 		</div>
 		<div class="note-meta card-actions">
-			<div class="badge badge-outline border border-base-content p-2">
+			<div class="badge badge-outline border-base-content border p-2">
 				{notes.note.grade}th grade
 			</div>
 			<div class="badge badge-outline border-base-content p-2">{notes.note.subject}</div>
@@ -161,7 +161,7 @@
 <dialog id="delete_modal_{notes.note.slug}" class="modal">
 	<div class="modal-box">
 		<form method="dialog">
-			<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
+			<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
 		</form>
 		<h1 class="text-2xl">Delete Note</h1>
 		<p class="py-4">Are you sure you want to delete this note?</p>

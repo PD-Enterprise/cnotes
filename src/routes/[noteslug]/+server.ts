@@ -1,10 +1,10 @@
 import config from "$lib/utils/apiConfig";
 
 export async function GET({ url, locals }) {
-    const slug = url.pathname.split('/home/')[1].split('/sharing')[0];
+    const slug = url.pathname;
 
     try {
-        const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
+        const response = await fetch(`${config.apiUrl}notes/note${slug}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -44,7 +44,17 @@ export async function POST({ locals, request }) {
         ))
     }
     const noteData = body.data;
-    const userEmail = locals.session.claims.userEmail;
+
+    const session = await locals.getSession();
+    if (!session) {
+        return new Response(JSON.stringify(
+            {
+                status: 401
+            }
+        ))
+    }
+
+    const email = session.user.email
 
     const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
         method: 'POST',
@@ -52,7 +62,7 @@ export async function POST({ locals, request }) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: userEmail,
+            email: email,
             data: noteData
         })
     });

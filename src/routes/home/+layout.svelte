@@ -1,7 +1,7 @@
 <script lang="ts">
 	// Imports
 	import { onMount, type Snippet } from 'svelte';
-	import InAppNavbar from '../components/inAppNavbar.svelte';
+	import Navbar from '../components/navbar.svelte';
 	import SvelteToast from '../components/svelteToast.svelte';
 	import config from '$lib/utils/apiConfig';
 	import type { PageData } from '../$types';
@@ -31,8 +31,8 @@
 <SvelteToast />
 
 <div class="main h-screen">
-	<div class="navbar mb-5 mt-3">
-		<InAppNavbar />
+	<div class="navbar mt-3 mb-5">
+		<Navbar />
 	</div>
 	<div class="content">
 		{@render children()}

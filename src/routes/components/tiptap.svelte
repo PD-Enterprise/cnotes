@@ -277,7 +277,7 @@
 							}}
 							class="tipex-edit-button"
 						>
-							<Icon icon="fa6-solid:plus" />
+							<Icon icon="majesticons:add-row" width="24" height="24" />
 						</button>
 						<button
 							aria-label="Add Column After"
@@ -289,7 +289,7 @@
 							}}
 							class="tipex-edit-button"
 						>
-							<Icon icon="fa6-solid:plus" />
+							<Icon icon="majesticons:add-column" width="24" height="24" />
 						</button>
 						<button
 							aria-label="Delete Row"
@@ -301,7 +301,31 @@
 							}}
 							class="tipex-edit-button"
 						>
-							<Icon icon="fa6-solid:trash" />
+							<Icon icon="fluent:table-delete-row-20-regular" width="20" height="20" />
+						</button>
+						<button
+							aria-label="Delete Column"
+							title="Delete Column"
+							onclick={() => {
+								if (editor) {
+									editor.value.chain().focus().deleteColumn().run();
+								}
+							}}
+							class="tipex-edit-button"
+						>
+							<Icon icon="fluent:table-delete-column-20-regular" width="20" height="20" />
+						</button>
+						<button
+							aria-label="Delete Table"
+							title="Delete Table"
+							onclick={() => {
+								if (editor) {
+									editor.value.chain().focus().deleteTable().run();
+								}
+							}}
+							class="tipex-edit-button"
+						>
+							<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
 						</button>
 					{/if}
 				</div>

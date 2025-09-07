@@ -15,7 +15,7 @@ Cnotes is a modern, cloud-based note-taking application built with SvelteKit, of
 ## Tech Stack
 
 - **Frontend**: SvelteKit, TailwindCSS, DaisyUI
-- **Rich Text Editor**: Tipex, Tiptap Extensions
+- **Rich Text Editor**: Tiptap, Tiptap Extensions
 - **Authentication**: Auth0
 - **Cloud Database**: Neon Database (via `@neondatabase/serverless`)
 - **Other**: Svelte Toasts, Excalidraw (planned for diagrams), TinyMCE (planned)
@@ -104,7 +104,7 @@ See [`package.json`](./package.json) for a full list. Key dependencies include:
 
 - `@sveltejs/kit`, `svelte`, `vite`, `tailwindcss`, `daisyui`
 - `@auth0/auth0-spa-js` for authentication
-- `@friendofsvelte/tipex`, `@tiptap/extension-*` for rich text editing
+- `tiptap` for rich text editing 
 - `@neondatabase/serverless` for cloud database
 - `svelte-toasts` for notifications
 

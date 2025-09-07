@@ -2,7 +2,6 @@
 	// Imports
 	import { onDestroy, onMount } from 'svelte';
 	import type { note } from '../../types';
-	import { defaultExtensions, Tipex, type TipexEditor } from '@friendofsvelte/tipex';
 	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
@@ -229,7 +228,7 @@
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">
 				<form method="dialog">
-					<button class="btn btn-ghost btn-sm btn-circle absolute right-2 top-2">✕</button>
+					<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
 				</form>
 				<span>Link:</span>
 				<a href="/home/{EditorNoteData.value.slug}/sharing" class="share-link">
@@ -286,78 +285,4 @@
 		border-radius: 0.25rem;
 		display: inline-block;
 	} */
-	.tipex-controller {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		position: sticky;
-		bottom: 0;
-		z-index: 10;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-between;
-		gap: 0.5rem; /* gap-2 */
-		border-radius: 0; /* rounded-none */
-		padding-left: 0.75rem; /* px-3 */
-		padding-right: 0.75rem;
-		padding-top: 0.5rem; /* py-2 */
-		padding-bottom: 0.5rem;
-	}
-	@media (min-width: 768px) {
-		.tipex-controller {
-			flex-direction: row;
-		}
-	}
-
-	.tipex-controller.dark,
-	:global(.dark) .tipex-controller {
-		background-color: #171717;
-	}
-
-	.tipex-controller-wrapper {
-		display: flex;
-		width: 100%;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.75rem; /* gap-3 */
-	}
-
-	.tipex-basic-controller-wrapper {
-		display: flex;
-		gap: 0.5rem; /* gap-2 */
-	}
-
-	.tipex-edit-button {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		color: #374151; /* text-neutral-700 */
-		display: flex;
-		height: 2.5rem;
-		width: 2.5rem;
-		cursor: pointer;
-		align-items: center;
-		justify-content: center;
-		border-radius: 0.375rem; /* rounded-md */
-		border: 0;
-		padding: 0;
-		font-size: 0.75rem; /* text-xs */
-		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-		transition-duration: 100ms;
-	}
-
-	.tipex-edit-button.dark,
-	:global(.dark) .tipex-edit-button {
-		background-color: rgba(31, 41, 55, 0.8);
-		color: #e5e7eb;
-	}
-
-	.tipex-edit-button.active {
-		background-color: #f3f4f6; /* bg-neutral-100 */
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
-	}
-
-	.tipex-edit-button.active.dark,
-	:global(.dark) .tipex-edit-button.active {
-		background-color: #374151;
-	}
 </style>

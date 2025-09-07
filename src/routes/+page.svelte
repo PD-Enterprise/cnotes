@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { signIn, signOut } from '@auth/sveltekit/client';
+	import { SignIn, SignOut } from '@auth/sveltekit/components';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
@@ -14,17 +14,12 @@
 				null,
 				2
 			)}</pre>
-		<button class="btn" onclick={() => signOut()}>Sign Out</button>
+		<SignOut>
+			<span class="btn" slot="submitButton">Signout</span>
+		</SignOut>
 	{:else}
-		<button
-			class="btn"
-			onclick={() => {
-				console.log('Button clicked! Calling signIn...');
-				console.log('The signIn function:', signIn); // This is key!
-				signIn('google');
-			}}
-		>
-			Sign in with Google
-		</button>
+		<SignIn>
+			<span class="btn" slot="submitButton">Sign In</span>
+		</SignIn>
 	{/if}
 </div>

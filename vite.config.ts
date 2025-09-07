@@ -10,11 +10,6 @@ export default defineConfig({
 	define: {
 		'process.env.IS_PREACT': JSON.stringify('true')
 	},
-	build: {
-		rollupOptions: {
-			external: ['clsx']
-		}
-	},
 	optimizeDeps: {
 		exclude: ["clsx"]
 	}

@@ -1,10 +1,11 @@
 import config from "$lib/utils/apiConfig";
 
 export async function GET({ url, locals }) {
-    const slug = url.pathname;
+    const slug = url.pathname.split('/')[1]
+    // console.log(slug)
 
     try {
-        const response = await fetch(`${config.apiUrl}notes/note${slug}`, {
+        const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -14,12 +15,14 @@ export async function GET({ url, locals }) {
         if (result.status == 200) {
             return new Response(JSON.stringify(
                 {
+                    status: 200,
                     data: result.data
                 }
             ))
         } else {
             return new Response(JSON.stringify(
                 {
+                    status: result.status,
                     message: "coudln't fetch note data."
                 }
             ))
@@ -55,7 +58,7 @@ export async function POST({ locals, request }) {
     }
 
     const email = session.user.email
-
+    noteData.notescontent = btoa(JSON.stringify(noteData.notescontent));
     const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
         method: 'POST',
         headers: {

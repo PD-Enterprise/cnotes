@@ -32,13 +32,7 @@
 				return;
 			}
 			localStorage.removeItem(`note:${notes.note.slug}`);
-			for (let i = 0; i < notesStore.value.length; i++) {
-				if (notesStore.value[i].title.replaceAll(' ', '-').toLowerCase() == notes.note.slug) {
-					notesStore.value = notesStore.value.filter(
-						(note) => note.title.replaceAll(' ', '-').toLowerCase() !== notes.note.slug
-					);
-				}
-			}
+			notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
 			showToast('Success', 'Note deleted successfully', 2500, 'success');
 		} catch (error) {
 			showToast('Error deleting note', 'There was an error deleting your note', 3000, 'error');

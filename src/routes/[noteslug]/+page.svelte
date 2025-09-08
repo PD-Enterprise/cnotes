@@ -28,13 +28,14 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 
 		if (!result.data) {
 			console.error('Failed to fetch note data.');
 			return;
 		}
 
+		result.data.notescontent = atob(result.data.notescontent).split('"')[1];
 		const serverNote: note = result.data;
 		originalNote = result.data;
 		// console.log('server note', serverNote);

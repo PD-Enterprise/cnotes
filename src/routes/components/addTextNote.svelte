@@ -34,30 +34,10 @@
 		try {
 			const rawHtml = editor.value.getHTML();
 			newNote.notescontent = DOMPurify.sanitize(rawHtml);
-			const slug = newNote.title.replaceAll(' ', '-').toLowerCase();
-			// console.log(newNote);
 
-			const encryptedNote = btoa(JSON.stringify(newNote));
-			// console.log(encryptedNote);
-			const storableNote: { key: string; value: string } = {
-				key: `note:${slug}`,
-				value: encryptedNote
-			};
-
-			if (localStorage.getItem(`note:${slug}`)) {
-				console.error('Another note with that name already exists.');
-				showToast(
-					'Title name Conflict',
-					'Another note with that name already exists, please choose another name',
-					3000,
-					'error'
-				);
-			} else {
-				localStorage.setItem(storableNote.key, storableNote.value);
-				await addToDB(newNote);
-				showToast('Successfully added note', 'Note added successfully', 1000, 'success');
-				window.location.href = '/';
-			}
+			await addToDB(newNote);
+			showToast('Successfully added note', 'Note added successfully', 1000, 'success');
+			window.location.href = '/';
 		} catch (error) {
 			console.error('There was an error:', error);
 		}

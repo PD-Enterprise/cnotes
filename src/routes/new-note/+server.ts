@@ -3,7 +3,14 @@ import type { note } from "../types";
 
 export async function POST({ url, locals, request }) {
     const body = await request.json();
-    // console.log(body.note);
+    if (!body) {
+        return new Response(JSON.stringify(
+            {
+                status: 400,
+                message: 'Invalid request body.'
+            }
+        ))
+    }
 
     const session = await locals.getSession();
     if (!session) {
@@ -17,6 +24,7 @@ export async function POST({ url, locals, request }) {
     const email = session.user.email
 
     try {
+        body.note.notescontent = btoa(JSON.stringify(body.note.notescontent));
         const addNoteRequest = await fetch(`${config.apiUrl}notes/new-note/text`, {
             method: 'POST',
             headers: {

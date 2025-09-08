@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { signIn } from '@auth/sveltekit/client';
+
+	async function handleGoogleSignIn() {
+		signIn('google', { redirectTo: '/' });
+	}
 </script>
 
 <div class="main flex flex-col items-center justify-center gap-5 p-3">
@@ -10,7 +14,7 @@
 		class="h-80"
 	/>
 	<div class="login-button">
-		<button class="btn btn-accent" onclick={() => signIn('google', { redirectTo: '/' })}>
+		<button class="btn btn-accent" onclick={handleGoogleSignIn}>
 			Signin with Google
 			<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 			<svg

@@ -44,7 +44,7 @@ export async function DELETE({ locals, request }) {
             }
         ))
     }
-    const slug = body.note.title.replaceAll(' ', '-').toLowerCase();
+    const slug = body.note.slug;
     const session = await locals.getSession();
     if (!session) {
         return new Response(JSON.stringify(

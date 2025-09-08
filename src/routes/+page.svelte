@@ -60,7 +60,28 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		// console.log(result);
+		console.log(result);
+
+		// Remove notes from localStorage that are not present in the server version
+		if (result.data && Array.isArray(result.data)) {
+			const serverSlugs = new Set(result.data.map((note) => note.slug));
+			let changed = false;
+			for (let i = 0; i < localStorage.length; i++) {
+				const key = localStorage.key(i);
+				if (key?.startsWith('note:')) {
+					const slug = key.slice(5);
+					if (!serverSlugs.has(slug)) {
+						localStorage.removeItem(key);
+						changed = true;
+					}
+				}
+			}
+			// Update notesStore to immediately reflect the change
+			if (changed) {
+				const updatedNotes = notesStore.value.filter((note) => serverSlugs.has(note.slug));
+				notesStore.value = updatedNotes;
+			}
+		}
 
 		if (result.status == 401) {
 			errorMessage = 'You are not logged in. Please login to continue.';
@@ -287,7 +308,7 @@
 			{:else if errorMessage}
 				<p class="errorMessage">{errorMessage}</p>
 			{:else}
-				<p class="loadingNotes">Loading your Notes...</p>
+				<p class="loadingNotes">No notes found.</p>
 			{/if}
 		{/await}
 	</div>

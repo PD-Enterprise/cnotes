@@ -38,7 +38,6 @@
 		const serverNote = result.data;
 		// console.log(serverNote);
 		if (serverNote && serverNote != undefined) {
-			serverNote.notescontent = atob(serverNote.notescontent).split('"')[1];
 			noteData = { ...serverNote };
 		} else {
 			onMount(() => {

@@ -35,7 +35,6 @@
 			return;
 		}
 
-		result.data.notescontent = atob(result.data.notescontent).split('"')[1];
 		const serverNote: note = result.data;
 		originalNote = result.data;
 		// console.log('server note', serverNote);

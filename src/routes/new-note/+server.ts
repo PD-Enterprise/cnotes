@@ -24,7 +24,6 @@ export async function POST({ url, locals, request }) {
     const email = session.user.email
 
     try {
-        body.note.notescontent = btoa(JSON.stringify(body.note.notescontent));
         const addNoteRequest = await fetch(`${config.apiUrl}notes/new-note/text`, {
             method: 'POST',
             headers: {

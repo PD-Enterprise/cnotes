@@ -11,7 +11,7 @@
 
 	async function deleteNote(note: note) {
 		try {
-			const request = await fetch(`/home`, {
+			const request = await fetch(`/`, {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'

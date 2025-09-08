@@ -45,7 +45,15 @@ export async function DELETE({ locals, request }) {
         ))
     }
     const slug = body.note.title.replaceAll(' ', '-').toLowerCase();
-
+    const session = await locals.getSession();
+    if (!session) {
+        return new Response(JSON.stringify(
+            {
+                status: 401
+            }
+        ))
+    }
+    const email = session.user.email;
     try {
         const deleteNoteRequest = await fetch(
             `${config.apiUrl}notes/note/${slug}/delete`,
@@ -54,7 +62,7 @@ export async function DELETE({ locals, request }) {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: locals.getSession().user.email })
+                body: JSON.stringify({ email: email })
             }
         );
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
@@ -120,6 +120,10 @@
 				}
 			}
 		});
+		if (!editable) {
+			const editorElement = document.getElementById('editor') as HTMLDivElement;
+			editorElement.style = 'border: none';
+		}
 	});
 	$effect(() => {
 		if (editor.value && content !== undefined && content !== null) {
@@ -135,8 +139,8 @@
 	});
 </script>
 
-<div class="editor-container flex h-full flex-col gap-3 overflow-hidden p-1">
-	<div bind:this={element} class="editor bg-base-300 rounded-md border-1 border-gray-500"></div>
+<div class="editor-container flex h-full flex-col gap-3 p-1">
+	<div bind:this={element} class="editor bg-base-300 rounded-md" id="editor"></div>
 	{#if editable}
 		<div class="tipex-controller dark">
 			<div class="tipex-controller-wrapper">
@@ -332,9 +336,15 @@
 </div>
 
 <style>
+	.editor-container {
+		overflow: hidden;
+	}
 	.editor {
 		height: calc(100vh - 270px);
 		min-height: calc(var(--spacing) * 96);
+		border-style: var(--tw-border-style);
+		border-width: 1px;
+		border-color: var(--color-gray-500);
 	}
 	.tipex-controller {
 		background-color: #f3f4f6;

@@ -63,14 +63,14 @@
 		<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
 	{:then}
 		{#if noteData}
-			<div class="content flex flex-col gap-1">
-				<div class="metadata-box bg-base-300 flex flex-col gap-2 rounded-md p-2">
-					<h1 class="w-full p-2 text-3xl font-bold">
+			<div class="content flex h-full flex-col gap-1">
+				<div class="metadata-box bg-base-200 flex flex-col gap-2 pt-1 pr-2 pb-2 pl-2">
+					<h1 class="w-full p-2 text-2xl font-bold">
 						{noteData.title}
 					</h1>
 					<div class="meta-data flex flex-col flex-wrap items-center justify-center">
 						{#each Object.keys(noteData) as noteDataKey}
-							{#if ['board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+							{#if ['dateCreated', 'grade', 'subject'].includes(noteDataKey)}
 								<div class="mx-auto">
 									<div class="label text-center">
 										<span class="label-text">
@@ -86,7 +86,7 @@
 					</div>
 					<div class="buttons">
 						<button
-							class="share-btn btn btn-success"
+							class="share-btn btn btn-success p-2"
 							onclick={() => {
 								const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
 								share_modal.showModal();

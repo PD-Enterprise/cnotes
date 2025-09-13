@@ -63,7 +63,7 @@
 		<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
 	{:then}
 		{#if noteData}
-			<div class="content flex flex-col gap-3">
+			<div class="content flex flex-col gap-1">
 				<div class="metadata-box bg-base-300 flex flex-col gap-2 rounded-md p-2">
 					<h1 class="w-full p-2 text-3xl font-bold">
 						{noteData.title}
@@ -109,13 +109,7 @@
 						</button>
 					</div>
 				</div>
-				<div
-					class="editor-container border-base-300 bg-base-200 h-full overflow-hidden rounded-lg border-4 p-2"
-				>
-					<div class="editor dark p-1">
-						<Tiptap content={noteData.notescontent} editable={false} />
-					</div>
-				</div>
+				<Tiptap content={noteData.notescontent} editable={false} />
 			</div>
 			<dialog id="share_modal" class="modal">
 				<div class="modal-box">

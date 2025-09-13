@@ -107,7 +107,7 @@
 			},
 			editorProps: {
 				attributes: {
-					class: 'p-2 focus:outline-none overflow-y-scroll prose-sm',
+					class: 'p-2 focus:outline-none overflow-y-scroll',
 					style: 'height: 100%'
 				}
 			},
@@ -136,10 +136,7 @@
 </script>
 
 <div class="editor-container flex h-full flex-col gap-3 overflow-hidden p-1">
-	<div
-		bind:this={element}
-		class="editor bg-base-300 min-h-96 rounded-md border-2 border-gray-500"
-	></div>
+	<div bind:this={element} class="editor bg-base-300 rounded-md border-1 border-gray-500"></div>
 	{#if editable}
 		<div class="tipex-controller dark">
 			<div class="tipex-controller-wrapper">
@@ -336,7 +333,8 @@
 
 <style>
 	.editor {
-		height: calc(100vh - 400px);
+		height: calc(100vh - 270px);
+		min-height: calc(var(--spacing) * 96);
 	}
 	.tipex-controller {
 		background-color: #f3f4f6;
@@ -363,7 +361,6 @@
 	:global(.dark) .tipex-controller {
 		background-color: #171717;
 	}
-
 	.tipex-controller-wrapper {
 		display: flex;
 		width: 100%;
@@ -371,7 +368,6 @@
 		justify-content: space-between;
 		gap: 0.75rem;
 	}
-
 	.tipex-basic-controller-wrapper {
 		display: flex;
 		gap: 0.5rem;
@@ -433,7 +429,6 @@
 		font-weight: bold;
 		text-align: left;
 	}
-
 	.tiptap table .selectedCell:after {
 		background: rgba(200, 200, 200, 0.4);
 		content: '';
@@ -445,7 +440,6 @@
 		position: absolute;
 		z-index: 2;
 	}
-
 	.tiptap table .column-resize-handle {
 		background-color: #8b5cf6;
 		bottom: -2px;
@@ -459,7 +453,6 @@
 		margin: 1.5rem 0;
 		overflow-x: auto;
 	}
-
 	.tiptap.resize-cursor {
 		cursor: ew-resize;
 		cursor: col-resize;
@@ -475,18 +468,15 @@
 	:global(.dark) .tiptap table .selectedCell:after {
 		background: rgba(55, 65, 81, 0.4);
 	}
-
 	.table-controls {
 		display: flex;
 		align-items: center;
 		padding: 2px;
 		border-radius: 4px;
 	}
-
 	.tipex-edit-button {
 		position: relative;
 	}
-
 	.tipex-edit-button:hover::after {
 		content: attr(title);
 		position: absolute;

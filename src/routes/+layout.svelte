@@ -11,7 +11,7 @@
 
 <SvelteToast />
 
-<div class="main flex h-screen flex-col gap-2">
+<div class="main flex h-screen flex-col">
 	<div class="navbar">
 		<Navbar {data} />
 	</div>

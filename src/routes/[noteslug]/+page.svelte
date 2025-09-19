@@ -15,13 +15,13 @@
 	let isChanged = $derived(
 		originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote)
 	);
+	let data = $props();
 
 	// Functions
-	async function getNote(slug: string) {
-		if (!slug) {
-			console.error('No note slug provided.');
-			return;
-		}
+	async function getNote() {
+		const slug = $page.url.pathname.split('/')[1];
+
+		console.log(slug);
 
 		const response = await fetch(`${slug}`, {
 			method: 'GET',
@@ -30,8 +30,9 @@
 		const result = await response.json();
 		// console.log(result);
 
-		if (!result.data) {
+		if (!result.data || result.status != 200) {
 			console.error('Failed to fetch note data.');
+			error = 'Failed to fetch note data.';
 			return;
 		}
 
@@ -43,30 +44,6 @@
 			EditorNoteData.value = { ...serverNote };
 			// console.log(noteData);
 		}
-	}
-	function getNotesFromLocalStorage(slug: string) {
-		if (!slug) {
-			console.error('No note slug provided.');
-			return;
-		}
-		// let localNote = null;
-		// let hasLocalNote = false;
-		// const storedNote = localStorage.getItem(`note:${slug}`);
-		// if (storedNote) {
-		// 	hasLocalNote = true;
-		// 	try {
-		// 		localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
-		// 	} catch (e) {
-		// 		try {
-		// 			localNote = JSON.parse(storedNote);
-		// 		} catch {
-		// 			error = 'Corrupted local note data.';
-		// 			return;
-		// 		}
-		// 	}
-		// 	noteData = { ...localNote };
-		// 	originalNoteData = { ...localNote };
-		// }
 	}
 	async function saveNote() {
 		EditorNoteData.value.dateUpdated = new Date().toISOString();
@@ -108,10 +85,6 @@
 		}
 	}
 	onMount(async () => {
-		const slug = $page.url.pathname;
-		getNotesFromLocalStorage(slug);
-		getNote(slug);
-
 		window.addEventListener('keydown', handleSaveShortcut);
 		const editor = document.getElementById('editor') as HTMLDivElement;
 
@@ -128,113 +101,127 @@
 	});
 </script>
 
-<dialog id="meta_data_modal" class="modal">
-	<div class="modal-box flex w-96 flex-col">
-		<div class="absolute right-2">
-			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
-				<button
-					class="btn btn-ghost btn-sm btn-circle top-2"
-					onclick={(e) => {
-						e.preventDefault();
-						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
-						meta_data_modal.close();
-						// console.log(newNote);
-					}}>✕</button
-				>
-			</form>
-		</div>
-		<div class="flex flex-col gap-2">
-			<h3>Enter Metadata for your Note Here:</h3>
-			<div class="meta-data flex flex-row flex-wrap gap-3">
-				{#each Object.keys(EditorNoteData.value) as noteDataKey}
-					{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-						<label class="form-control w-full max-w-xs">
-							<div class="label">
-								<span class="label-text">{noteDataKey}:</span>
-							</div>
-							{#if noteDataKey == 'dateCreated'}
-								<input
-									type="date"
-									class="input-bordered input"
-									placeholder={noteDataKey}
-									required
-									bind:value={EditorNoteData.value[noteDataKey]}
-								/>
-							{:else}
-								<input
-									type="text"
-									class="input-bordered input"
-									placeholder={noteDataKey}
-									required
-									bind:value={EditorNoteData.value[noteDataKey]}
-								/>
-							{/if}
-						</label>
-					{/if}
-				{/each}
-			</div>
-		</div>
+{#if data.data.session}
+	<div class="main">
+		{#await getNote()}
+			<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
+		{:then}
+			<dialog id="meta_data_modal" class="modal">
+				<div class="modal-box flex w-96 flex-col">
+					<div class="absolute right-2">
+						<form method="dialog" onsubmit={(e) => e.preventDefault()}>
+							<button
+								class="btn btn-ghost btn-sm btn-circle top-2"
+								onclick={(e) => {
+									e.preventDefault();
+									const meta_data_modal = document.getElementById(
+										'meta_data_modal'
+									) as HTMLDialogElement;
+									meta_data_modal.close();
+									// console.log(newNote);
+								}}>✕</button
+							>
+						</form>
+					</div>
+					<div class="flex flex-col gap-2">
+						<h3>Enter Metadata for your Note Here:</h3>
+						<div class="meta-data flex flex-row flex-wrap gap-3">
+							{#each Object.keys(EditorNoteData.value) as noteDataKey}
+								{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+									<label class="form-control w-full max-w-xs">
+										<div class="label">
+											<span class="label-text">{noteDataKey}:</span>
+										</div>
+										{#if noteDataKey == 'dateCreated'}
+											<input
+												type="date"
+												class="input-bordered input"
+												placeholder={noteDataKey}
+												required
+												bind:value={EditorNoteData.value[noteDataKey]}
+											/>
+										{:else}
+											<input
+												type="text"
+												class="input-bordered input"
+												placeholder={noteDataKey}
+												required
+												bind:value={EditorNoteData.value[noteDataKey]}
+											/>
+										{/if}
+									</label>
+								{/if}
+							{/each}
+						</div>
+					</div>
+				</div>
+			</dialog>
+			{#if error}
+				{error}
+			{:else if EditorNoteData.value}
+				<div class="note flex h-full flex-col gap-5 rounded-md">
+					<div class="buttons mt-2 flex gap-2">
+						{#if isChanged}
+							<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
+						{:else}
+							<button class="btn btn-accent btn-outline" disabled>Save</button>
+						{/if}
+						<button
+							class="btn btn-info border"
+							onclick={() => {
+								const meta_data_modal = document.getElementById(
+									'meta_data_modal'
+								) as HTMLDialogElement;
+								meta_data_modal.showModal();
+							}}>Edit Metadata</button
+						>
+						<button
+							class="btn btn-success"
+							onclick={() => {
+								const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
+								share_modal.showModal();
+							}}
+							>Share<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="size-6"
+								><path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+								/></svg
+							></button
+						>
+					</div>
+					<div class="editor h-full">
+						<!-- {console.log('notedata', noteData.notescontent)} -->
+						<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
+					</div>
+				</div>
+				<dialog id="share_modal" class="modal">
+					<div class="modal-box">
+						<form method="dialog">
+							<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
+						</form>
+						<span>Link:</span>
+						<a href="/{EditorNoteData.value.slug}/sharing" class="share-link">
+							https://cnotes.pages.dev/{EditorNoteData.value.slug}/sharing
+						</a>
+					</div>
+				</dialog>
+			{:else}
+				<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
+			{/if}
+		{:catch error}
+			<p class="errorMessage">{error}</p>
+		{/await}
 	</div>
-</dialog>
-<div class="main">
-	{#if error}
-		{error}
-	{:else if EditorNoteData.value}
-		<div class="note flex h-full flex-col gap-5 rounded-md">
-			<div class="buttons mt-2 flex gap-2">
-				{#if isChanged}
-					<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
-				{:else}
-					<button class="btn btn-accent btn-outline" disabled>Save</button>
-				{/if}
-				<button
-					class="btn btn-info border"
-					onclick={() => {
-						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
-						meta_data_modal.showModal();
-					}}>Edit Metadata</button
-				>
-				<button
-					class="btn btn-success"
-					onclick={() => {
-						const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-						share_modal.showModal();
-					}}
-					>Share<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke-width="1.5"
-						stroke="currentColor"
-						class="size-6"
-						><path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-						/></svg
-					></button
-				>
-			</div>
-			<div class="editor h-full">
-				<!-- {console.log('notedata', noteData.notescontent)} -->
-				<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
-			</div>
-		</div>
-		<dialog id="share_modal" class="modal">
-			<div class="modal-box">
-				<form method="dialog">
-					<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
-				</form>
-				<span>Link:</span>
-				<a href="/{EditorNoteData.value.slug}/sharing" class="share-link">
-					https://cnotes.pages.dev/{EditorNoteData.value.slug}/sharing
-				</a>
-			</div>
-		</dialog>
-	{:else}
-		<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
-	{/if}
-</div>
+{:else}
+	<p class="errorMessage">You are not logged in. Please login to continue.</p>
+{/if}
 
 <div class="active dark hidden"></div>
 

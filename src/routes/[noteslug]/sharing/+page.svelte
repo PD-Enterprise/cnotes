@@ -56,6 +56,9 @@
 			noteData = { ...localNote };
 		}
 	}
+	onMount(() => {
+		getNoteFromLocalStorage($page.url.pathname.split('/sharing')[0].split('/')[1]);
+	});
 </script>
 
 <div class="main">

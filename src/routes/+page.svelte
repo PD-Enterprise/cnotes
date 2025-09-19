@@ -20,6 +20,7 @@
 	let selectedSort = $state('title');
 	let localNotes: note[] = [];
 	let hasLocalNotes = false;
+	let data = $props();
 
 	// Functions
 	async function getNotesFromLocalStorage() {
@@ -60,7 +61,7 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 
 		// Remove notes from localStorage that are not present in the server version
 		if (result.data && Array.isArray(result.data)) {
@@ -110,7 +111,9 @@
 		}
 	}
 	onMount(() => {
-		getNotesFromLocalStorage();
+		if (data.data.session) {
+			getNotesFromLocalStorage();
+		}
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
 			if (searchBar && !searchBar.contains(event.target as Node)) {
@@ -288,12 +291,21 @@
 				</div>
 			{/if}
 		</div>
-		<div class="add-note">
-			<a
-				class="addNoteButton btn border-base-content bg-accent text-accent-content border"
-				href="/new-note">New Note</a
-			>
-		</div>
+		{#if data.data.session}
+			<div class="add-note">
+				<a
+					class="addNoteButton btn border-base-content bg-accent text-accent-content border"
+					href="/new-note">New Note</a
+				>
+			</div>
+		{:else}
+			<div class="add-note">
+				<a
+					class="addNoteButton btn-disabled btn border-base-content bg-accent text-accent-content"
+					href="/new-note">New Note</a
+				>
+			</div>
+		{/if}
 	</div>
 	<div class="notes h-auto overflow-y-auto p-4">
 		{#await getNotes()}
@@ -302,7 +314,7 @@
 			{#if notesStore.value && notesStore.value.length > 0}
 				<div class="notes-grid">
 					{#each getFilteredAndSortedNotes() as note}
-						<Note {note} />
+						<Note {note} auth={data.data.session} />
 					{/each}
 				</div>
 			{:else if errorMessage}

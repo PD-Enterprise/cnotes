@@ -2,7 +2,6 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
-	// import { Placeholder } from '@tiptap/extensions';
 	import StarterKit from '@tiptap/starter-kit';
 	import Mathematics from '@tiptap/extension-mathematics';
 	import 'katex/dist/katex.min.css';
@@ -10,12 +9,13 @@
 	import './tiptap-editor.css';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
-	// import Youtube from '@tiptap/extension-youtube';
+	import Youtube from '@tiptap/extension-youtube';
 	import Subscript from '@tiptap/extension-subscript';
 	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
 	import TextAlign from '@tiptap/extension-text-align';
 	import { TableKit } from '@tiptap/extension-table';
+	import { charWidth } from '@excalidraw/excalidraw/element/textMeasurements';
 
 	let element;
 	let { content, editable } = $props();
@@ -91,8 +91,8 @@
 				}),
 				TableKit.configure({
 					table: { resizable: true }
-				})
-				// Youtube,
+				}),
+				Youtube
 				// TableRow,
 				// TableHeader,
 				// TableCell,
@@ -235,7 +235,7 @@
 					</button>
 					<button
 						aria-label="Insert Math Formula"
-						title="Insert Math Formula"
+						title="Math Formula"
 						onclick={() => {
 							const latex = prompt('Enter inline math expression:', '');
 							return editor.value.chain().insertInlineMath({ latex }).focus().run();
@@ -329,6 +329,28 @@
 							<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
 						</button>
 					{/if}
+					<button
+						aria-label="Youtube"
+						title="YouTube"
+						onclick={() => {
+							const url = prompt('Enter Youtube URL');
+							if (url) {
+								editor.value
+									.chain()
+									.focus()
+									.setYoutubeVideo({
+										src: url,
+										width: Math.max(320, 10) || 640,
+										height: Math.max(180, 10) || 480
+									})
+									.run();
+							}
+						}}
+						class="tipex-edit-button"
+						class:active={editor.value?.isActive('Youtube')}
+					>
+						<Icon icon="mdi:youtube" width="24" height="24" />
+					</button>
 				</div>
 			</div>
 		</div>

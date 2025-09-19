@@ -15,7 +15,6 @@
 	import Highlight from '@tiptap/extension-highlight';
 	import TextAlign from '@tiptap/extension-text-align';
 	import { TableKit } from '@tiptap/extension-table';
-	import { charWidth } from '@excalidraw/excalidraw/element/textMeasurements';
 
 	let element;
 	let { content, editable } = $props();

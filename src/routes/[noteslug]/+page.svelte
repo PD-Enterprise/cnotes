@@ -127,7 +127,7 @@
 						<h3>Enter Metadata for your Note Here:</h3>
 						<div class="meta-data flex flex-row flex-wrap gap-3">
 							{#each Object.keys(EditorNoteData.value) as noteDataKey}
-								{#if ['title', 'board', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+								{#if ['title', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
 									<label class="form-control w-full max-w-xs">
 										<div class="label">
 											<span class="label-text">{noteDataKey}:</span>

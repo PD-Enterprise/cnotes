@@ -31,7 +31,7 @@
 			if (key?.startsWith('note:')) {
 				hasLocalNotes = true;
 				const encodedData = localStorage.getItem(key);
-				let noteData;
+				let noteData: any;
 				try {
 					const decodedString = atob(encodedData || '');
 					const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
@@ -48,8 +48,8 @@
 		}
 		// Sort notes by date (latest first)
 		localNotes = tempNotes.sort((a, b) => {
-			const dateA = new Date(a.dateCreated || a.dateCreated || 0).getTime();
-			const dateB = new Date(b.dateCreated || b.dateCreated || 0).getTime();
+			const dateA = new Date(a.dateCreated || 0).getTime();
+			const dateB = new Date(b.dateCreated || 0).getTime();
 			return dateB - dateA;
 		});
 		if (hasLocalNotes) {
@@ -114,6 +114,7 @@
 	onMount(() => {
 		if (data.data.session) {
 			getNotesFromLocalStorage();
+			getNotes();
 		}
 		document.addEventListener('click', (event) => {
 			const searchBar = document.querySelector('.search-bar');
@@ -309,21 +310,17 @@
 		{/if}
 	</div>
 	<div class="notes h-auto overflow-y-auto p-4">
-		{#await getNotes()}
-			<Loader title="Loading your notes..." />
-		{:then}
-			{#if notesStore.value && notesStore.value.length > 0}
-				<div class="notes-grid">
-					{#each getFilteredAndSortedNotes() as note}
-						<Note {note} auth={data.data.session} />
-					{/each}
-				</div>
-			{:else if errorMessage}
-				<p class="errorMessage">{errorMessage}</p>
-			{:else}
-				<p class="loadingNotes">No notes found.</p>
-			{/if}
-		{/await}
+		{#if notesStore.value && notesStore.value.length > 0}
+			<div class="notes-grid">
+				{#each getFilteredAndSortedNotes() as note}
+					<Note {note} auth={data.data.session} />
+				{/each}
+			</div>
+		{:else if errorMessage}
+			<p class="errorMessage">{errorMessage}</p>
+		{:else}
+			<p class="loadingNotes">No notes found.</p>
+		{/if}
 	</div>
 </div>
 

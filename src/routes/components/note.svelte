@@ -55,7 +55,7 @@
 					<div
 						tabindex="0"
 						role="button"
-						class="btn btn-circle border-base-content hover:bg-base-300 m-1 border"
+						class="btn btn-circle hover:bg-base-100 focus:border-base-content hover:border-base-content m-1 hover:border focus:border"
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

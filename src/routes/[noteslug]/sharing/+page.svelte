@@ -5,6 +5,7 @@
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
+	import Loader from '../../components/loader.svelte';
 
 	// Variables
 	let errorMessage: string = '';
@@ -63,7 +64,7 @@
 
 <div class="main">
 	{#await getNoteFromServer()}
-		<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
+		<Loader title="Loading the note..." />
 	{:then}
 		{#if noteData}
 			<div class="content flex h-full flex-col gap-1">

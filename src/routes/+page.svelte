@@ -6,6 +6,7 @@
 	import { notesStore } from '$lib/stores/store.svelte';
 	import Note from './components/note.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import Loader from './components/loader.svelte';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -309,7 +310,7 @@
 	</div>
 	<div class="notes h-auto overflow-y-auto p-4">
 		{#await getNotes()}
-			<p class="loadingNotes">Loading your Notes...</p>
+			<Loader title="Loading your notes..." />
 		{:then}
 			{#if notesStore.value && notesStore.value.length > 0}
 				<div class="notes-grid">

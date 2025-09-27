@@ -8,6 +8,7 @@
 	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../components/tiptap.svelte';
+	import Loader from '../components/loader.svelte';
 
 	// Variables
 	let error: string = $state('');
@@ -104,7 +105,7 @@
 {#if data.data.session}
 	<div class="main">
 		{#await getNote()}
-			<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
+			<Loader title="Loading your note..."/>
 		{:then}
 			<dialog id="meta_data_modal" class="modal">
 				<div class="modal-box flex w-96 flex-col">

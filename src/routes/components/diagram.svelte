@@ -192,7 +192,7 @@
 			<Excalidraw
 				theme="dark"
 				excalidrawAPI={(api) => (excalidrawAPI = api)}
-				viewModeEnabled={true}
+				viewModeEnabled={false}
 			/>
 		</div>
 	</div>

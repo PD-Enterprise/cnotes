@@ -1,15 +1,18 @@
 <script lang="ts">
 	// import { onMount } from 'svelte';
 	import AddTextNote from '../components/addTextNote.svelte';
-	// import Diagram from '../../components/diagram.svelte';
+	import Diagram from '../components/diagram.svelte';
 
 	// Variables
-	let option = $state('text');
+	let option = $state('diagram');
 </script>
 
 <div class="main">
 	<div class="dropdown p-2">
-		<select bind:value={option} class="menu bg-base-100 z-[1] m-1 w-52 p-2 shadow">
+		<select
+			bind:value={option}
+			class="menu bg-base-200 border-base-content z-[1] m-1 w-52 rounded border p-2 shadow-xl"
+		>
 			<option value="text">Text</option>
 			<option value="diagram">Diagram</option>
 		</select>
@@ -43,8 +46,7 @@
 		</div>
 	{:else if option === 'diagram'}
 		<div class="diagram mt-1 p-2">
-			This feature coming soon!!
-			<!-- <Diagram /> -->
+			<Diagram />
 		</div>
 	{/if}
 </div>

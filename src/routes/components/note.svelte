@@ -43,12 +43,13 @@
 <div
 	role="button"
 	tabindex="0"
-	class="note card border-base-content flex border p-1 shadow-2xl"
+	class="note card border-base-content flex gap-2.5 border p-1 shadow-2xl"
 	id={notes.note.slug}
 >
 	<div class="card-body bg-base-300 flex flex-col p-1">
 		<div class="title-and-options flex flex-row justify-between gap-1">
-			<a class="note-title card-title w-full" href="{notes.note.slug}/sharing">{notes.note.title}</a
+			<a class="note-title card-title w-full p-1" href="{notes.note.slug}/sharing"
+				>{notes.note.title}</a
 			>
 			<div class="card-options">
 				<div class="dropdown">
@@ -248,9 +249,7 @@
 		--note-height: 11em;
 		width: var(--note-width);
 		height: var(--note-height);
-		font-size: 1rem;
 		flex-direction: column;
-		gap: 10px;
 		overflow-y: hidden;
 		cursor: pointer;
 	}

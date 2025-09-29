@@ -1,5 +1,5 @@
-<!-- <script lang="ts">
-	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
+<script lang="ts">
+	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types';
 	import Excalidraw from './Excalidraw.svelte';
 	import type { note } from '../types';
 
@@ -19,64 +19,10 @@
 		<div class="header-box">
 			<h2 class="mb-6 text-3xl">Add a Diagram</h2>
 			<div class="new-note-data">
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Title:</span>
-					</div>
-					<input
-						type="text"
-						class="input-bordered input w-full max-w-xs"
-						bind:value={newNote[0].title}
-						required
-						placeholder="Title"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Date Created:</span>
-					</div>
-					<input
-						type="date"
-						class="input-bordered input w-full max-w-xs"
-						bind:value={newNote[0].dateCreated}
-						required
-						placeholder="Date Created"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Grade:</span>
-					</div>
-					<input
-						type="text"
-						class="input-bordered input w-full max-w-xs"
-						bind:value={newNote[0].grade}
-						required
-						placeholder="Grade"
-					/>
-				</label>
-				<label class="form-control w-full max-w-xs">
-					<div class="label">
-						<span class="label-text">Subject:</span>
-					</div>
-					<input
-						type="text"
-						class="input-bordered input w-full max-w-xs"
-						bind:value={newNote[0].subject}
-						required
-						placeholder="Subject"
-					/>
-				</label>
-			</div>
-			<label>
-				<div class="label">
-					<span class="label-text">Diagram:</span>
-				</div>
 				<Excalidraw theme="dark" excalidrawAPI={(api) => (excalidrawAPI = api)} />
-			</label>
-			<br />
+			</div>
+			<!-- <button class="btn btn-accent btn-outline" onclick={addNewDiagram}>Add Note</button> -->
 		</div>
-		<button class="btn btn-accent btn-outline" onclick={addNewDiagram}>Add Note</button>
 	</form>
 </div>
 
@@ -183,4 +129,4 @@
 			/* Full-width button on smaller screens */
 		}
 	}
-</style> -->
+</style>

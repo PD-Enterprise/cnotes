@@ -2,7 +2,6 @@ type note = {
 	noteId?: number;
 	title: string;
 	notescontent: string;
-	board: string;
 	dateCreated: string;
 	dateUpdated?: string;
 	grade: string;

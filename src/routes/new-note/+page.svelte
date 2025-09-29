@@ -4,7 +4,7 @@
 	import Diagram from '../components/diagram.svelte';
 
 	// Variables
-	let option = $state('text');
+	let option = $state('diagram');
 </script>
 
 <div class="main">

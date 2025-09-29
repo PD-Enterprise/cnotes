@@ -11,7 +11,6 @@
 	let errorMessage: string = '';
 	let noteData = $state<note>({
 		title: '',
-		board: '',
 		dateCreated: '',
 		grade: undefined,
 		subject: '',

@@ -10,7 +10,6 @@
 	let newNote: note = $state({
 		title: '',
 		notescontent: '',
-		board: '',
 		dateCreated: '',
 		grade: '',
 		subject: ''
@@ -48,11 +47,12 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					note: note
+					note: note,
+					type: 'text'
 				})
 			});
 			const result = await request.json();
-			console.log(result);
+			// console.log(result);
 			if (result.status == 401) {
 				showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
 				return false;
@@ -134,11 +134,6 @@
 		<div class="header flex flex-col gap-3 p-2">
 			<div class="header-box flex flex-col items-center justify-center">
 				<div class="mb-1 flex items-center gap-3">
-					<svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-blue-600">
-						<rect x="2" y="4" width="20" height="16" rx="3" fill="#3B82F6" />
-						<rect x="5" y="7" width="14" height="10" rx="2" fill="#fff" />
-						<path d="M8 10h8M8 13h5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" />
-					</svg>
 					<h2 class="component-title mb-0 text-4xl font-extrabold drop-shadow">Add a Text Note</h2>
 				</div>
 			</div>
@@ -178,7 +173,7 @@
 <style>
 	.main-component {
 		animation: fadeInDown 0.5s ease-in-out;
-		height: calc(100vh - 130px);
+		height: calc(100vh - 250px);
 	}
 	.header-box {
 		text-align: center;

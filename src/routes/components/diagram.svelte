@@ -158,7 +158,7 @@
 		<div class="header flex flex-col gap-3 p-2">
 			<div class="header-box flex flex-col items-center justify-center">
 				<div class="mb-1 flex items-center gap-3">
-					<h2 class="component-title mb-0 text-4xl font-extrabold drop-shadow">Add a Text Note</h2>
+					<h2 class="component-title mb-0 text-4xl font-extrabold drop-shadow">Add a Diagram</h2>
 				</div>
 			</div>
 			<div class="buttons flex flex-row gap-2">

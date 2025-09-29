@@ -6,7 +6,8 @@ type note = {
 	dateUpdated?: string;
 	grade: string;
 	subject: string;
-	slug?: string
+	slug?: string,
+	type: string
 };
 
 type searchResult = {

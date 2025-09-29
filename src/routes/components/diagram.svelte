@@ -9,7 +9,8 @@
 		notescontent: '',
 		dateCreated: '09/29/2025',
 		grade: '9',
-		subject: 'test'
+		subject: 'test',
+		type: ''
 	});
 	let isValid: boolean = $state(false);
 
@@ -189,7 +190,11 @@
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Excalidraw theme="dark" excalidrawAPI={(api) => (excalidrawAPI = api)} />
+			<Excalidraw
+				theme="dark"
+				excalidrawAPI={(api) => (excalidrawAPI = api)}
+				viewModeEnabled={true}
+			/>
 		</div>
 	</div>
 </div>

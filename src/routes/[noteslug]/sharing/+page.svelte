@@ -6,15 +6,17 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
 	import Loader from '../../components/loader.svelte';
+	import Excalidraw from '../../components/Excalidraw.svelte';
 
 	// Variables
-	let errorMessage: string = '';
+	let errorMessage: string = $state('');
 	let noteData = $state<note>({
 		title: '',
 		dateCreated: '',
 		grade: undefined,
 		subject: '',
-		notescontent: ''
+		notescontent: '',
+		type: ''
 	});
 	let localNote = null;
 	let hasLocalNote = false;
@@ -59,6 +61,8 @@
 	onMount(() => {
 		getNoteFromLocalStorage($page.url.pathname.split('/sharing')[0].split('/')[1]);
 		getNoteFromServer();
+
+		// console.log(JSON.parse(noteData.notescontent));
 	});
 </script>
 
@@ -110,7 +114,11 @@
 					</button>
 				</div>
 			</div>
-			<Tiptap content={noteData.notescontent} editable={false} />
+			{#if noteData.type == 'text'}
+				<Tiptap content={noteData.notescontent} editable={false} />
+			{:else if noteData.type == 'diagram'}
+				<Excalidraw theme="dark" content={noteData.notescontent} viewModeEnabled={true} />
+			{/if}
 		</div>
 		<dialog id="share_modal" class="modal">
 			<div class="modal-box">

@@ -9,14 +9,22 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../components/tiptap.svelte';
 	import Loader from '../components/loader.svelte';
+	import Excalidraw from '../components/Excalidraw.svelte';
+	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
 	// Variables
 	let error: string = $state('');
 	let originalNote = $state(null);
-	let isChanged = $derived(
-		originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote)
-	);
+	let excalidrawIsDirty = $state(false);
+	let excalidrawKey = $state(0);
 	let data = $props();
+	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
+	let isChanged = $derived(() => {
+		if (EditorNoteData.value.type === 'diagram') {
+			return excalidrawIsDirty;
+		}
+		return originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote);
+	});
 
 	// Functions
 	async function getNote() {
@@ -42,11 +50,23 @@
 
 		if (serverNote && serverNote != undefined) {
 			EditorNoteData.value = { ...serverNote };
-			// console.log(noteData);
+			console.log(EditorNoteData.value.notescontent);
 		}
 	}
 	async function saveNote() {
 		EditorNoteData.value.dateUpdated = new Date().toISOString();
+
+		let noteToSave = { ...EditorNoteData.value };
+
+		if (noteToSave.type == 'diagram' && excalidrawAPI) {
+			const currentElements = excalidrawAPI.getSceneElements();
+			const currentFiles = excalidrawAPI.getFiles();
+
+			noteToSave.notescontent = JSON.stringify({
+				elements: currentElements,
+				files: currentFiles
+			});
+		}
 		try {
 			const response = await fetch(`${EditorNoteData.value.slug}`, {
 				method: 'POST',
@@ -54,7 +74,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					data: EditorNoteData.value
+					data: noteToSave
 				})
 			});
 			const result = await response.json();
@@ -65,7 +85,15 @@
 				showToast('Error', 'Failed to save note', 3000, 'error');
 				return;
 			}
+
+			EditorNoteData.value = noteToSave;
+
 			originalNote = JSON.parse(JSON.stringify(EditorNoteData.value));
+			excalidrawIsDirty = false;
+
+			if (EditorNoteData.value.type === 'diagram') {
+				excalidrawKey++;
+			}
 
 			// Save to localStorage
 			localStorage.setItem(
@@ -96,6 +124,29 @@
 				editor.classList.remove('dark');
 			} else {
 				editor.classList.add('dark');
+			}
+		});
+
+		$effect(() => {
+			if (excalidrawAPI) {
+				// Destructure the three arguments: elements, appState, and files
+				excalidrawAPI.onChange((elements, files) => {
+					// console.log('Elements:', elements);
+					// console.log('Files:', files);
+
+					if (elements.length > 0) {
+						const currentContent = JSON.stringify({ elements: elements, files: files });
+						const originalContent = JSON.stringify({
+							elements: JSON.parse(originalNote.notescontent).elements,
+							files: JSON.parse(originalNote.notescontent).files
+						});
+
+						excalidrawIsDirty = currentContent !== originalContent;
+					} else {
+						excalidrawIsDirty =
+							originalNote && originalNote.notescontent !== '{"elements": [], "files": {}}';
+					}
+				});
 			}
 		});
 	});
@@ -197,8 +248,18 @@
 						>
 					</div>
 					<div class="editor h-full">
-						<!-- {console.log('notedata', noteData.notescontent)} -->
-						<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
+						{#if EditorNoteData.value.type == 'text'}
+							<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
+						{:else if EditorNoteData.value.type == 'diagram'}
+							{#key excalidrawKey}
+								<Excalidraw
+									theme="dark"
+									content={EditorNoteData.value.notescontent}
+									viewModeEnabled={false}
+									excalidrawAPI={(api) => (excalidrawAPI = api)}
+								/>
+							{/key}
+						{/if}
 					</div>
 				</div>
 				<dialog id="share_modal" class="modal">

@@ -2,6 +2,8 @@
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { validateNote } from '$lib/utils/validateNote';
 	import type { note } from '../types';
+	import Excalidraw from './Excalidraw.svelte';
+	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
 	// Variables
 	let newNote: note = $state({
@@ -13,9 +15,6 @@
 		type: ''
 	});
 	let isValid: boolean = $state(false);
-
-	import Excalidraw from './Excalidraw.svelte';
-	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
 	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 

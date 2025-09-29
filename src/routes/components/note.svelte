@@ -206,7 +206,7 @@
 				})()}
 			</div>
 			{#if notes.note.type == 'diagram'}
-				<div class="badge badge-outline border-base-content bg-gray-700 p-2">Diagram</div>
+				<div class="badge badge-outline border-base-content bg-gray-600 p-2">Diagram</div>
 			{/if}
 		</div>
 	</div>

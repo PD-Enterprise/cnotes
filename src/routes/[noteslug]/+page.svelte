@@ -50,7 +50,7 @@
 
 		if (serverNote && serverNote != undefined) {
 			EditorNoteData.value = { ...serverNote };
-			console.log(EditorNoteData.value.notescontent);
+			// console.log(EditorNoteData.value.notescontent);
 		}
 	}
 	async function saveNote() {

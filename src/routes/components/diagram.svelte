@@ -7,11 +7,11 @@
 
 	// Variables
 	let newNote: note = $state({
-		title: 'test',
+		title: '',
 		notescontent: '',
-		dateCreated: '09/29/2025',
-		grade: '9',
-		subject: 'test',
+		dateCreated: '',
+		grade: '',
+		subject: '',
 		type: ''
 	});
 	let isValid: boolean = $state(false);

@@ -11,6 +11,7 @@
 
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
+	let title = $state('Home');
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -31,8 +32,10 @@
 			// console.log($page.url.pathname);
 			if ($page.url.pathname == '/') {
 				isHome = true;
+				title = 'Home';
 			} else {
 				isHome = false;
+				title = $page.url.pathname.split('/')[1].replaceAll('-', ' ').slice(0, -6);
 			}
 		});
 	});
@@ -119,12 +122,13 @@
 				onclick={() => {
 					history.back();
 				}}
+				class="btn btn-ghost btn-circle"
 			>
 				<Icon icon="ep:back" class="h-5 w-5" />
 			</button>
 		{/if}
 
-		<a class="btn btn-ghost text-2xl" href="/">Home</a>
+		<a class="btn btn-ghost text-2xl" href="/">{title}</a>
 	</div>
 </div>
 

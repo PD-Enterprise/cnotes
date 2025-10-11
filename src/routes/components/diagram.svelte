@@ -12,7 +12,7 @@
 		dateCreated: '',
 		grade: '',
 		subject: '',
-		type: ''
+		type: 'diagram'
 	});
 	let isValid: boolean = $state(false);
 
@@ -156,11 +156,6 @@
 <div class="main-component">
 	<div class="content flex h-full flex-col gap-3 p-2">
 		<div class="header flex flex-col gap-3 p-2">
-			<div class="header-box flex flex-col items-center justify-center">
-				<div class="mb-1 flex items-center gap-3">
-					<h2 class="component-title mb-0 text-4xl font-extrabold drop-shadow">Add a Diagram</h2>
-				</div>
-			</div>
 			<div class="buttons flex flex-row gap-2">
 				<div class="metadata-btn w-40">
 					<button
@@ -203,14 +198,6 @@
 		animation: fadeInDown 0.5s ease-in-out;
 		height: calc(100vh - 140px);
 	}
-	.header-box {
-		text-align: center;
-		animation: fadeInDown 0.5s ease-in-out;
-	}
-	.header-box h2 {
-		font-weight: bold;
-		animation: fadeInDown 0.5s ease-in-out;
-	}
 	/* Form container */
 	.new-note-data {
 		display: flex;
@@ -220,12 +207,6 @@
 		/* Space between fields */
 		animation: fadeInDown 0.5s ease-in-out;
 	}
-	@media (max-width: 600px) {
-		.component-title {
-			font-size: 1.5rem;
-		}
-	}
-
 	/* Label styling */
 	.form-control {
 		width: 100%;

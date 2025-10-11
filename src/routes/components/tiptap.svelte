@@ -3,6 +3,7 @@
 	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
+	import MathExtension from '@aarkue/tiptap-math-extension';
 	import Mathematics from '@tiptap/extension-mathematics';
 	import 'katex/dist/katex.min.css';
 	import Icon from '@iconify/svelte';
@@ -16,9 +17,15 @@
 	import TextAlign from '@tiptap/extension-text-align';
 	import { TableKit } from '@tiptap/extension-table';
 
-	let element;
+	let element: any;
 	let { content, editable } = $props();
 	let isTableActive = $state(false);
+	let isParagraphActive = $state(false);
+	let isUnderlineActive = $state(false);
+	let isHighlightActive = $state(false);
+	let isBoldActive = $state(false);
+	let isSubscriptActive = $state(false);
+	let isSuperscriptActive = $state(false);
 
 	// console.log(content);
 
@@ -70,23 +77,8 @@
 					alignments: ['left', 'center', 'right'],
 					defaultAlignment: 'left'
 				}),
-				Mathematics.configure({
-					inlineOptions: {
-						onClick: (node) => {
-							if (editable) {
-								const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
-								if (newCalculation) {
-									editor.value
-										.chain()
-										// @ts-expect-error
-										.setNodeSelection(node.pos)
-										.updateInlineMath({ latex: newCalculation })
-										.focus()
-										.run();
-								}
-							}
-						}
-					}
+				MathExtension.configure({
+					evaluation: true
 				}),
 				TableKit.configure({
 					table: { resizable: true }
@@ -139,22 +131,20 @@
 </script>
 
 <div class="editor-container flex h-full flex-col gap-3 p-1">
-	<div bind:this={element} class="editor bg-base-300 rounded-md" id="editor"></div>
 	{#if editable}
-		<div class="tipex-controller dark">
-			<div class="tipex-controller-wrapper">
+		<div class="tipex-controller control-group dark">
+			<div class="button-group">
 				<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
 					{#each { length: 3 } as _, index}
 						{@const level = index + 1}
 						<button
-							class="tipex-edit-button"
+							class="tipex-edit-button is-active"
 							title={`Heading ${level}`}
 							aria-label={`Heading ${level}`}
 							onclick={() => {
 								// @ts-expect-error
 								editor.value.chain().focus().toggleHeading({ level }).run();
 							}}
-							class:active={editor.value?.isActive('heading', { level })}
 						>
 							H{level}
 						</button>
@@ -164,8 +154,9 @@
 						title="Paragraph"
 						onclick={() => {
 							editor.value.chain().focus().setParagraph().run();
+							isParagraphActive = editor.value.isActive('paragraph');
 						}}
-						class:active={editor.value?.isActive('paragraph')}
+						class:active={isParagraphActive}
 						class="tipex-edit-button btn"><Icon icon="fa6-solid:paragraph" /></button
 					>
 					<button
@@ -174,9 +165,9 @@
 						class="tipex-edit-button btn"
 						onclick={() => {
 							editor.value.chain().focus().toggleUnderline().run();
+							isUnderlineActive = editor.value.isActive('underline');
 						}}
-						class:active={editor.value?.isActive('underline')}
-						><Icon icon="fa6-solid:underline" /></button
+						class:active={isUnderlineActive}><Icon icon="fa6-solid:underline" /></button
 					>
 					<button
 						aria-label="Highlight"
@@ -184,22 +175,23 @@
 						class="tipex-edit-button btn"
 						onclick={() => {
 							editor.value.chain().focus().toggleHighlight().run();
+							isHighlightActive = editor.value.isActive('highlight');
 						}}
-						class:active={editor.value?.isActive('highlight')}
-						><Icon icon="fa6-solid:highlighter" /></button
+						class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
 					>
 					<button
 						aria-label="Bold"
 						title="Bold"
 						onclick={() => {
 							editor.value?.chain().focus().toggleBold().run();
+							isBoldActive = editor.value.isActive('bold');
 						}}
 						class="tipex-edit-button"
-						class:active={editor.value?.isActive('bold')}
+						class:active={isBoldActive}
 					>
 						<Icon icon="fa6-solid:bold" />
 					</button>
-					<button
+					<!-- <button
 						aria-label="Italic"
 						title="Italic"
 						onclick={() => {
@@ -209,48 +201,31 @@
 						class:active={editor.value?.isActive('italic')}
 					>
 						<Icon icon="fa6-solid:italic" />
-					</button>
+					</button> -->
 					<button
 						aria-label="Subscript"
 						title="Subscript"
 						onclick={() => {
 							editor.value?.chain().focus().toggleSubscript().run();
+							isSubscriptActive = editor.value.isActive('subscript');
 						}}
 						class="tipex-edit-button"
-						class:active={editor.value?.isActive('subscript')}
+						class:active={isSubscriptActive}
 					>
 						<Icon icon="fa6-solid:subscript" />
 					</button>
 					<button
-						aria-label="Subscript"
-						title="Subscript"
+						aria-label="Superscript"
+						title="Superscript"
 						onclick={() => {
 							editor.value?.chain().focus().toggleSuperscript().run();
+							isSuperscriptActive = editor.value.isActive('superscript');
 						}}
 						class="tipex-edit-button"
-						class:active={editor.value?.isActive('superscript')}
+						class:active={isSuperscriptActive}
 					>
 						<Icon icon="fa6-solid:superscript" />
 					</button>
-					<button
-						aria-label="Insert Math Formula"
-						title="Math Formula"
-						onclick={() => {
-							const latex = prompt('Enter inline math expression:', '');
-							return editor.value.chain().insertInlineMath({ latex }).focus().run();
-						}}
-						class="tipex-edit-button btn"
-						><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-							><path
-								fill="none"
-								stroke="currentColor"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M19 5h-7L8 19l-3-6H3m11 0l6 6m-6 0l6-6"
-							/></svg
-						></button
-					>
 					<button
 						aria-label="Table"
 						title="Table"
@@ -263,6 +238,7 @@
 							isTableActive = true;
 						}}
 						class="tipex-edit-button"
+						class:active={isTableActive}
 					>
 						<Icon icon="fa6-solid:table" />
 					</button>
@@ -354,6 +330,7 @@
 			</div>
 		</div>
 	{/if}
+	<div bind:this={element} class="editor bg-base-300 rounded-md" id="editor"></div>
 </div>
 
 <style>
@@ -391,13 +368,6 @@
 	.tipex-controller.dark,
 	:global(.dark) .tipex-controller {
 		background-color: #171717;
-	}
-	.tipex-controller-wrapper {
-		display: flex;
-		width: 100%;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.75rem;
 	}
 	.tipex-basic-controller-wrapper {
 		display: flex;

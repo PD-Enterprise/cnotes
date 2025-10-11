@@ -4,7 +4,6 @@
 	import { Editor, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
-	import Mathematics from '@tiptap/extension-mathematics';
 	import 'katex/dist/katex.min.css';
 	import Icon from '@iconify/svelte';
 	import './tiptap-editor.css';

@@ -25,6 +25,7 @@
 		}
 		return originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote);
 	});
+	let isSaving = false;
 
 	// Functions
 	async function getNote() {
@@ -54,6 +55,11 @@
 		}
 	}
 	async function saveNote() {
+		if (isSaving) {
+			showToast('Info', 'Save already in progress...', 1500, 'info');
+			return;
+		}
+
 		EditorNoteData.value.dateUpdated = new Date().toISOString();
 
 		let noteToSave = { ...EditorNoteData.value };
@@ -67,6 +73,7 @@
 				files: currentFiles
 			});
 		}
+		isSaving = true;
 		try {
 			const response = await fetch(`${EditorNoteData.value.slug}`, {
 				method: 'POST',
@@ -104,11 +111,17 @@
 		} catch (error) {
 			console.error(error);
 			showToast('Error', 'Failed to save note', 3000, 'error');
+		} finally {
+			isSaving = false;
 		}
 	}
 	function handleSaveShortcut(event: KeyboardEvent) {
 		if (event.ctrlKey && event.key === 's') {
 			event.preventDefault();
+
+			if (event.repeat) {
+				return;
+			}
 			saveNote();
 		}
 	}

@@ -226,9 +226,9 @@
 				<div class="note flex h-full flex-col gap-5 rounded-md">
 					<div class="buttons mt-2 flex gap-2">
 						{#if isChanged}
-							<button class="btn btn-accent btn-outline" onclick={saveNote}>Save</button>
+							<button class="btn btn-accent btn-outline shadow-xl" onclick={saveNote}>Save</button>
 						{:else}
-							<button class="btn btn-accent btn-outline" disabled>Save</button>
+							<button class="btn btn-accent btn-outline shadow-xl" disabled>Save</button>
 						{/if}
 						<button
 							class="btn btn-info border"
@@ -316,29 +316,4 @@
 	.note {
 		padding: 5px;
 	}
-	/* .Tiptap-mathematics-editor {
-		background: #202020;
-		color: #fff;
-		font-family: monospace;
-		padding: 0.2rem 0.5rem;
-	}
-
-	.Tiptap-mathematics-render {
-		padding: 0 0.25rem;
-	}
-
-	.Tiptap-mathematics-render--editable {
-		cursor: pointer;
-		transition: background 0.2s;
-	}
-
-	.Tiptap-mathematics-render--editable:hover {
-		background: #eee;
-	}
-
-	.Tiptap-mathematics-editor,
-	.Tiptap-mathematics-render {
-		border-radius: 0.25rem;
-		display: inline-block;
-	} */
 </style>

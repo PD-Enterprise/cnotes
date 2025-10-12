@@ -19,11 +19,11 @@ export const editor = $state<{ value: Editor | null }>({ value: null });
 export const EditorNoteData = $state<{ value: note }>({
     value: {
         title: '',
-        board: '',
         dateCreated: '',
         grade: undefined,
         subject: '',
         notescontent: '',
-        slug: ''
+        slug: '',
+        type: ''
     }
 });

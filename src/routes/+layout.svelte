@@ -26,7 +26,7 @@
 <div
 	class="main flex h-screen flex-col {isLoaded
 		? 'opacity-100'
-		: 'opacity-0'} transition-opacity duration-400"
+		: 'opacity-0'} overflow-hidden transition-opacity duration-400"
 >
 	<div class="navbar">
 		<Navbar {data} />

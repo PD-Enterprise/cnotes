@@ -7,6 +7,7 @@
 	import Tiptap from '../../components/tiptap.svelte';
 	import Loader from '../../components/loader.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
+	import Icon from '@iconify/svelte';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -68,9 +69,9 @@
 
 <div class="main">
 	{#if noteData}
-		<div class="content flex h-full flex-col gap-1">
-			<div class="metadata-box bg-base-200 flex flex-col gap-2 pt-1 pr-2 pb-2 pl-2">
-				<h1 class="w-full p-2 text-2xl font-bold">
+		<div class="content flex h-full flex-col">
+			<div class="metadata-box bg-base-200 flex flex-col gap-1 p-2">
+				<h1 class="w-full p-1 text-2xl font-bold">
 					{noteData.title}
 				</h1>
 				<div class="meta-data flex flex-col flex-wrap items-center justify-center">
@@ -84,12 +85,12 @@
 											.replace(/^./, (str) => str.toUpperCase())}:
 									</span>
 								</div>
-								<h2 class="label-body text-center">{noteData[noteDataKey]}</h2>
+								<p class="label-body text-center">{noteData[noteDataKey]}</p>
 							</div>
 						{/if}
 					{/each}
 				</div>
-				<div class="buttons">
+				<div class="buttons flex flex-row gap-2">
 					<button
 						class="share-btn btn btn-success p-2"
 						onclick={() => {
@@ -98,20 +99,11 @@
 						}}
 					>
 						Share
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							class="size-6"
-							><path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-							/>
-						</svg>
+						<Icon icon="material-symbols:share-outline" width="24" height="24" />
 					</button>
+					<a class="edit-btn btn btn-accent p-2" href={`/${noteData.slug}`}
+						>Edit<Icon icon="mage:edit" width="24" height="24" /></a
+					>
 				</div>
 			</div>
 			{#if noteData.type == 'text'}
@@ -175,6 +167,9 @@
 	}
 	.share-btn {
 		font-size: 16px;
+	}
+	.metadata-box {
+		border-bottom: 1px solid var(--color-gray-500);
 	}
 	.meta-data {
 		display: flex;

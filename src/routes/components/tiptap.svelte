@@ -129,7 +129,7 @@
 	});
 </script>
 
-<div class="editor-container flex h-full flex-col p-1">
+<div class="editor-container flex h-full flex-col p-0">
 	{#if editable}
 		<div
 			class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl"
@@ -339,7 +339,7 @@
 		overflow: hidden;
 	}
 	.editor {
-		height: calc(100vh - 220px);
+		height: calc(100vh - 180px);
 		min-height: calc(var(--spacing) * 96);
 		border-width: 1px;
 		border-color: var(--color-gray-500);

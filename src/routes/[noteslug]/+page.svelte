@@ -223,8 +223,8 @@
 			{#if error}
 				{error}
 			{:else if EditorNoteData.value}
-				<div class="note flex h-full flex-col gap-5 rounded-md">
-					<div class="buttons mt-2 flex gap-2">
+				<div class="note flex h-full flex-col gap-2 rounded-md">
+					<div class="buttons flex gap-3">
 						{#if isChanged}
 							<button class="btn btn-accent btn-outline shadow-xl" onclick={saveNote}>Save</button>
 						{:else}

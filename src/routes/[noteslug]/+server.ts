@@ -10,7 +10,7 @@ export async function GET({ url, locals }) {
             headers: { 'Content-Type': 'application/json' }
         });
         const result = await response.json();
-        // console.log(result.data);
+        // console.log(result);
 
         if (result.status == 200) {
             return new Response(JSON.stringify(

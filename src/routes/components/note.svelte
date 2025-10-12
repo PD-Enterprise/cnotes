@@ -192,11 +192,13 @@
 			</div>
 		</div>
 		<div class="note-meta card-actions">
-			<div class="badge badge-outline border-base-content border p-2">
+			<div class="badge badge-outline bg-base-200 border-base-content border p-2">
 				{notes.note.grade}th grade
 			</div>
-			<div class="badge badge-outline border-base-content p-2">{notes.note.subject}</div>
-			<div class="badge badge-outline border-base-content p-2">
+			<div class="badge badge-outline bg-base-200 border-base-content p-2">
+				{notes.note.subject}
+			</div>
+			<div class="badge badge-outline bg-base-200 border-base-content p-2">
 				{(() => {
 					const d = new Date(notes.note.dateCreated);
 					const day = String(d.getDate()).padStart(2, '0');
@@ -206,7 +208,7 @@
 				})()}
 			</div>
 			{#if notes.note.type == 'diagram'}
-				<div class="badge badge-outline border-base-content bg-gray-600 p-2">Diagram</div>
+				<div class="badge badge-outline border-base-content bg-base-300 p-2">Diagram</div>
 			{/if}
 		</div>
 	</div>

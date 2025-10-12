@@ -23,12 +23,14 @@ export async function GET({ url, locals, event }) {
     if (result.status == 200) {
         return new Response(JSON.stringify(
             {
+                status: 200,
                 data: result.data
             }
         ))
     } else {
         return new Response(JSON.stringify(
             {
+                status: 500,
                 data: undefined
             }
         ))

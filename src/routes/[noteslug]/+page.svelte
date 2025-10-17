@@ -11,6 +11,7 @@
 	import Loader from '../components/loader.svelte';
 	import Excalidraw from '../components/Excalidraw.svelte';
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
+	import ShareModel from '../components/shareModel.svelte';
 
 	// Variables
 	let error: string = $state('');
@@ -59,6 +60,8 @@
 			showToast('Info', 'Save already in progress...', 1500, 'info');
 			return;
 		}
+
+		showToast('Info', 'Saving your note...', 1500, 'info');
 
 		EditorNoteData.value.dateUpdated = new Date().toISOString();
 
@@ -275,17 +278,7 @@
 						{/if}
 					</div>
 				</div>
-				<dialog id="share_modal" class="modal">
-					<div class="modal-box">
-						<form method="dialog">
-							<button class="btn btn-ghost btn-sm btn-circle absolute top-2 right-2">✕</button>
-						</form>
-						<span>Link:</span>
-						<a href="/{EditorNoteData.value.slug}/sharing" class="share-link">
-							https://cnotes.pages.dev/{EditorNoteData.value.slug}/sharing
-						</a>
-					</div>
-				</dialog>
+				<ShareModel slug={EditorNoteData.value.slug} />
 			{:else}
 				<div class="loadingNotes"><h1>Loading Your Note...</h1></div>
 			{/if}
@@ -302,10 +295,6 @@
 <style>
 	.main {
 		height: calc(100vh - 65px);
-	}
-	.share-link {
-		text-decoration: underline;
-		color: #4a90e2;
 	}
 	.meta-data {
 		display: flex;

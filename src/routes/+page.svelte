@@ -297,21 +297,21 @@
 			<div class="add-note">
 				<a
 					class="addNoteButton btn border-base-content bg-accent text-accent-content border"
-					href="/new-note">New Note</a
+					href="/new-note">Create <Icon icon="mage:edit" width="24" height="24" /></a
 				>
 			</div>
 		{:else}
 			<div class="add-note">
 				<a
 					class="addNoteButton btn-disabled btn border-base-content bg-accent text-accent-content"
-					href="/new-note">New Note</a
+					href="/new-note">Create <Icon icon="mage:edit" width="24" height="24" /></a
 				>
 			</div>
 		{/if}
 	</div>
-	<div class="notes h-auto overflow-y-auto p-4">
+	<div class="notes overflow-y-scroll p-3">
 		{#if notesStore.value && notesStore.value.length > 0}
-			<div class="notes-grid">
+			<div class="notes-grid mb-17">
 				{#each getFilteredAndSortedNotes() as note}
 					<Note {note} auth={data.data.session} />
 				{/each}
@@ -329,6 +329,9 @@
 <style>
 	.main {
 		height: calc(100vh - 65px);
+	}
+	.notes {
+		height: 100%;
 	}
 	.header {
 		justify-content: space-between;

@@ -15,10 +15,14 @@
 	let noteData = $state<note>({
 		title: '',
 		dateCreated: '',
-		grade: undefined,
-		subject: '',
-		notescontent: '',
-		type: ''
+		academicLevel: '',
+		topic: '',
+		content: '',
+		type: '',
+		visibility: '',
+		year: '',
+		language: '',
+		keywords: ''
 	});
 	let localNote = null;
 	let hasLocalNote = false;
@@ -108,9 +112,9 @@
 				</div>
 			</div>
 			{#if noteData.type == 'text'}
-				<Tiptap content={noteData.notescontent} editable={false} />
+				<Tiptap content={noteData.content} editable={false} />
 			{:else if noteData.type == 'diagram'}
-				<Excalidraw theme="dark" content={noteData.notescontent} viewModeEnabled={true} />
+				<Excalidraw theme="dark" content={noteData.content} viewModeEnabled={true} />
 			{/if}
 		</div>
 		<ShareModel slug={noteData.slug} />

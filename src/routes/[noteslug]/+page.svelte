@@ -38,7 +38,7 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		// console.log(result);
+		console.log(result);
 
 		if (!result.data || result.status != 200) {
 			console.error('Failed to fetch note data.');
@@ -55,7 +55,7 @@
 			// console.log(EditorNoteData.value.notescontent);
 		}
 	}
-	async function saveNote() {
+	export async function saveNote() {
 		if (isSaving) {
 			showToast('Info', 'Save already in progress...', 1500, 'info');
 			return;
@@ -63,15 +63,13 @@
 
 		showToast('Info', 'Saving your note...', 1500, 'info');
 
-		EditorNoteData.value.dateUpdated = new Date().toISOString();
-
 		let noteToSave = { ...EditorNoteData.value };
 
 		if (noteToSave.type == 'diagram' && excalidrawAPI) {
 			const currentElements = excalidrawAPI.getSceneElements();
 			const currentFiles = excalidrawAPI.getFiles();
 
-			noteToSave.notescontent = JSON.stringify({
+			noteToSave.content = JSON.stringify({
 				elements: currentElements,
 				files: currentFiles
 			});
@@ -240,7 +238,7 @@
 									'meta_data_modal'
 								) as HTMLDialogElement;
 								meta_data_modal.showModal();
-							}}>Edit Metadata</button
+							}}>Metadata</button
 						>
 						<button
 							class="btn btn-success"
@@ -265,12 +263,12 @@
 					</div>
 					<div class="editor h-full">
 						{#if EditorNoteData.value.type == 'text'}
-							<Tiptap content={EditorNoteData.value.notescontent} editable={true} />
+							<Tiptap content={EditorNoteData.value.content} editable={true} />
 						{:else if EditorNoteData.value.type == 'diagram'}
 							{#key excalidrawKey}
 								<Excalidraw
 									theme="dark"
-									content={EditorNoteData.value.notescontent}
+									content={EditorNoteData.value.content}
 									viewModeEnabled={false}
 									excalidrawAPI={(api) => (excalidrawAPI = api)}
 								/>

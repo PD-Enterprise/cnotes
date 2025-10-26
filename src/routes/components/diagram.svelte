@@ -155,9 +155,9 @@
 
 <div class="main-component">
 	<div class="content flex h-full flex-col gap-3 p-2">
-		<div class="header flex flex-col gap-3 p-2">
-			<div class="buttons flex flex-row gap-2">
-				<div class="metadata-btn w-40">
+		<div class="header flex flex-col gap-3">
+			<div class="buttons flex flex-row gap-3">
+				<div class="metadata-btn">
 					<button
 						class="btn border-base-content h-12 border"
 						onclick={() => {
@@ -165,7 +165,7 @@
 								'meta_data_modal'
 							) as HTMLDialogElement;
 							meta_data_modal.showModal();
-						}}>Edit Metadata</button
+						}}>Metadata</button
 					>
 				</div>
 				<div class="save-button-container w-40">

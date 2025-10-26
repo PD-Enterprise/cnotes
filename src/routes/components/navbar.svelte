@@ -30,7 +30,7 @@
 				document.documentElement.setAttribute('data-theme', 'dark');
 			}
 
-			console.log($page.url.pathname);
+			// console.log($page.url.pathname);
 			if ($page.url.pathname == '/') {
 				isHome = true;
 				title = 'Home';

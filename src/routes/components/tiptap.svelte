@@ -13,7 +13,6 @@
 	import Subscript from '@tiptap/extension-subscript';
 	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
-	import TextAlign from '@tiptap/extension-text-align';
 	import { TableKit } from '@tiptap/extension-table';
 
 	let element: any;
@@ -72,10 +71,6 @@
 				}),
 				Subscript,
 				Superscript,
-				TextAlign.configure({
-					alignments: ['left', 'center', 'right'],
-					defaultAlignment: 'left'
-				}),
 				MathExtension.configure({
 					evaluation: true
 				}),
@@ -83,17 +78,13 @@
 					table: { resizable: true }
 				}),
 				Youtube
-				// TableRow,
-				// TableHeader,
-				// TableCell,
 			],
 			content: 'Loading...',
 			onTransaction: () => {
 				editor.value = editor.value;
 			},
 			onUpdate() {
-				// console.log(editor.value.getHTML());
-				EditorNoteData.value.notescontent = editor.value.getHTML();
+				EditorNoteData.value.content = editor.value.getHTML();
 			},
 			editorProps: {
 				attributes: {

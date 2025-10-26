@@ -1,13 +1,19 @@
 type note = {
 	noteId?: number;
 	title: string;
-	notescontent: string;
+	slug?: string;
+
+	content: string;
+
 	dateCreated: string;
-	dateUpdated?: string;
-	grade: string;
-	subject: string;
-	slug?: string,
-	type: string
+	academicLevel: string;
+	topic: string;
+
+	type: string;
+	visibility: string;
+	year: string;
+	language: string;
+	keywords: string;
 };
 
 type searchResult = {
@@ -24,5 +30,5 @@ type userType = {
 	picture: string;
 	sub: string;
 	updated_at: string;
-}
+};
 export type { note, searchResult, userType };

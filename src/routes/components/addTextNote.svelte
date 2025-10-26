@@ -9,11 +9,15 @@
 	// Variables
 	let newNote: note = $state({
 		title: '',
-		notescontent: '',
+		content: '',
 		dateCreated: '',
-		grade: '',
-		subject: '',
-		type: 'text'
+		academicLevel: '',
+		topic: '',
+		type: 'text',
+		visibility: 'private',
+		year: '',
+		language: '',
+		keywords: ''
 	});
 	let isValid: boolean = $state(false);
 
@@ -31,7 +35,7 @@
 		}
 		try {
 			const rawHtml = editor.value.getHTML();
-			newNote.notescontent = DOMPurify.sanitize(rawHtml);
+			newNote.content = DOMPurify.sanitize(rawHtml);
 
 			await addToDB(newNote);
 			showToast('Successfully added note', 'Note added successfully', 1000, 'success');
@@ -101,10 +105,10 @@
 			<h3>Enter Metadata for your Note Here:</h3>
 			<div class="new-note-data flex flex-row flex-wrap gap-3">
 				{#each Object.keys(newNote) as newNoteKey}
-					{#if ['title', 'dateCreated', 'grade', 'subject'].includes(newNoteKey)}
+					{#if ['title', 'dateCreated', 'academicLevel', 'topic'].includes(newNoteKey)}
 						<label class="form-control w-full max-w-xs">
 							<div class="label">
-								<span class="label-text">{newNoteKey}:</span>
+								<span class="label-text">{newNoteKey[0].toUpperCase() + newNoteKey.slice(1)}:</span>
 							</div>
 							{#if newNoteKey == 'dateCreated'}
 								<input
@@ -130,11 +134,12 @@
 		</div>
 	</div>
 </dialog>
+
 <div class="main-component">
 	<div class="content flex h-full flex-col gap-3 p-2">
-		<div class="header flex flex-col gap-3 p-2">
-			<div class="buttons flex flex-row gap-2">
-				<div class="metadata-btn w-40">
+		<div class="header flex flex-col gap-3">
+			<div class="buttons flex flex-row gap-3">
+				<div class="metadata-btn">
 					<button
 						class="btn border-base-content h-12 border"
 						onclick={() => {
@@ -142,7 +147,7 @@
 								'meta_data_modal'
 							) as HTMLDialogElement;
 							meta_data_modal.showModal();
-						}}>Edit Metadata</button
+						}}>Metadata</button
 					>
 				</div>
 				<div class="save-button-container w-40">
@@ -161,7 +166,7 @@
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Tiptap content={newNote.notescontent} editable={true} />
+			<Tiptap content={newNote.content} editable={true} />
 		</div>
 	</div>
 </div>

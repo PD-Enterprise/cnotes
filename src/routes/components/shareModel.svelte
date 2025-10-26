@@ -5,10 +5,6 @@
 	import { onMount } from 'svelte';
 
 	export let slug;
-
-	onMount(() => {
-		console.log(urlConfig.shareUrl);
-	});
 </script>
 
 <dialog id="share_modal" class="modal">

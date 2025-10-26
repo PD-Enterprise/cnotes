@@ -1,4 +1,6 @@
 <script lang="ts">
+	import Icon from '@iconify/svelte';
+
 	// import { onMount } from 'svelte';
 	import AddTextNote from '../components/addTextNote.svelte';
 	import Diagram from '../components/diagram.svelte';
@@ -19,19 +21,7 @@
 	</div>
 	<div class="dropdown dropdown-end">
 		<div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle text-info">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				class="h-4 w-4 stroke-current"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-				></path>
-			</svg>
+			<Icon icon="material-symbols:info" width="24" height="24" />
 		</div>
 		<div class="compact dropdown-content card rounded-box bg-base-100 z-[1] w-64 shadow">
 			<div class="card-body">

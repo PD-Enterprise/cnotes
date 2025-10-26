@@ -6,6 +6,7 @@
 	import SvelteToast from './components/svelteToast.svelte';
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
+	import { onNavigate } from '$app/navigation';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
@@ -14,6 +15,20 @@
 		setTimeout(() => {
 			isLoaded = true;
 		}, 50);
+	});
+
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) {
+			return;
+		}
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+
+				await navigation.complete;
+			});
+		});
 	});
 </script>
 
@@ -40,5 +55,20 @@
 	.navbar {
 		margin: 0;
 		padding: 0;
+	}
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation: none;
+	}
+	::view-transition-new(root) {
+		animation: fade-in 0.1s ease-in;
+	}
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
 </style>

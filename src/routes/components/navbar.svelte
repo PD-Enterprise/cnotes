@@ -29,13 +29,23 @@
 				localStorage.setItem('theme', 'dark');
 				document.documentElement.setAttribute('data-theme', 'dark');
 			}
-			// console.log($page.url.pathname);
+
+			console.log($page.url.pathname);
 			if ($page.url.pathname == '/') {
 				isHome = true;
 				title = 'Home';
 			} else {
 				isHome = false;
-				title = $page.url.pathname.split('/')[1].replaceAll('-', ' ').slice(0, -6);
+				// console.log($page.url.pathname);
+				if (
+					$page.url.pathname.split('/')[1] == 'new-note' ||
+					$page.url.pathname.split('/')[1] == 'login' ||
+					$page.url.pathname.split('/')[1] == 'logout'
+				) {
+					title = $page.url.pathname.split('/')[1].replaceAll('-', ' ');
+				} else {
+					title = $page.url.pathname.split('/')[1].replaceAll('-', ' ').slice(0, -6);
+				}
 			}
 		});
 	});
@@ -128,7 +138,7 @@
 			</button>
 		{/if}
 
-		<a class="btn btn-ghost text-2xl" href="/">{title}</a>
+		<a class="btn btn-ghost text-2xl" href="/">{title[0].toUpperCase() + title.slice(1)}</a>
 	</div>
 </div>
 

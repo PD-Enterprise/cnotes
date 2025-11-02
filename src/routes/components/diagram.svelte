@@ -10,9 +10,14 @@
 		title: '',
 		notescontent: '',
 		dateCreated: '',
-		grade: '',
-		subject: '',
-		type: 'diagram'
+		academicLevel: '',
+		topic: '',
+		type: 'diagram',
+		content: '',
+		visibility: 'private',
+		year: '',
+		language: '',
+		keywords: ''
 	});
 	let isValid: boolean = $state(false);
 
@@ -48,7 +53,7 @@
 				// console.log('Elements:', elements);
 				// console.log('Files:', files);
 
-				newNote.notescontent = JSON.stringify({ elements: elements, files: files });
+				newNote.content = JSON.stringify({ elements: elements, files: files });
 
 				// console.log(newNote);
 				await addToDB(newNote);

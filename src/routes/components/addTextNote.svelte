@@ -34,7 +34,7 @@
 			showToast('Error saving note...', 'There is an error with the editor.', 3000, 'error');
 		}
 		showToast('Successfully added note', 'Note added successfully', 1000, 'success');
-		// window.location.href = '/';
+		window.location.href = '/';
 	}
 	async function addToDB(note: note) {
 		try {
@@ -48,7 +48,7 @@
 				})
 			});
 			const result = await request.json();
-			// console.log(result);
+
 			switch (result.status) {
 				case 401:
 					showToast('Error', 'You must be logged in to save notes.', 3000, 'error');

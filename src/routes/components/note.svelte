@@ -10,33 +10,29 @@
 	let notes = $props();
 
 	async function deleteNote(note: note) {
-		try {
-			const request = await fetch(`/`, {
-				method: 'DELETE',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					note: note
-				})
-			});
-			const result = await request.json();
+		const request = await fetch(`/`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				note: note
+			})
+		});
+		const result = await request.json();
 
-			if (result.status !== 200) {
-				showToast(
-					'Error deleting note',
-					'There was an error deleting your note from the database.',
-					3000,
-					'error'
-				);
-				return;
-			}
-			localStorage.removeItem(`note:${notes.note.slug}`);
-			notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
-			showToast('Success', 'Note deleted successfully', 2500, 'success');
-		} catch (error) {
-			showToast('Error deleting note', 'There was an error deleting your note', 3000, 'error');
+		if (result.status !== 200) {
+			showToast(
+				'Error deleting note',
+				'There was an error deleting your note from the database.',
+				3000,
+				'error'
+			);
+			return;
 		}
+		localStorage.removeItem(`note:${notes.note.slug}`);
+		notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
+		showToast('Success', 'Note deleted successfully', 2500, 'success');
 	}
 </script>
 

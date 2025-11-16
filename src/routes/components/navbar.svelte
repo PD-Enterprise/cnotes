@@ -8,6 +8,7 @@
 	import { SignIn, SignOut } from '@auth/sveltekit/components';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
+	import { toTitleCase } from '$lib/utils/toTitleCase';
 
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
@@ -138,7 +139,7 @@
 			</button>
 		{/if}
 
-		<a class="btn btn-ghost text-2xl" href="/">{title[0].toUpperCase() + title.slice(1)}</a>
+		<a class="btn btn-ghost text-2xl" href="/">{toTitleCase(title)}</a>
 	</div>
 </div>
 

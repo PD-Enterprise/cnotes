@@ -6,20 +6,9 @@
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
 	// Variables
-	let newNote: note = $state({
-		title: '',
-		notescontent: '',
-		dateCreated: '',
-		academicLevel: '',
-		topic: '',
-		type: 'diagram',
-		content: '',
-		visibility: 'private',
-		year: '',
-		language: '',
-		keywords: ''
-	});
 	let isValid: boolean = $state(false);
+	let props = $props();
+	let newNote: note = props.newNote;
 
 	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 

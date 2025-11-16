@@ -1,53 +1,26 @@
-import config from "$lib/utils/apiConfig";
-import type { note } from "../types";
+import { returnJson } from '$lib/utils/returnJson';
+import type { returnData } from '../interfaces';
+import { newNote } from '$lib/api/new-note';
 
 export async function POST({ url, locals, request }) {
-    const body = await request.json();
-    if (!body) {
-        return new Response(JSON.stringify(
-            {
-                status: 400,
-                message: 'Invalid request body.'
-            }
-        ))
-    }
+	const session = await locals.getSession();
+	if (!session) {
+		return returnJson(401, 'Unauthorized', null, null);
+	}
 
-    const session = await locals.getSession();
-    if (!session) {
-        return new Response(JSON.stringify(
-            {
-                status: 401
-            }
-        ))
-    }
+	const body = await request.json();
+	if (!body) {
+		return returnJson(400, 'Invalid request body', null, null);
+	}
 
-    const email = session.user.email
+	const email = session.user.email;
 
-    try {
-        const addNoteRequest = await fetch(`${config.apiUrl}notes/new-note/${body.type}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                note: body.note
-            })
-        });
-        const result = await addNoteRequest.json();
-        // console.log(result);
+	const year = new Date(body.note.dateCreated).getFullYear();
+	body.note.year = year;
 
-        return new Response(JSON.stringify(
-            {
-                status: 200
-            }
-        ))
-    } catch (error) {
-        console.error(error);
-        return new Response(JSON.stringify(
-            {
-                status: 500
-            }
-        ))
-    }
+	const [success, error] = await newNote(email, body.note);
+	if (error || !success) {
+		return returnJson(500, 'Error creating note', null, error);
+	}
+	return returnJson(200, 'Note created successfully', null, null);
 }

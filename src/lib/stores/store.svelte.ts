@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import type { note } from '../../routes/types';
-import { Editor } from "@tiptap/core"
+import { Editor } from '@tiptap/core';
 
 // Theme and UI state
 export const theme = $state({ value: false });
@@ -17,13 +17,13 @@ export const sync = writable(false);
 // Editor state
 export const editor = $state<{ value: Editor | null }>({ value: null });
 export const EditorNoteData = $state<{ value: note }>({
-    value: {
-        title: '',
-        dateCreated: '',
-        grade: undefined,
-        subject: '',
-        notescontent: '',
-        slug: '',
-        type: ''
-    }
+	value: {
+		title: '',
+		dateCreated: '',
+		academicLevel: undefined,
+		topic: '',
+		content: '',
+		slug: '',
+		type: ''
+	}
 });

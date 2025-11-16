@@ -41,6 +41,6 @@
 
 <style>
 	.main {
-		height: calc(100vh - 65px);
+		height: calc(100vh - 120px);
 	}
 </style>

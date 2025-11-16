@@ -7,6 +7,8 @@
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
 	import { onNavigate } from '$app/navigation';
+	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import NotLoggedIn from './components/notLoggedIn.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
@@ -16,6 +18,12 @@
 			isLoaded = true;
 		}, 50);
 	});
+
+	if (!data.session || !data.session == null) {
+		isAuthenticated.value = false;
+	} else {
+		isAuthenticated.value = true;
+	}
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) {
@@ -43,6 +51,9 @@
 		? 'opacity-100'
 		: 'opacity-0'} overflow-hidden transition-opacity duration-400"
 >
+	{#if !isAuthenticated.value}
+		<NotLoggedIn />
+	{/if}
 	<div class="navbar">
 		<Navbar {data} />
 	</div>

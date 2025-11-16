@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { note } from '../../types';
-	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
-	import Loader from '../../components/loader.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
 	import Icon from '@iconify/svelte';
 	import ShareModel from '../../components/shareModel.svelte';
+	import { toTitleCase } from '$lib/utils/toTitleCase';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -30,13 +28,12 @@
 	// Functions
 	async function getNoteFromServer() {
 		const slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
-
 		const request = await fetch(`/${slug}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await request.json();
-		// console.log(result);
+		console.log(result);
 
 		if (result.status != 200) {
 			errorMessage = 'Note not found.';
@@ -44,7 +41,6 @@
 		}
 
 		const serverNote = result.data;
-		// console.log(serverNote);
 		if (serverNote && serverNote != undefined) {
 			noteData = { ...serverNote };
 		} else {
@@ -81,16 +77,22 @@
 				</h1>
 				<div class="meta-data flex flex-col flex-wrap items-center justify-center">
 					{#each Object.keys(noteData) as noteDataKey}
-						{#if ['dateCreated', 'grade', 'subject'].includes(noteDataKey)}
+						{#if ['dateCreated', 'academicLevel', 'topic', 'visibility', 'language'].includes(noteDataKey)}
 							<div class="mx-auto">
 								<div class="label text-center">
 									<span class="label-text">
-										{noteDataKey
-											.replace(/([A-Z])/g, ' $1')
-											.replace(/^./, (str) => str.toUpperCase())}:
+										{toTitleCase(noteDataKey)}:
 									</span>
 								</div>
-								<p class="label-body text-center">{noteData[noteDataKey]}</p>
+								{#if noteDataKey == 'academicLevel'}
+									{#if Number(noteData[noteDataKey])}
+										<p class="label-body text-center">{noteData[noteDataKey]}th grade</p>
+									{:else}
+										<p class="label-body text-center">{noteData[noteDataKey]}</p>
+									{/if}
+								{:else}
+									<p class="label-body text-center">{noteData[noteDataKey]}</p>
+								{/if}
 							</div>
 						{/if}
 					{/each}

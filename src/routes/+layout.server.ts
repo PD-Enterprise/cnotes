@@ -6,7 +6,6 @@ export const load: LayoutServerLoad = async (event) => {
 	const session = await event.locals.auth();
 
 	if (session) {
-		// console.log(session);
 		try {
 			const request = await fetch(`${config.apiUrl}user/new-user`, {
 				method: 'POST',
@@ -17,7 +16,6 @@ export const load: LayoutServerLoad = async (event) => {
 				})
 			});
 			const result = await request.json();
-			// console.log(result);
 		} catch (error) {
 			return {
 				status: 500,

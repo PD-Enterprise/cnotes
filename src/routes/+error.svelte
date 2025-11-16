@@ -24,7 +24,6 @@
 		getStatusCode();
 	});
 	$effect(() => {
-		// console.log(httpDogUrlStatusCode);
 		imgSrc = `https://http.dog/${httpDogUrlStatusCode}.jpg`;
 	});
 </script>
@@ -33,7 +32,7 @@
 	<img src={imgSrc} class="mt-5" alt="Image for Error Code: {httpDogUrlStatusCode}" />
 </center>
 <center>
-	<a href="/home" class="btn mb-5 mt-5 text-3xl">Go To Home</a>
+	<a href="/home" class="btn mt-5 mb-5 text-3xl">Go To Home</a>
 </center>
 
 <style>

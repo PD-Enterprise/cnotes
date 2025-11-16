@@ -1,88 +1,34 @@
+import { getNote } from '$lib/api/get-note.js';
+import { updateNote } from '$lib/api/update-note';
 import config from '$lib/utils/apiConfig';
+import { returnJson } from '$lib/utils/returnJson';
 
 export async function GET({ url, locals }) {
 	const slug = url.pathname.split('/')[1];
-	// console.log(slug)
 
-	try {
-		const response = await fetch(`${config.apiUrl}notes/note/${slug}`, {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' }
-		});
-		const result = await response.json();
-		// console.log(result);
-
-		if (result.status == 200) {
-			// console.log(result.data);
-			return new Response(
-				JSON.stringify({
-					status: 200,
-					data: result.data
-				})
-			);
-		} else {
-			return new Response(
-				JSON.stringify({
-					status: result.status,
-					message: "coudln't fetch note data."
-				})
-			);
-		}
-	} catch (error) {
-		console.error(error);
-		return new Response(
-			JSON.stringify({
-				message: 'Could not fetch note data. Probably a server error.'
-			})
-		);
+	const [success, error, _, data] = await getNote(slug);
+	if (error || !success) {
+		return returnJson(500, 'Error fetching note', null, error);
 	}
+	return returnJson(200, 'Note fetched successfully', data, null);
 }
 
 export async function POST({ locals, request }) {
 	const body = await request.json();
 	if (!body) {
-		return new Response(
-			JSON.stringify({
-				status: 400
-			})
-		);
+		return returnJson(400, 'Invalid request body', null, null);
 	}
 	const noteData = body.data;
 
 	const session = await locals.getSession();
 	if (!session) {
-		return new Response(
-			JSON.stringify({
-				status: 401
-			})
-		);
+		return returnJson(401, 'Unauthorized', null, null);
 	}
-
 	const email = session.user.email;
-	const response = await fetch(`${config.apiUrl}notes/note/text/${noteData.slug}/update`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			email: email,
-			data: noteData
-		})
-	});
-	const result = await response.json();
-	// console.log(result);
 
-	if (result.status !== 200) {
-		return new Response(
-			JSON.stringify({
-				status: result.status
-			})
-		);
+	const [success, error] = await updateNote(email, noteData);
+	if (error || !success) {
+		return returnJson(500, 'Error updating note', null, error);
 	}
-
-	return new Response(
-		JSON.stringify({
-			status: 200
-		})
-	);
+	return returnJson(200, 'Note updated successfully', null, null);
 }

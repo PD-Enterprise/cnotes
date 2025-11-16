@@ -100,13 +100,10 @@
 		}
 	}
 	async function persistNotesInLocalStorage() {
-		// console.log('Persisting Notes In Local Storage');
 		for (const note of notesStore.value) {
-			// console.log(note);
 			const encryptedNote = btoa(
 				String.fromCharCode(...new TextEncoder().encode(JSON.stringify(note)))
 			);
-			// console.log('encryptednote', encryptedNote);
 			localStorage.setItem(`note:${note.slug}`, encryptedNote);
 		}
 	}
@@ -126,7 +123,6 @@
 		clearTimeout(loadingTimeout);
 	});
 	function search() {
-		// console.log(searchQuery);
 		if (searchQuery.length > 0 && notesStore.value) {
 			shouldShowSearchResults = true;
 			setTimeout(() => {

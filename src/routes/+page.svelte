@@ -62,7 +62,6 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		// console.log(result);
 
 		// Remove notes from localStorage that are not present in the server version
 		if (result.data && Array.isArray(result.data)) {
@@ -156,22 +155,22 @@
 
 		// Filter by grade
 		if (selectedGrade && selectedGrade !== 'all' && selectedGrade !== '') {
-			filtered = filtered.filter((note) => Number(note.grade) === Number(selectedGrade));
+			filtered = filtered.filter((note) => Number(note.academicLevel) === Number(selectedGrade));
 		}
 		// Filter by subject
 		if (selectedSubject && selectedSubject !== 'all' && selectedSubject !== '') {
-			filtered = filtered.filter((note) => note.subject === selectedSubject);
+			filtered = filtered.filter((note) => note.topic === selectedSubject);
 		}
 
 		// Sort
 		switch (selectedSort) {
-			case 'grade':
-				filtered = filtered.slice().sort((a, b) => (Number(a.grade) ?? 0) - (Number(b.grade) ?? 0));
-				break;
-			case 'subject':
+			case 'academicLevel':
 				filtered = filtered
 					.slice()
-					.sort((a, b) => (a.subject || '').localeCompare(b.subject || ''));
+					.sort((a, b) => (Number(a.academicLevel) ?? 0) - (Number(b.academicLevel) ?? 0));
+				break;
+			case 'topic':
+				filtered = filtered.slice().sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
 				break;
 		}
 		return filtered;
@@ -212,7 +211,7 @@
 					<div class="filter-section mb-2">
 						<span class="mb-1 block font-bold">Grade:</span>
 						<div class="flex flex-col gap-1">
-							{#each Array.from(new Set(notesStore.value.map((note) => note.grade))) as grade, i}
+							{#each Array.from(new Set(notesStore.value.map((note) => note.academicLevel))) as grade, i}
 								<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 									<input
 										type="radio"
@@ -240,7 +239,7 @@
 					<div class="filter-section mb-2">
 						<span class="mb-1 block font-bold">Subject:</span>
 						<div class="flex flex-col gap-1">
-							{#each Array.from(new Set(notesStore.value.map((note) => note.subject))) as subject, i}
+							{#each Array.from(new Set(notesStore.value.map((note) => note.topic))) as subject, i}
 								<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
 									<input
 										type="radio"

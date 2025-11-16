@@ -1,20 +1,16 @@
 import config from '$lib/utils/apiConfig';
-import type { note } from '../../routes/types';
 import { functionReturn } from '../utils/functionReturn';
 
-export async function newNote(email: string, note: note) {
-	const newNoteRequest = await fetch(`${config.apiUrl}cnotes/new-note/${note.type}`, {
+export async function getNotes(email: string) {
+	const getNotesRequest = await fetch(`${config.apiUrl}cnotes/notes`, {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
+		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
-			email: email,
-			note: note
+			email: email
 		})
 	});
 
-	const result = await newNoteRequest.json();
+	const result = await getNotesRequest.json();
 
 	if (result.status != 200) {
 		return functionReturn(false, true, result.message, result.status, result.error);

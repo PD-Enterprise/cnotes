@@ -1,12 +1,24 @@
 <script lang="ts">
 	// Imports
 	import { onDestroy, onMount } from 'svelte';
-	import type { note, searchResult } from './types';
+	import type { note } from './types';
 	import Icon from '@iconify/svelte';
-	import { notesStore } from '$lib/stores/store.svelte';
+	import { notesStore, notebooksStore, showNotebookModal, sync } from '$lib/stores/store.svelte';
 	import Note from './components/note.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import Loader from './components/loader.svelte';
+	import {
+		loadNotebooksFromLocalStorage,
+		getNotebookNotes,
+		renameNotebook,
+		deleteNotebook
+	} from '$lib/utils/notebooks';
+	import NotebookModal from './components/NotebookModal.svelte';
+	import Icons from './components/Icons.svelte';
+	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
+
+	// Props
+	let { data } = $props();
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -17,11 +29,32 @@
 	let isDataInconsistent: boolean = $state(false);
 	let loadingTimeout;
 	let selectedGrade = $state('all');
-	let selectedSubject = $state('all');
+	let selectedTopic = $state('all');
 	let selectedSort = $state('title');
-	let localNotes: note[] = [];
-	let hasLocalNotes = false;
-	let data = $props();
+	let notes: note[] = $state([]);
+	let activeNotebookId: string | null = $state(null);
+
+	// Reactive statements
+	$: {
+		if (activeNotebookId) {
+			notes = getNotebookNotes(activeNotebookId);
+		} else {
+			// Show notes not in any notebook
+			const notesInNotebooks = new Set(notebooksStore.value.flatMap((nb) => nb.noteSlugs));
+			notes = notesStore.value.filter((note) => !notesInNotebooks.has(note.slug));
+		}
+	}
+
+	$: filteredAndSortedNotes = (() => {
+		let filtered = notes.filter(
+			(note) =>
+				note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				(note.content && note.content.toLowerCase().includes(searchQuery.toLowerCase()))
+		);
+
+		// Apply other filters (grade, topic, sort) here if needed
+		return filtered;
+	})();
 
 	// Functions
 	async function getNotesFromLocalStorage() {
@@ -29,7 +62,6 @@
 		for (let i = 0; i < localStorage.length; i++) {
 			const key = localStorage.key(i);
 			if (key?.startsWith('note:')) {
-				hasLocalNotes = true;
 				const encodedData = localStorage.getItem(key);
 				let noteData: any;
 				try {
@@ -46,16 +78,13 @@
 				tempNotes.push(noteData);
 			}
 		}
-		// Sort notes by date (latest first)
-		localNotes = tempNotes.sort((a, b) => {
+		notesStore.value = tempNotes.sort((a, b) => {
 			const dateA = new Date(a.dateCreated || 0).getTime();
 			const dateB = new Date(b.dateCreated || 0).getTime();
 			return dateB - dateA;
 		});
-		if (hasLocalNotes) {
-			notesStore.value = localNotes;
-		}
 	}
+
 	async function getNotes() {
 		const response = await fetch('/', {
 			method: 'GET',
@@ -98,6 +127,7 @@
 			notesStore.value = serverNotes;
 			persistNotesInLocalStorage();
 		}
+		notes = notesStore.value;
 	}
 	async function persistNotesInLocalStorage() {
 		for (const note of notesStore.value) {
@@ -107,9 +137,12 @@
 			localStorage.setItem(`note:${note.slug}`, encryptedNote);
 		}
 	}
-	onMount(() => {
-		if (data.data.session) {
+	onMount(async () => {
+		if (browser) {
 			getNotesFromLocalStorage();
+			loadNotebooksFromLocalStorage();
+		}
+		if (data.session) {
 			getNotes();
 		}
 		document.addEventListener('click', (event) => {
@@ -119,6 +152,25 @@
 			}
 		});
 	});
+
+	function handleRenameNotebook(notebookId: string, currentName: string) {
+		const newName = prompt('Enter new notebook name:', currentName);
+		if (newName && newName.trim() !== '' && newName.trim() !== currentName) {
+			renameNotebook(notebookId, newName.trim());
+			showToast('Success', `Notebook renamed to "${newName.trim()}".`, 3000, 'success');
+		}
+	}
+
+	function handleDeleteNotebook(notebookId: string, notebookName: string) {
+		if (confirm(`Are you sure you want to delete the "${notebookName}" notebook? Notes inside will become uncategorized.`)) {
+			deleteNotebook(notebookId);
+			// If the active notebook is the one being deleted, switch to uncategorized view
+			if (activeNotebookId === notebookId) {
+				activeNotebookId = null;
+			}
+			showToast('Deleted', `Notebook "${notebookName}" was deleted.`, 3000, 'info');
+		}
+	}
 	onDestroy(() => {
 		clearTimeout(loadingTimeout);
 	});
@@ -146,51 +198,32 @@
 	$effect(() => {
 		search();
 	});
-	function getFilteredAndSortedNotes() {
-		let filtered = notesStore.value;
 
-		// Filter by grade
-		if (selectedGrade && selectedGrade !== 'all' && selectedGrade !== '') {
-			filtered = filtered.filter((note) => Number(note.academicLevel) === Number(selectedGrade));
+	async function deleteNoteFromCloud(noteToDelete: note) {
+		// Assuming a delete endpoint exists
+		try {
+			// Optimistic UI update
+			notesStore.value = notesStore.value.filter((n) => n.slug !== noteToDelete.slug);
+			localStorage.removeItem(`note:${noteToDelete.slug}`);
+			showToast('Deleted', `Note "${noteToDelete.title}" was deleted.`, 3000, 'info');
+		} catch (error) {
+			showToast('Error', 'Failed to delete note.', 3000, 'error');
+			// Revert if API call fails
+			getNotes();
 		}
-		// Filter by subject
-		if (selectedSubject && selectedSubject !== 'all' && selectedSubject !== '') {
-			filtered = filtered.filter((note) => note.topic === selectedSubject);
-		}
-
-		// Sort
-		switch (selectedSort) {
-			case 'academicLevel':
-				filtered = filtered
-					.slice()
-					.sort((a, b) => (Number(a.academicLevel) ?? 0) - (Number(b.academicLevel) ?? 0));
-				break;
-			case 'topic':
-				filtered = filtered.slice().sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
-				break;
-		}
-		return filtered;
 	}
 </script>
 
+<NotebookModal />
 <div class="main">
 	<div class="header bg-base-200 flex gap-3 p-2">
 		<div class="search-bar bg-base-100 grow rounded-md p-1">
 			<div class="flex items-center gap-2 rounded-md p-1">
 				<input
 					type="text"
-					class="search-input grow focus:border-none focus:outline-none"
+					class="input input-ghost grow focus:border-none focus:outline-none"
 					placeholder="Search for a note"
 					bind:value={searchQuery}
-					onkeydown={(e) => {
-						if (e.key === 'Enter' && searchResults && searchResults.length === 1) {
-							// Automatically select the only result
-							const onlyResult = searchResults[0];
-							if (onlyResult && onlyResult.slug) {
-								document.getElementById(onlyResult.slug).focus();
-							}
-						}
-					}}
 				/>
 				<button
 					title="Filter Notes"
@@ -237,12 +270,12 @@
 						<div class="flex flex-col gap-1">
 							{#each Array.from(new Set(notesStore.value.map((note) => note.topic))) as subject, i}
 								<label class="hover:bg-base-200 flex cursor-pointer items-center gap-2 rounded p-1">
-									<input
+									<input 
 										type="radio"
 										name="subject-filter"
 										value={subject}
 										class="radio radio-sm"
-										bind:group={selectedSubject}
+										bind:group={selectedTopic}
 									/>
 									<span class="text-base">{subject}</span>
 								</label>
@@ -254,7 +287,7 @@
 									value="all"
 									class="radio radio-sm"
 									checked
-									bind:group={selectedSubject}
+									bind:group={selectedTopic}
 								/>
 								<span class="text-base">All Subjects</span>
 							</label>
@@ -288,7 +321,7 @@
 				</div>
 			{/if}
 		</div>
-		{#if data.data.session}
+		{#if data.session}
 			<div class="add-note">
 				<a
 					class="addNoteButton btn border-base-content bg-accent text-accent-content border"
@@ -304,20 +337,75 @@
 			</div>
 		{/if}
 	</div>
-	<div class="notes overflow-y-scroll p-3">
-		{#if notesStore.value && notesStore.value.length > 0}
-			<div class="notes-grid mb-17">
-				{#each getFilteredAndSortedNotes() as note}
-					<Note {note} auth={data.data.session} />
-				{/each}
+	<div class="flex gap-8 p-4">
+		<div class="w-1/4">
+			<div class="flex justify-between items-center mb-4">
+				<h2 class="text-2xl font-bold">Notebooks</h2>
+				<button class="btn btn-sm btn-primary" on:click={() => (showNotebookModal.value = true)}>
+					New
+				</button>
 			</div>
-		{:else if errorMessage}
+			<ul class="menu bg-base-200 rounded-box">
+				<li>
+					<a
+						href={'#'}
+						class:active={activeNotebookId === null}
+						on:click|preventDefault={() => (activeNotebookId = null)}
+					>
+						<Icons name="inbox" />
+						Uncategorized
+					</a>
+				</li>
+				{#each notebooksStore.value as notebook}
+					<li>
+						<div class="flex justify-between items-center p-0">
+							<a
+								href={'#'}
+								class:active={activeNotebookId === notebook.id}
+								on:click|preventDefault={() => (activeNotebookId = notebook.id)}
+								class="flex-grow p-2"
+							>
+								<Icons name="book" />
+								{notebook.name}
+								<span class="badge badge-sm">{notebook.noteSlugs.length}</span>
+							</a>
+							<div class="flex-shrink-0 pr-2">
+								<button
+									class="btn btn-ghost btn-xs"
+									on:click={() => handleRenameNotebook(notebook.id, notebook.name)}
+									aria-label="Rename notebook"
+								>
+									✏️
+								</button>
+								<button
+									class="btn btn-ghost btn-xs"
+									on:click={() => handleDeleteNotebook(notebook.id, notebook.name)}
+									aria-label="Delete notebook"
+								>
+									🗑️
+								</button>
+							</div>
+						</div>
+					</li>
+				{/each}
+			</ul>
+		</div>
+
+		<div class="w-3/4">
+			{#if filteredAndSortedNotes.length > 0}
+				<div class="notes-grid mb-17">
+					{#each filteredAndSortedNotes as note (note.slug)}
+						<Note {note} {deleteNoteFromCloud} auth={data.session} />
+					{/each}
+				</div>
+			{:else if errorMessage}
 			<p class="errorMessage">{errorMessage}</p>
 		{:else}
 			<p class="loadingNotes">No notes found.</p>
 		{/if}
 	</div>
 </div>
+
 
 <div class="search-button hidden"></div>
 
@@ -326,7 +414,7 @@
 		height: calc(100vh - 65px);
 	}
 	.notes {
-		height: 100%;
+		/* height: 100%; */
 	}
 	.header {
 		justify-content: space-between;
@@ -339,13 +427,6 @@
 	}
 	.search-bar:hover {
 		box-shadow: 0 6px 15px rgba(77, 96, 116, 0.5);
-	}
-	.search-input {
-		transition:
-			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
-			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
-		min-width: 100px;
-		max-width: 100%;
 	}
 	.search-button,
 	.filter-notes {
@@ -375,9 +456,6 @@
 		gap: 20px;
 	}
 	@media (max-width: 600px) {
-		.search-input {
-			width: 50%;
-		}
 		.notes-grid {
 			display: flex;
 			flex-direction: column;

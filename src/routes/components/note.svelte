@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { note } from '../types';
+	import { fly } from 'svelte/transition';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import SvelteToast from './svelteToast.svelte';
 	import { onMount } from 'svelte';
@@ -40,6 +41,7 @@
 	role="button"
 	tabindex="0"
 	class="note card border-base-content flex gap-2.5 border shadow-2xl"
+	out:fly={{ y: -20, duration: 250 }}
 	id={notes.note.slug}
 >
 	<div class="card-body bg-base-300 flex flex-col rounded p-1">

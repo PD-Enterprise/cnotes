@@ -38,7 +38,7 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		console.log(result);
+		// console.log(result);
 
 		if (!result.data || result.status != 200) {
 			console.error('Failed to fetch note data.');

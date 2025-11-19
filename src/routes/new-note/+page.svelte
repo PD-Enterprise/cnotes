@@ -28,61 +28,116 @@
 	let isK_12: string = $state('true');
 </script>
 
-<dialog id="meta_data_modal" class="modal">
-	<div class="modal-box flex flex-col">
-		<div class="absolute right-2">
-			<form method="dialog" onsubmit={(e) => e.preventDefault()}>
-				<button
-					class="btn btn-ghost btn-sm btn-circle top-2"
-					onclick={(e) => {
-						e.preventDefault();
-						isValid = validateNote(newNote);
-						if (isValid) {
-							const meta_data_modal = document.getElementById(
-								'meta_data_modal'
-							) as HTMLDialogElement;
-							meta_data_modal.close();
-						} else {
-							showToast(
-								'Data type error.',
-								'The note is not in correct form. Please recheck your data.',
-								3000,
-								'error'
-							);
-						}
-						// console.log(newNote);
-					}}>✕</button
-				>
-			</form>
-		</div>
-		<div class="flex flex-col gap-4">
-			<h2 class="text-2xl">Enter Metadata for your Note Here:</h2>
-			<div class="new-note-data flex flex-row flex-wrap gap-3">
-				{#each Object.keys(newNote) as newNoteKey}
-					{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
-						<label class="form-control">
-							<div class="label">
-								<span class="label-text">{toTitleCase(newNoteKey)}:</span>
+<div class="main">
+	<div class="drawer lg:drawer-open">
+		<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+		<div class="drawer-content flex flex-col gap-2">
+			<div class="flex flex-row gap-2">
+				<div class="sidebar-toggle hidden p-1">
+					<label for="my-drawer-4" aria-label="open sidebar" class="btn btn-ghost">
+						<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+					</label>
+				</div>
+
+				<div class="type-selector p-2">
+					<div class="dropdown">
+						<select
+							bind:value={option}
+							class="menu bg-base-200 border-base-content z-[1] w-52 rounded border p-2 shadow-xl"
+						>
+							<option value="text">Text</option>
+							<option value="diagram">Diagram</option>
+						</select>
+					</div>
+					<div class="dropdown dropdown-end">
+						<div tabindex="0" role="button" class="btn btn-ghost info-text">
+							<Icon icon="material-symbols:info" width="22" height="22" />
+						</div>
+						<div class="compact dropdown-content card rounded-box bg-base-100 z-[1] w-64 shadow">
+							<div class="card-body">
+								<h2 class="card-title">component state is not held!!</h2>
+								<p>Save your work before switching</p>
 							</div>
-							{#if newNoteKey == 'dateCreated'}
-								<input
-									type="date"
-									class="input-bordered input metadata-input-field w-full max-w-xs"
-									bind:value={newNote[newNoteKey]}
-									required
-									placeholder="Date Created"
-								/>
-							{:else if newNoteKey == 'academicLevel'}
-								<div class="academicLevel flex gap-5">
-									<select
-										class="select select-bordered metadata-input-field"
-										bind:value={isK_12}
-										required
-									>
-										<option value="true">K-12</option>
-										<option value="false">Not K-12</option>
-									</select>
-									{#if isK_12 == 'true'}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="editors">
+				{#if option === 'text'}
+					<div class="text">
+						<AddTextNote {newNote} />
+					</div>
+				{:else if option === 'diagram'}
+					<div class="diagram mt-1 p-2">
+						<Diagram {newNote} />
+					</div>
+				{/if}
+			</div>
+		</div>
+		<div class="drawer-side is-drawer-close:overflow-visible">
+			<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+			<div
+				class="bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 flex min-h-full w-82 flex-col items-start"
+			>
+				<div class="flex flex-col gap-4 p-2">
+					<div class="top-bar flex flex-row gap-2">
+						<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
+					</div>
+					<div class="new-note-data flex w-72 flex-row flex-wrap gap-3">
+						{#each Object.keys(newNote) as newNoteKey}
+							{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
+								<label class="form-control">
+									<div class="label">
+										<span class="label-text">{toTitleCase(newNoteKey)}:</span>
+									</div>
+									{#if newNoteKey == 'dateCreated'}
+										<input
+											type="date"
+											class="input-bordered input metadata-input-field"
+											bind:value={newNote[newNoteKey]}
+											required
+											placeholder="Date Created"
+										/>
+									{:else if newNoteKey == 'academicLevel'}
+										<div class="academicLevel flex flex-wrap gap-5">
+											<select
+												class="select select-bordered metadata-input-field"
+												bind:value={isK_12}
+												required
+											>
+												<option value="true">K-12</option>
+												<option value="false">Not K-12</option>
+											</select>
+											{#if isK_12 == 'true'}
+												<input
+													type="text"
+													class="input-bordered input metadata-input-field"
+													required
+													bind:value={newNote[newNoteKey]}
+													placeholder={toTitleCase(newNoteKey)}
+												/>
+											{:else}
+												<select
+													class="select select-bordered metadata-input-field"
+													bind:value={newNote[newNoteKey]}
+													required
+												>
+													<option value="UG">Undergraduate (UG)</option>
+													<option value="G">Graduate (G)</option>
+													<option value="PG">Postgraduate (PG)</option>
+												</select>
+											{/if}
+										</div>
+									{:else if newNoteKey == 'visibility'}
+										<select
+											class="select select-bordered metadata-input-field"
+											bind:value={newNote[newNoteKey]}
+											required
+										>
+											<option value="private">Private</option>
+											<option value="public">Public</option>
+										</select>
+									{:else}
 										<input
 											type="text"
 											class="input-bordered input metadata-input-field"
@@ -90,87 +145,15 @@
 											bind:value={newNote[newNoteKey]}
 											placeholder={toTitleCase(newNoteKey)}
 										/>
-									{:else}
-										<select
-											class="select select-bordered metadata-input-field"
-											bind:value={newNote[newNoteKey]}
-											required
-										>
-											<option value="UG">Undergraduate (UG)</option>
-											<option value="G">Graduate (G)</option>
-											<option value="PG">Postgraduate (PG)</option>
-										</select>
 									{/if}
-								</div>
-							{:else if newNoteKey == 'visibility'}
-								<select
-									class="select select-bordered metadata-input-field"
-									bind:value={newNote[newNoteKey]}
-									required
-								>
-									<option value="private">Private</option>
-									<option value="public">Public</option>
-								</select>
-							{:else}
-								<input
-									type="text"
-									class="input-bordered input metadata-input-field"
-									required
-									bind:value={newNote[newNoteKey]}
-									placeholder={toTitleCase(newNoteKey)}
-								/>
+								</label>
 							{/if}
-						</label>
-					{/if}
-				{/each}
+						{/each}
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</dialog>
-
-<div class="main">
-	<div class="dropdown p-2">
-		<select
-			bind:value={option}
-			class="menu bg-base-200 border-base-content z-[1] m-1 w-52 rounded border p-2 shadow-xl"
-		>
-			<option value="text">Text</option>
-			<option value="diagram">Diagram</option>
-		</select>
-	</div>
-	<div class="dropdown dropdown-end">
-		<div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle text-info">
-			<Icon icon="material-symbols:info" width="24" height="24" />
-		</div>
-		<div class="compact dropdown-content card rounded-box bg-base-100 z-[1] w-64 shadow">
-			<div class="card-body">
-				<h2 class="card-title">component state is not held!!</h2>
-				<p>Save your work before switching</p>
-			</div>
-		</div>
-	</div>
-	<div class="header flex flex-col pl-3">
-		<div class="buttons flex flex-row gap-3">
-			<div class="metadata-btn">
-				<button
-					class="btn border-base-content h-12 border"
-					onclick={() => {
-						const meta_data_modal = document.getElementById('meta_data_modal') as HTMLDialogElement;
-						meta_data_modal.showModal();
-					}}>Metadata</button
-				>
-			</div>
-		</div>
-	</div>
-	{#if option === 'text'}
-		<div class="text">
-			<AddTextNote {newNote} />
-		</div>
-	{:else if option === 'diagram'}
-		<div class="diagram mt-1 p-2">
-			<Diagram {newNote} />
-		</div>
-	{/if}
 </div>
 
 <style>
@@ -179,11 +162,6 @@
 	}
 	/* Form container */
 	.new-note-data {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		gap: 20px;
-		/* Space between fields */
 		animation: fadeInDown 0.5s ease-in-out;
 	}
 	.metadata-input-field {
@@ -194,7 +172,6 @@
 		display: flex;
 		flex-direction: column;
 	}
-
 	.form-control .label-text {
 		font-weight: 600;
 		margin-bottom: 5px;
@@ -208,8 +185,11 @@
 		border-radius: 8px;
 		font-size: 1rem;
 		transition: all 0.3s ease-in-out;
+		width: 300px;
 	}
-
+	.form-control select {
+		width: 300px;
+	}
 	.form-control input:focus {
 		outline: none;
 		box-shadow: 0 0 8px rgba(107, 136, 190, 0.4);
@@ -228,5 +208,17 @@
 	.btn:active {
 		transform: translateY(0);
 		box-shadow: none;
+	}
+	@media (max-width: 1023px) {
+		.sidebar-toggle {
+			display: block;
+		}
+		.type-selector {
+			padding: 0.25rem;
+		}
+		.drawer-side {
+			height: calc(100vh - 64px);
+			margin-top: 64px;
+		}
 	}
 </style>

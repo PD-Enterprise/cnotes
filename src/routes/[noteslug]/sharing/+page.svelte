@@ -33,7 +33,7 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await request.json();
-		console.log(result);
+		// console.log(result);
 
 		if (result.status != 200) {
 			errorMessage = 'Note not found.';

@@ -133,7 +133,7 @@
 						slug: note.slug
 					}));
 				searchResults = matches;
-				console.log(searchResults);
+				// console.log(searchResults);
 			}, 500);
 		} else {
 			shouldShowSearchResults = false;

@@ -1,17 +1,21 @@
 <script lang="ts">
 	// Imports
 	import '../app.css';
-	import { onMount, type Snippet } from 'svelte';
+	import { onMount, type Snippet, afterUpdate } from 'svelte';
 	import Navbar from './components/navbar.svelte';
 	import SvelteToast from './components/svelteToast.svelte';
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import NotLoggedIn from './components/notLoggedIn.svelte';
+	import CommandPalette from '$lib/components/CommandPalette.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
+	let showCommandPalette = $state(false);
+	let previousIsAuthenticated = $state(isAuthenticated.value);
 
 	onMount(() => {
 		setTimeout(() => {
@@ -19,12 +23,33 @@
 		}, 50);
 	});
 
-	if (!data.session || !data.session == null) {
-		isAuthenticated.value = false;
-	} else {
-		isAuthenticated.value = true;
-	}
+	afterUpdate(() => {
+		const currentIsAuthenticated = !!data.session;
+		if (currentIsAuthenticated && !previousIsAuthenticated) {
+			// User just logged in
+			setTimeout(() => {
+				showToast(
+					'Pro Tip!',
+					'Press Ctrl+K (or Cmd+K) to open the command palette.',
+					'info',
+					8000
+				);
+			}, 1000); // Delay to ensure UI is ready
+		}
+		isAuthenticated.value = currentIsAuthenticated;
+		previousIsAuthenticated = currentIsAuthenticated;
+	});
 
+	const handleKeydown = (event: KeyboardEvent) => {
+		if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+			event.preventDefault();
+			showCommandPalette = !showCommandPalette;
+		}
+	};
+
+	isAuthenticated.value = !!data.session;
+
+	// View Transitions
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) {
 			return;
@@ -40,7 +65,10 @@
 	});
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
+
 <SvelteToast />
+<CommandPalette bind:open={showCommandPalette} />
 
 {#if !isLoaded}
 	<Loader title="Loading Cnotes..." />
@@ -61,6 +89,11 @@
 		{@render children()}
 	</div>
 </div>
+
+<!-- Hidden form for command palette logout -->
+<form id="logout-form" action="/logout" method="POST" style="display: none;">
+	<button type="submit">Logout</button>
+</form>
 
 <style>
 	.navbar {

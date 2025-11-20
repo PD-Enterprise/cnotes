@@ -1,26 +1,20 @@
 // Imports
-import {
-    toasts,
-    ToastContainer as ToastContainerAny,
-    FlatToast as FlatToastAny
-} from 'svelte-toasts';
-import { theme } from "$lib/stores/store.svelte"
+import { toasts } from 'svelte-toasts';
+import CustomToast from '$lib/components/CustomToast.svelte';
 
 // Functions
-const showToast = (title: string, body: string, duration: number, type: string) => {
-    const toast = toasts.add({
-        title: title,
-        description: body,
-        duration: duration,
-        placement: 'bottom-right',
-        showProgress: true,
-        //@ts-ignore
-        type: type,
-        //@ts-ignore
-        theme: theme.value ? "light" : "dark",
-        onClick: () => { },
-        onRemove: () => { }
-    });
+const showToast = (
+	title: string,
+	description: string,
+	type: 'info' | 'success' | 'warning' | 'error' = 'info',
+	duration: number = 5000
+) => {
+	toasts.add({
+		component: CustomToast,
+		props: { title, description, type },
+		duration: duration,
+		placement: 'bottom-right'
+	});
 };
 
 export { showToast };

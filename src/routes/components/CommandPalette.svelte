@@ -1,4 +1,4 @@
-<script lang="ts">
+i<script lang="ts">
 	import { createEventDispatcher, onMount, onDestroy } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import Icon from '@iconify/svelte';

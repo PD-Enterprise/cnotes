@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
+	import { editor, EditorNoteData, isStudyModeActive } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
@@ -14,18 +14,20 @@
 	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
 	import { TableKit } from '@tiptap/extension-table';
+	import { BubbleMenu, isClient } from '@tiptap/svelte';
 
 	let element: any;
 	let { content, editable } = $props();
+
+	// Centralized state management for button activity
 	let isTableActive = $state(false);
 	let isParagraphActive = $state(false);
 	let isUnderlineActive = $state(false);
 	let isHighlightActive = $state(false);
 	let isBoldActive = $state(false);
+	let isItalicActive = $state(false);
 	let isSubscriptActive = $state(false);
 	let isSuperscriptActive = $state(false);
-
-	// console.log(content);
 
 	onMount(() => {
 		editor.value = new Editor({
@@ -44,7 +46,7 @@
 						let classes = '';
 						switch (level) {
 							case 1:
-								classes = 'text-4xl font-bold'; // Added font-bold for better visual distinction
+								classes = 'text-4xl font-bold';
 								break;
 							case 2:
 								classes = 'text-3xl font-semibold';
@@ -58,11 +60,7 @@
 							default:
 								classes = 'text-base';
 						}
-						return [
-							`h${level}`,
-							mergeAttributes(HTMLAttributes, { class: classes }), // Merge existing attributes with your new class
-							0
-						];
+						return [`h${level}`, mergeAttributes(HTMLAttributes, { class: classes }), 0];
 					}
 				}),
 				Underline,
@@ -77,11 +75,25 @@
 				TableKit.configure({
 					table: { resizable: true }
 				}),
-				Youtube
+				Youtube,
+				BubbleMenu.configure({
+					// You can configure plugin options here
+				})
 			],
 			content: 'Loading...',
-			onTransaction: () => {
+			onTransaction: ({ editor }) => {
+				// This is a more efficient way to keep the editor instance reactive
 				editor.value = editor.value;
+
+				// Update all button states from a single source of truth
+				isTableActive = editor.isActive('table');
+				isParagraphActive = editor.isActive('paragraph');
+				isUnderlineActive = editor.isActive('underline');
+				isHighlightActive = editor.isActive('highlight');
+				isBoldActive = editor.isActive('bold');
+				isItalicActive = editor.isActive('italic');
+				isSubscriptActive = editor.isActive('subscript');
+				isSuperscriptActive = editor.isActive('superscript');
 			},
 			onUpdate() {
 				EditorNoteData.value.content = editor.value.getHTML();
@@ -92,20 +104,15 @@
 					style: 'height: 100%'
 				}
 			},
-			editable: editable,
-			onSelectionUpdate: ({ editor }) => {
-				if (editor.isActive('table')) {
-					isTableActive = true;
-				} else {
-					isTableActive = false;
-				}
-			}
+			editable: editable
 		});
+
 		if (!editable) {
 			const editorElement = document.getElementById('editor') as HTMLDivElement;
-			editorElement.style = 'border: none';
+			editorElement.style.border = 'none';
 		}
 	});
+
 	$effect(() => {
 		if (editor.value && content !== undefined && content !== null) {
 			if (editor.value.getHTML() !== content) {
@@ -113,30 +120,41 @@
 			}
 		}
 	});
+
 	onDestroy(() => {
 		if (editor.value) {
 			editor.value.destroy();
 		}
 	});
+
+	function toggleStudyMode() {
+		isStudyModeActive.update((n) => !n);
+	}
 </script>
 
 <div class="editor-container flex h-full flex-col p-0">
 	{#if editable}
-		<div
-			class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl"
-		>
+		<!-- Main Static Toolbar -->
+		<div class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl">
 			<div class="button-group">
 				<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
+					<button
+						aria-label="Study Mode"
+						title="Study Mode"
+						class="editor-button btn"
+						onclick={toggleStudyMode}
+						class:active={$isStudyModeActive}
+					>
+						<Icon icon="ion:book-outline" width="24" height="24" />
+					</button>
 					{#each { length: 3 } as _, index}
 						{@const level = index + 1}
 						<button
-							class="editor-button is-active"
+							class="editor-button"
 							title={`Heading ${level}`}
 							aria-label={`Heading ${level}`}
-							onclick={() => {
-								// @ts-expect-error
-								editor.value.chain().focus().toggleHeading({ level }).run();
-							}}
+							class:active={editor.value?.isActive('heading', { level })}
+							onclick={() => editor.value?.chain().focus().toggleHeading({ level }).run()}
 						>
 							H{level}
 						</button>
@@ -144,10 +162,7 @@
 					<button
 						aria-label="Paragraph"
 						title="Paragraph"
-						onclick={() => {
-							editor.value.chain().focus().setParagraph().run();
-							isParagraphActive = editor.value.isActive('paragraph');
-						}}
+						onclick={() => editor.value?.chain().focus().setParagraph().run()}
 						class:active={isParagraphActive}
 						class="editor-button btn"><Icon icon="fa6-solid:paragraph" /></button
 					>
@@ -155,52 +170,38 @@
 						aria-label="Underline"
 						title="Underline"
 						class="editor-button btn"
-						onclick={() => {
-							editor.value.chain().focus().toggleUnderline().run();
-							isUnderlineActive = editor.value.isActive('underline');
-						}}
+						onclick={() => editor.value?.chain().focus().toggleUnderline().run()}
 						class:active={isUnderlineActive}><Icon icon="fa6-solid:underline" /></button
 					>
 					<button
 						aria-label="Highlight"
 						title="Highlight"
 						class="editor-button btn"
-						onclick={() => {
-							editor.value.chain().focus().toggleHighlight().run();
-							isHighlightActive = editor.value.isActive('highlight');
-						}}
+						onclick={() => editor.value?.chain().focus().toggleHighlight().run()}
 						class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
 					>
 					<button
 						aria-label="Bold"
 						title="Bold"
-						onclick={() => {
-							editor.value?.chain().focus().toggleBold().run();
-							isBoldActive = editor.value.isActive('bold');
-						}}
+						onclick={() => editor.value?.chain().focus().toggleBold().run()}
 						class="editor-button"
 						class:active={isBoldActive}
 					>
 						<Icon icon="fa6-solid:bold" />
 					</button>
-					<!-- <button
+					<button
 						aria-label="Italic"
 						title="Italic"
-						onclick={() => {
-							editor.value?.chain().focus().toggleItalic().run();
-						}}
+						onclick={() => editor.value?.chain().focus().toggleItalic().run()}
 						class="editor-button"
-						class:active={editor.value?.isActive('italic')}
+						class:active={isItalicActive}
 					>
 						<Icon icon="fa6-solid:italic" />
-					</button> -->
+					</button>
 					<button
 						aria-label="Subscript"
 						title="Subscript"
-						onclick={() => {
-							editor.value?.chain().focus().toggleSubscript().run();
-							isSubscriptActive = editor.value.isActive('subscript');
-						}}
+						onclick={() => editor.value?.chain().focus().toggleSubscript().run()}
 						class="editor-button"
 						class:active={isSubscriptActive}
 					>
@@ -209,10 +210,7 @@
 					<button
 						aria-label="Superscript"
 						title="Superscript"
-						onclick={() => {
-							editor.value?.chain().focus().toggleSuperscript().run();
-							isSuperscriptActive = editor.value.isActive('superscript');
-						}}
+						onclick={() => editor.value?.chain().focus().toggleSuperscript().run()}
 						class="editor-button"
 						class:active={isSuperscriptActive}
 					>
@@ -221,14 +219,12 @@
 					<button
 						aria-label="Table"
 						title="Table"
-						onclick={() => {
+						onclick={() =>
 							editor.value
 								.chain()
 								.focus()
 								.insertTable({ rows: 3, cols: 2, withHeaderRow: false })
-								.run();
-							isTableActive = true;
-						}}
+								.run()}
 						class="editor-button"
 						class:active={isTableActive}
 					>
@@ -238,11 +234,7 @@
 						<button
 							aria-label="Add Row After"
 							title="Add Row After"
-							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().addRowAfter().run();
-								}
-							}}
+							onclick={() => editor.value?.chain().focus().addRowAfter().run()}
 							class="editor-button"
 						>
 							<Icon icon="majesticons:add-row" width="24" height="24" />
@@ -250,11 +242,7 @@
 						<button
 							aria-label="Add Column After"
 							title="Add Column After"
-							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().addColumnAfter().run();
-								}
-							}}
+							onclick={() => editor.value?.chain().focus().addColumnAfter().run()}
 							class="editor-button"
 						>
 							<Icon icon="majesticons:add-column" width="24" height="24" />
@@ -262,11 +250,7 @@
 						<button
 							aria-label="Delete Row"
 							title="Delete Row"
-							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteRow().run();
-								}
-							}}
+							onclick={() => editor.value?.chain().focus().deleteRow().run()}
 							class="editor-button"
 						>
 							<Icon icon="fluent:table-delete-row-20-regular" width="20" height="20" />
@@ -274,11 +258,7 @@
 						<button
 							aria-label="Delete Column"
 							title="Delete Column"
-							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteColumn().run();
-								}
-							}}
+							onclick={() => editor.value?.chain().focus().deleteColumn().run()}
 							class="editor-button"
 						>
 							<Icon icon="fluent:table-delete-column-20-regular" width="20" height="20" />
@@ -286,11 +266,7 @@
 						<button
 							aria-label="Delete Table"
 							title="Delete Table"
-							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteTable().run();
-								}
-							}}
+							onclick={() => editor.value?.chain().focus().deleteTable().run()}
 							class="editor-button"
 						>
 							<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
@@ -303,18 +279,17 @@
 							const url = prompt('Enter Youtube URL');
 							if (url) {
 								editor.value
-									.chain()
+									?.chain()
 									.focus()
 									.setYoutubeVideo({
 										src: url,
-										width: Math.max(320, 10) || 640,
-										height: Math.max(180, 10) || 480
+										width: 640,
+										height: 480
 									})
 									.run();
 							}
 						}}
 						class="editor-button"
-						class:active={editor.value?.isActive('Youtube')}
 					>
 						<Icon icon="mdi:youtube" width="24" height="24" />
 					</button>
@@ -322,7 +297,45 @@
 			</div>
 		</div>
 	{/if}
-	<div bind:this={element} class="editor bg-base-300 rounded-br-md rounded-bl-md" id="editor"></div>
+
+	<!-- Bubble Menu (Floating Toolbar) -->
+	{#if isClient && editor.value}
+		<BubbleMenu
+			class="bubble-menu"
+			editor={editor.value}
+			tippyOptions={{ duration: 150, animation: 'scale-subtle' }}
+		>
+			<button
+				aria-label="Bold"
+				title="Bold"
+				class="editor-button"
+				onclick={() => editor.value?.chain().focus().toggleBold().run()}
+				class:active={isBoldActive}
+			>
+				<Icon icon="fa6-solid:bold" />
+			</button>
+			<button
+				aria-label="Italic"
+				title="Italic"
+				class="editor-button"
+				onclick={() => editor.value?.chain().focus().toggleItalic().run()}
+				class:active={isItalicActive}
+			>
+				<Icon icon="fa6-solid:italic" />
+			</button>
+			<button
+				aria-label="Underline"
+				title="Underline"
+				class="editor-button"
+				onclick={() => editor.value?.chain().focus().toggleUnderline().run()}
+				class:active={isUnderlineActive}
+			>
+				<Icon icon="fa6-solid:underline" />
+			</button>
+		</BubbleMenu>
+	{/if}
+
+	<div bind:this={element} class="editor bg-base-300 rounded-br-md rounded-bl-md" id="editor" />
 </div>
 
 <style>
@@ -374,7 +387,7 @@
 		color: #e5e7eb;
 	}
 	.editor-button.active {
-		background-color: #f3f4f6;
+		background-color: #e5e7eb;
 		box-shadow:
 			0 10px 15px -3px rgba(0, 0, 0, 0.1),
 			0 4px 6px -4px rgba(0, 0, 0, 0.1);
@@ -383,6 +396,43 @@
 	:global(.dark) .editor-button.active {
 		background-color: #374151;
 	}
+
+	/* Bubble Menu Styles */
+	.bubble-menu {
+		display: flex;
+		padding: 0.25rem;
+		border-radius: 0.5rem;
+		box-shadow:
+			0 10px 15px -3px rgba(0, 0, 0, 0.1),
+			0 4px 6px -4px rgba(0, 0, 0, 0.1);
+		gap: 0.25rem;
+		background-color: #f3f4f6;
+		border: 1px solid #e5e7eb;
+	}
+	:global(.dark) .bubble-menu {
+		background-color: #171717;
+		border: 1px solid #374151;
+	}
+	/* Tooltip styling */
+	.editor-button {
+		position: relative;
+	}
+	.editor-button:hover::after {
+		content: attr(title);
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		background-color: rgba(0, 0, 0, 0.8);
+		color: #fff;
+		padding: 4px 8px;
+		border-radius: 4px;
+		z-index: 10;
+		margin-top: 8px;
+		white-space: nowrap;
+	}
+
+	/* Tiptap Table Styles */
 	.tiptap table {
 		border-collapse: collapse;
 		margin: 0;
@@ -441,31 +491,9 @@
 		border-color: #374151;
 	}
 	:global(.dark) .tiptap table th {
-		background-color: #1f2937;
+		background-color: #1f2337;
 	}
-
 	:global(.dark) .tiptap table .selectedCell:after {
 		background: rgba(55, 65, 81, 0.4);
-	}
-	.table-controls {
-		display: flex;
-		align-items: center;
-		padding: 2px;
-		border-radius: 4px;
-	}
-	.editor-button {
-		position: relative;
-	}
-	.editor-button:hover::after {
-		content: attr(title);
-		position: absolute;
-		top: 100%;
-		left: 50%;
-		transform: translateX(-50%);
-		background-color: rgba(0, 0, 0, 0.8);
-		color: #fff;
-		padding: 4px 8px;
-		border-radius: 4px;
-		z-index: 10;
 	}
 </style>

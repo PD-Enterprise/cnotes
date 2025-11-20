@@ -7,6 +7,7 @@
 	import Note from './components/note.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Loader from './components/loader.svelte';
+	import { slide } from 'svelte/transition';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -175,8 +176,8 @@
 
 <div class="main">
 	{#if !$isStudyModeActive}
-		<div class="header bg-base-200 flex gap-3 p-2">
-			<div class="search-bar bg-base-100 grow rounded-md p-1">
+		<div class="header bg-base-200 flex gap-3 p-2" transition:slide={{ duration: 300, axis: 'y' }}>
+			<div class="search-bar bg-base-100 grow rounded-md p-1 animate-fadeInUp">
 				<div class="flex items-center gap-2 rounded-md p-1">
 					<input
 						type="text"
@@ -195,7 +196,7 @@
 					/>
 					<button
 						title="Filter Notes"
-						class="filter-notes btn btn-circle border-base-content bg-base-100 hover:bg-base-300 border"
+						class="filter-notes btn btn-circle border-base-content bg-base-100 hover:bg-base-300 border interactive-pop"
 						onclick={filter}
 					>
 						<Icon icon="fa6-solid:filter" />
@@ -203,7 +204,7 @@
 				</div>
 				{#if shouldShowFilterMenu}
 					<div
-						class="filter-menu search-results bg-base-100 mt-2 flex flex-row gap-16 rounded-md p-3 shadow"
+						class="filter-menu search-results bg-base-100 mt-2 flex flex-row gap-16 rounded-md p-3 shadow animate-scaleIn"
 					>
 						<div class="filter-section mb-2">
 							<span class="mb-1 block font-bold">Grade:</span>
@@ -272,7 +273,7 @@
 					</div>
 				{/if}
 				{#if shouldShowSearchResults}
-					<div class="search-results bg-base-100 mt-2 flex flex-col gap-2 rounded-md p-2">
+					<div class="search-results bg-base-100 mt-2 flex flex-col gap-2 rounded-md p-2 animate-scaleIn">
 						{#if searchResults.length > 0}
 							{#each searchResults as searchResult}
 								<a
@@ -298,9 +299,9 @@
 				{/if}
 			</div>
 			{#if data.data.session}
-				<div class="add-note">
+				<div class="add-note animate-fadeInUp">
 					<a
-						class="addNoteButton btn border-base-content bg-accent text-accent-content border"
+						class="addNoteButton btn border-base-content bg-accent text-accent-content border interactive-pop"
 						href="/new-note">Create <Icon icon="mage:edit" width="24" height="24" /></a
 					>
 				</div>
@@ -317,8 +318,13 @@
 	<div class="notes overflow-y-scroll p-3">
 		{#if $notesStore && $notesStore.length > 0}
 			<div class="notes-grid mb-17">
-				{#each getFilteredAndSortedNotes() as note}
-					<Note {note} auth={data.data.session} />
+				{#each getFilteredAndSortedNotes() as note, i}
+					<div
+						class="animate-scaleIn"
+						style="animation-delay: {i * 50}ms; opacity: 0;"
+					>
+						<Note {note} auth={data.data.session} />
+					</div>
 				{/each}
 			</div>
 		{:else if errorMessage}
@@ -361,14 +367,8 @@
 	.filter-notes {
 		border-radius: 6px;
 		cursor: pointer;
-		transition:
-			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
-			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
 	}
-	.search-button:hover,
-	.filter-notes:hover {
-		transform: scale(1.05);
-	}
+	
 	.search-results {
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		transition:
@@ -399,11 +399,5 @@
 		border-radius: 6px;
 		font-size: 16px;
 		cursor: pointer;
-		transition:
-			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
-			box-shadow 0.18s cubic-bezier(0.4, 0.2, 0.2, 1);
-	}
-	.addNoteButton:hover {
-		transform: translateY(-1px) scale(1.025);
 	}
 </style>

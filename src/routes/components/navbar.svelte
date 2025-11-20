@@ -1,157 +1,154 @@
 <script lang="ts">
 	// Imports
-	import { theme } from '$lib/stores/store.svelte';
 	import { onMount } from 'svelte';
-	import AutoLogin from './autoLogin.svelte';
-	import SvelteToast from './svelteToast.svelte';
 	import type { PageData } from '../$types';
-	import { SignIn, SignOut } from '@auth/sveltekit/components';
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 
 	let { data }: { data: PageData } = $props();
+
+	// State
 	let isHome = $state(true);
 	let title = $state('Home');
+	let currentTheme = $state('dark');
 
-	onMount(() => {
-		const localTheme = localStorage.getItem('theme');
-		if (localTheme === 'light') {
-			theme.value = true;
+	const themes = [
+		'light',
+		'dark',
+		'cupcake',
+		'bumblebee',
+		'emerald',
+		'corporate',
+		'synthwave',
+		'retro',
+		'cyberpunk',
+		'valentine',
+		'halloween',
+		'garden',
+		'forest',
+		'aqua',
+		'lofi',
+		'pastel',
+		'fantasy',
+		'wireframe',
+		'black',
+		'luxury',
+		'dracula',
+		'cmyk',
+		'autumn',
+		'business',
+		'acid',
+		'lemonade',
+		'night',
+		'coffee',
+		'winter'
+	];
+
+	// Update title and home status based on URL
+	$effect(() => {
+		const path = $page.url.pathname;
+		isHome = path === '/';
+		if (isHome) {
+			title = 'Home';
 		} else {
-			theme.value = false;
+			const pathSegment = path.split('/')[1];
+			if (['new-note', 'login', 'logout'].includes(pathSegment)) {
+				title = pathSegment.replaceAll('-', ' ');
+			} else if (pathSegment) {
+				// Handle dynamic routes like [noteslug]
+				title = 'Note';
+			}
 		}
-		$effect(() => {
-			// console.log(theme.value)
-			if (theme.value == true) {
-				document.documentElement.setAttribute('data-theme', 'light');
-				localStorage.setItem('theme', 'light');
-			} else {
-				localStorage.setItem('theme', 'dark');
-				document.documentElement.setAttribute('data-theme', 'dark');
-			}
+	});
 
-			// console.log($page.url.pathname);
-			if ($page.url.pathname == '/') {
-				isHome = true;
-				title = 'Home';
-			} else {
-				isHome = false;
-				// console.log($page.url.pathname);
-				if (
-					$page.url.pathname.split('/')[1] == 'new-note' ||
-					$page.url.pathname.split('/')[1] == 'login' ||
-					$page.url.pathname.split('/')[1] == 'logout'
-				) {
-					title = $page.url.pathname.split('/')[1].replaceAll('-', ' ');
-				} else {
-					title = $page.url.pathname.split('/')[1].replaceAll('-', ' ').slice(0, -6);
-				}
-			}
-		});
+	// Function to change the theme
+	function changeTheme(theme: string) {
+		document.documentElement.setAttribute('data-theme', theme);
+		localStorage.setItem('cnotes-theme', theme);
+		currentTheme = theme;
+	}
+
+	// Set initial theme on mount
+	onMount(() => {
+		const savedTheme = localStorage.getItem('cnotes-theme') || 'dark';
+		currentTheme = savedTheme;
 	});
 </script>
 
-<SvelteToast />
-
-<div class="navbar bg-base-300">
+<div class="navbar bg-base-100/80 backdrop-blur-sm fixed z-10">
+	<!-- Navbar Start (Back button and Title) -->
 	<div class="navbar-start">
-		{#if isHome}
-			<div class="dropdown">
-				<div tabindex="0" role="button" class="btn btn-ghost">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h8m-8 6h16"
-						/>
-					</svg>
-				</div>
-				<ul
-					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-[1] mt-3 flex gap-2 p-2 shadow"
-				>
-					<!-- <li>
-					<UserButton />
-				</li> -->
-					<li>
-						<label class="flex cursor-pointer gap-2">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<circle cx="12" cy="12" r="5" />
-								<path
-									d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
-								/>
-							</svg>
-							<input
-								type="checkbox"
-								value="light"
-								class="theme-controller toggle"
-								bind:checked={theme.value}
-							/>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								width="20"
-								height="20"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							>
-								<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-							</svg>
-						</label>
-					</li>
-					<div class="menu-buttons menu-login-buttons w-full" id="menu-login-buttons">
-						{#if data.session}
-							<a href="/logout" class="btn btn-error w-full">Logout</a>
-						{:else}
-							<a href="/login" class="btn btn-accent w-full">Login</a>
-						{/if}
-					</div>
-				</ul>
-			</div>
-		{:else}
-			<button
-				onclick={() => {
-					history.back();
-				}}
-				class="btn btn-ghost btn-circle"
-			>
+		{#if !isHome}
+			<button onclick={() => history.back()} class="btn btn-ghost btn-circle">
 				<Icon icon="ep:back" class="h-5 w-5" />
 			</button>
 		{/if}
+		<a class="btn btn-ghost text-xl" href="/">{toTitleCase(title)}</a>
+	</div>
 
-		<a class="btn btn-ghost text-2xl" href="/">{toTitleCase(title)}</a>
+	<!-- Navbar End (Actions) -->
+	<div class="navbar-end flex items-center gap-2">
+		<!-- New Note Button -->
+		{#if data.session}
+			<a href="/new-note" class="btn btn-ghost btn-circle">
+				<Icon icon="mdi:plus" class="h-6 w-6" />
+			</a>
+		{/if}
+
+		<!-- Theme Switcher -->
+		<div class="dropdown dropdown-end">
+			<div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+				<Icon icon="mdi:palette-swatch" class="h-6 w-6" />
+			</div>
+			<ul
+				tabindex="0"
+				class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52 h-64 overflow-y-auto"
+			>
+				{#each themes as theme}
+					<li>
+						<button
+							class:btn-active={currentTheme === theme}
+							on:click={() => changeTheme(theme)}>{toTitleCase(theme)}</button
+						>
+					</li>
+				{/each}
+			</ul>
+		</div>
+
+		<!-- User Menu -->
+		<div class="dropdown dropdown-end">
+			<div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+				<Icon icon="mdi:dots-vertical" class="h-6 w-6" />
+			</div>
+			<ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+				{#if data.session}
+					<li class="menu-title">
+						<span>Signed in as {data.session.user?.name}</span>
+					</li>
+					<li>
+						<form action="/logout" method="POST">
+							<button type="submit" class="w-full text-left">
+								<Icon icon="mdi:logout" class="h-5 w-5 mr-2" />
+								Logout
+							</button>
+						</form>
+					</li>
+				{:else}
+					<li>
+						<a href="/login" class="w-full">
+							<Icon icon="mdi:login" class="h-5 w-5 mr-2" />
+							Login
+						</a>
+					</li>
+				{/if}
+			</ul>
+		</div>
 	</div>
 </div>
 
 <style>
 	.navbar {
 		cursor: default;
-		position: fixed;
-		z-index: 1000;
-	}
-	@media (max-width: 466px) {
-		.menu-buttons {
-			display: block;
-		}
 	}
 </style>

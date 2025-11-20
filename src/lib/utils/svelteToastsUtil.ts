@@ -1,6 +1,5 @@
 // Imports
 import { toasts } from 'svelte-toasts';
-import CustomToast from '$lib/components/CustomToast.svelte';
 
 // Functions
 const showToast = (
@@ -10,8 +9,9 @@ const showToast = (
 	duration: number = 5000
 ) => {
 	toasts.add({
-		component: CustomToast,
-		props: { title, description, type },
+		title: title,
+		description: description,
+		type: type,
 		duration: duration,
 		placement: 'bottom-right'
 	});

@@ -1,3 +1,4 @@
+
 <script lang="ts">
 	// Imports
 	import '../app.css';
@@ -7,14 +8,15 @@
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
 	import { onNavigate } from '$app/navigation';
-	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import { isAuthenticated, notesStore } from '$lib/stores/store.svelte';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import NotLoggedIn from './components/notLoggedIn.svelte';
-	import CommandPalette from '$lib/components/CommandPalette.svelte';
+	import CommandPalette from './components/CommandPalette.svelte';
+    import ConfirmationModal from './components/ConfirmationModal.svelte';
+    import { commandPaletteStore } from '$lib/stores/commandPaletteStore';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
-	let showCommandPalette = $state(false);
 	let previousIsAuthenticated = $state(isAuthenticated.value);
 
 	onMount(() => {
@@ -43,7 +45,7 @@
 	const handleKeydown = (event: KeyboardEvent) => {
 		if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
 			event.preventDefault();
-			showCommandPalette = !showCommandPalette;
+			commandPaletteStore.open();
 		}
 	};
 
@@ -68,7 +70,8 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <SvelteToast />
-<CommandPalette bind:open={showCommandPalette} />
+<CommandPalette notes={notesStore.value} />
+<ConfirmationModal />
 
 {#if !isLoaded}
 	<Loader title="Loading Cnotes..." />

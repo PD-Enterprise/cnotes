@@ -24,6 +24,10 @@ export const EditorNoteData = $state<{ value: note }>({
 		topic: '',
 		content: '',
 		slug: '',
-		type: ''
+		type: '',
+		visibility: '',
+		year: '',
+		language: '',
+		keywords: ''
 	}
 });

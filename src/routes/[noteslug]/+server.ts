@@ -3,12 +3,24 @@ import { updateNote } from '$lib/api/update-note';
 import config from '$lib/utils/apiConfig';
 import { returnJson } from '$lib/utils/returnJson';
 
+let email: string;
+
 export async function GET({ url, locals }) {
 	const slug = url.pathname.split('/')[1];
 
-	const [success, error, _, data] = await getNote(slug);
+	try {
+		const session = await locals.getSession();
+		if (!session) {
+			email = 'null';
+		}
+		email = session.user.email;
+	} catch (error) {
+		email = 'null';
+	}
+
+	const [success, error, message, data] = await getNote(email, slug);
 	if (error || !success) {
-		return returnJson(500, 'Error fetching note', null, error);
+		return returnJson(data, message, null, error);
 	}
 	return returnJson(200, 'Note fetched successfully', data, null);
 }

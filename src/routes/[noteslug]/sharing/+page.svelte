@@ -7,6 +7,7 @@
 	import Icon from '@iconify/svelte';
 	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
+	import { isAuthenticated } from '$lib/stores/store.svelte';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -33,11 +34,22 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await request.json();
-		// console.log(result);
+		console.log(result);
 
 		if (result.status != 200) {
-			errorMessage = 'Note not found.';
-			return;
+			noteData = null;
+			switch (result.status) {
+				case 401:
+					errorMessage = 'You must be logged in to view this note.'; // Message for unauthenticated users
+					return;
+				case 403:
+					errorMessage =
+						"You aren't the owner of this note. You do not have permission to view it."; // Message for non-owning authenticated users
+					return;
+				default:
+					errorMessage = 'Note not found or an unexpected error occurred.';
+					return;
+			}
 		}
 
 		const serverNote = result.data;
@@ -63,8 +75,6 @@
 	onMount(() => {
 		getNoteFromLocalStorage($page.url.pathname.split('/sharing')[0].split('/')[1]);
 		getNoteFromServer();
-
-		// console.log(JSON.parse(noteData.notescontent));
 	});
 </script>
 
@@ -123,7 +133,7 @@
 	{:else if errorMessage}
 		<p class="errorMessage">{errorMessage}</p>
 	{:else}
-		<p class="loadingNotes">No note found.</p>
+		<p class="loadingNotes">Loading Note</p>
 	{/if}
 </div>
 

@@ -26,9 +26,9 @@ export async function POST({ locals, request }) {
 	}
 	const email = session.user.email;
 
-	const [success, error] = await updateNote(email, noteData);
+	const [success, error, _, data] = await updateNote(email, noteData);
 	if (error || !success) {
 		return returnJson(500, 'Error updating note', null, error);
 	}
-	return returnJson(200, 'Note updated successfully', null, null);
+	return returnJson(200, 'Note updated successfully', data, null);
 }

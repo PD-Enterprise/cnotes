@@ -2,23 +2,22 @@
 	// Imports
 	import { onDestroy, onMount } from 'svelte';
 	import type { note } from '../types';
-	import config from '$lib/utils/apiConfig';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
-	import DOMPurify from 'dompurify';
 	import { page } from '$app/stores';
 	import Tiptap from '../components/tiptap.svelte';
 	import Loader from '../components/loader.svelte';
 	import Excalidraw from '../components/Excalidraw.svelte';
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 	import ShareModel from '../components/shareModel.svelte';
+	import { toTitleCase } from '$lib/utils/toTitleCase';
+	import Icon from '@iconify/svelte';
 
 	// Variables
 	let error: string = $state('');
 	let originalNote = $state(null);
 	let excalidrawIsDirty = $state(false);
 	let excalidrawKey = $state(0);
-	let data = $props();
 	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 	let isChanged = $derived(() => {
 		if (EditorNoteData.value.type === 'diagram') {
@@ -27,6 +26,9 @@
 		return originalNote && JSON.stringify(EditorNoteData.value) !== JSON.stringify(originalNote);
 	});
 	let isSaving = false;
+	let isK_12: string = $state('true');
+	let initialTitle: string = $state('');
+	let isTitleChanged: boolean = $state(false);
 
 	// Functions
 	async function getNote() {
@@ -53,6 +55,7 @@
 		if (serverNote && serverNote != undefined) {
 			EditorNoteData.value = { ...serverNote };
 			// console.log(EditorNoteData.value.notescontent);
+			initialTitle = EditorNoteData.value.title;
 		}
 	}
 	export async function saveNote() {
@@ -74,6 +77,9 @@
 				files: currentFiles
 			});
 		}
+		if (initialTitle != EditorNoteData.value.title) {
+			isTitleChanged = true;
+		}
 		isSaving = true;
 		try {
 			const response = await fetch(`${EditorNoteData.value.slug}`, {
@@ -86,7 +92,6 @@
 				})
 			});
 			const result = await response.json();
-			// console.log(result);
 
 			if (result.status !== 200) {
 				console.error('Failed to save note.');
@@ -109,6 +114,11 @@
 				btoa(unescape(encodeURIComponent(JSON.stringify(EditorNoteData.value))))
 			);
 			showToast('Success', 'Note saved successfully', 1000, 'success');
+			if (isTitleChanged) {
+				setTimeout(() => {
+					window.location.href = `/${result.data.slug}`;
+				}, 1000);
+			}
 		} catch (error) {
 			console.error(error);
 			showToast('Error', 'Failed to save note', 3000, 'error');
@@ -142,6 +152,10 @@
 		});
 
 		$effect(() => {
+			console.log(initialTitle);
+		});
+
+		$effect(() => {
 			if (excalidrawAPI) {
 				// Destructure the three arguments: elements, appState, and files
 				excalidrawAPI.onChange((elements, files) => {
@@ -166,114 +180,150 @@
 	});
 </script>
 
-{#if data.data.session}
+{#if isAuthenticated.value}
 	<div class="main">
 		{#await getNote()}
 			<Loader title="Loading your note..." />
 		{:then}
-			<dialog id="meta_data_modal" class="modal">
-				<div class="modal-box flex w-96 flex-col">
-					<div class="absolute right-2">
-						<form method="dialog" onsubmit={(e) => e.preventDefault()}>
-							<button
-								class="btn btn-ghost btn-sm btn-circle top-2"
-								onclick={(e) => {
-									e.preventDefault();
-									const meta_data_modal = document.getElementById(
-										'meta_data_modal'
-									) as HTMLDialogElement;
-									meta_data_modal.close();
-									// console.log(newNote);
-								}}>✕</button
-							>
-						</form>
-					</div>
-					<div class="flex flex-col gap-2">
-						<h3>Enter Metadata for your Note Here:</h3>
-						<div class="meta-data flex flex-row flex-wrap gap-3">
-							{#each Object.keys(EditorNoteData.value) as noteDataKey}
-								{#if ['title', 'dateCreated', 'grade', 'subject'].includes(noteDataKey)}
-									<label class="form-control w-full max-w-xs">
-										<div class="label">
-											<span class="label-text">{noteDataKey}:</span>
-										</div>
-										{#if noteDataKey == 'dateCreated'}
-											<input
-												type="date"
-												class="input-bordered input"
-												placeholder={noteDataKey}
-												required
-												bind:value={EditorNoteData.value[noteDataKey]}
-											/>
-										{:else}
-											<input
-												type="text"
-												class="input-bordered input"
-												placeholder={noteDataKey}
-												required
-												bind:value={EditorNoteData.value[noteDataKey]}
-											/>
-										{/if}
-									</label>
-								{/if}
-							{/each}
-						</div>
-					</div>
-				</div>
-			</dialog>
 			{#if error}
 				{error}
 			{:else if EditorNoteData.value}
 				<div class="note flex h-full flex-col gap-2 rounded-md">
-					<div class="buttons flex gap-3">
-						{#if isChanged}
-							<button class="btn btn-accent btn-outline shadow-xl" onclick={saveNote}>Save</button>
-						{:else}
-							<button class="btn btn-accent btn-outline shadow-xl" disabled>Save</button>
-						{/if}
-						<button
-							class="btn btn-info border"
-							onclick={() => {
-								const meta_data_modal = document.getElementById(
-									'meta_data_modal'
-								) as HTMLDialogElement;
-								meta_data_modal.showModal();
-							}}>Metadata</button
-						>
-						<button
-							class="btn btn-success"
-							onclick={() => {
-								const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-								share_modal.showModal();
-							}}
-							>Share<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="size-6"
-								><path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-								/></svg
-							></button
-						>
-					</div>
-					<div class="editor h-full">
-						{#if EditorNoteData.value.type == 'text'}
-							<Tiptap content={EditorNoteData.value.content} editable={true} />
-						{:else if EditorNoteData.value.type == 'diagram'}
-							{#key excalidrawKey}
-								<Excalidraw
-									theme="dark"
-									content={EditorNoteData.value.content}
-									viewModeEnabled={false}
-									excalidrawAPI={(api) => (excalidrawAPI = api)}
-								/>
-							{/key}
-						{/if}
+					<div class="drawer lg:drawer-open">
+						<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
+						<div class="drawer-content flex flex-col gap-2">
+							<div class="buttons flex gap-3">
+								<div class="sidebar-toggle hidden p-1">
+									<label for="my-drawer-4" aria-label="open sidebar" class="btn btn-ghost">
+										<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+									</label>
+								</div>
+								<div class="save-button">
+									{#if isChanged}
+										<button class="btn btn-accent btn-outline shadow-xl" onclick={saveNote}
+											>Save</button
+										>
+									{:else}
+										<button class="btn btn-accent btn-outline shadow-xl" disabled>Save</button>
+									{/if}
+									<button
+										class="btn btn-success"
+										onclick={() => {
+											const share_modal = document.getElementById(
+												'share_modal'
+											) as HTMLDialogElement;
+											share_modal.showModal();
+										}}
+										>Share<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="size-6"
+											><path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+											/></svg
+										></button
+									>
+								</div>
+							</div>
+							<div class="editor h-full">
+								{#if EditorNoteData.value.type == 'text'}
+									<Tiptap content={EditorNoteData.value.content} editable={true} />
+								{:else if EditorNoteData.value.type == 'diagram'}
+									{#key excalidrawKey}
+										<Excalidraw
+											theme="dark"
+											content={EditorNoteData.value.content}
+											viewModeEnabled={false}
+											excalidrawAPI={(api) => (excalidrawAPI = api)}
+										/>
+									{/key}
+								{/if}
+							</div>
+						</div>
+						<div class="drawer-side is-drawer-close:overflow-visible">
+							<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
+							<div
+								class="bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 flex min-h-full w-82 flex-col items-start"
+							>
+								<div class="flex flex-col gap-4 p-2">
+									<div class="top-bar flex flex-row gap-2">
+										<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
+									</div>
+									<div class="new-note-data flex w-72 flex-row flex-wrap gap-3">
+										{#each Object.keys(EditorNoteData.value) as newNoteKey}
+											{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
+												<label class="form-control">
+													<div class="label">
+														<span class="label-text">{toTitleCase(newNoteKey)}:</span>
+													</div>
+													{#if newNoteKey == 'dateCreated'}
+														<input
+															type="date"
+															class="input-bordered input metadata-input-field"
+															bind:value={EditorNoteData.value[newNoteKey]}
+															required
+															placeholder="Date Created"
+														/>
+													{:else if newNoteKey == 'academicLevel'}
+														<div class="academicLevel flex flex-wrap gap-5">
+															<select
+																class="select select-bordered metadata-input-field"
+																bind:value={isK_12}
+																required
+															>
+																<option value="true">K-12</option>
+																<option value="false">Not K-12</option>
+															</select>
+															{#if isK_12 == 'true'}
+																<input
+																	type="text"
+																	class="input-bordered input metadata-input-field"
+																	required
+																	bind:value={EditorNoteData.value[newNoteKey]}
+																	placeholder={toTitleCase(newNoteKey)}
+																/>
+															{:else}
+																<select
+																	class="select select-bordered metadata-input-field"
+																	bind:value={EditorNoteData.value[newNoteKey]}
+																	required
+																>
+																	<option value="UG">Undergraduate (UG)</option>
+																	<option value="G">Graduate (G)</option>
+																	<option value="PG">Postgraduate (PG)</option>
+																</select>
+															{/if}
+														</div>
+													{:else if newNoteKey == 'visibility'}
+														<select
+															class="select select-bordered metadata-input-field"
+															bind:value={EditorNoteData.value[newNoteKey]}
+															required
+														>
+															<option value="private">Private</option>
+															<option value="public">Public</option>
+														</select>
+													{:else}
+														<input
+															type="text"
+															class="input-bordered input metadata-input-field"
+															required
+															bind:value={EditorNoteData.value[newNoteKey]}
+															placeholder={toTitleCase(newNoteKey)}
+														/>
+													{/if}
+												</label>
+											{/if}
+										{/each}
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<ShareModel slug={EditorNoteData.value.slug} />
@@ -294,11 +344,14 @@
 	.main {
 		height: calc(100vh - 65px);
 	}
-	.meta-data {
-		display: flex;
-		flex-direction: row;
-		gap: 10px;
-		flex-wrap: wrap;
+	@media (max-width: 1023px) {
+		.sidebar-toggle {
+			display: block;
+		}
+		.drawer-side {
+			height: calc(100vh - 64px);
+			margin-top: 64px;
+		}
 	}
 	.note {
 		padding: 5px;

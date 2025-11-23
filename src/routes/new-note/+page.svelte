@@ -24,7 +24,6 @@
 		language: '',
 		keywords: ''
 	});
-	let isValid: boolean = $state(false);
 	let isK_12: string = $state('true');
 </script>
 

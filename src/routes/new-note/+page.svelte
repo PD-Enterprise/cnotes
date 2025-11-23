@@ -18,7 +18,7 @@
 		dateCreated: '',
 		academicLevel: '',
 		topic: '',
-		type: 'text',
+		type: '',
 		visibility: 'private',
 		year: '',
 		language: '',

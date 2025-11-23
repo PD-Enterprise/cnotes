@@ -9,6 +9,7 @@
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import type { functionReturnData, returnData } from '../interfaces';
 	import { functionReturn } from '$lib/utils/functionReturn';
+	import { onMount } from 'svelte';
 
 	// Variables
 	let props = $props();
@@ -28,6 +29,7 @@
 		}
 		const rawHtml = editor.value.getHTML();
 		newNote.content = DOMPurify.sanitize(rawHtml);
+		newNote.type = 'text';
 
 		const [success, error] = await addToDB(newNote);
 		if (error || !success) {

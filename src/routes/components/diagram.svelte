@@ -41,6 +41,7 @@
 			const files = excalidrawAPI.getFiles();
 
 			newNote.content = JSON.stringify({ elements: elements, files: files });
+			newNote.type = 'diagram';
 
 			const [success, error] = await addToDB(newNote);
 			if (error || !success) {

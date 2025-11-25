@@ -23,16 +23,15 @@
 
 		if (result.status !== 200) {
 			showToast(
-				'Error deleting note',
 				'There was an error deleting your note from the database.',
-				3000,
+
 				'error'
 			);
 			return;
 		}
 		localStorage.removeItem(`note:${notes.note.slug}`);
 		notesStore.value = notesStore.value.filter((note) => note.slug !== notes.note.slug);
-		showToast('Success', 'Note deleted successfully', 2500, 'success');
+		showToast('Note deleted successfully', 'success');
 	}
 </script>
 

@@ -22,7 +22,7 @@
 		}
 	} catch (error) {
 		console.error('Failed to parse Excalidraw content JSON: ', error);
-		showToast('There was an error...', 'Error parsing editor data.', 3000, 'error');
+		showToast('Error parsing editor data.', 'error');
 		initialData = { elements: [], appState: {} };
 	}
 

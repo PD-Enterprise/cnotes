@@ -60,11 +60,11 @@
 	}
 	export async function saveNote() {
 		if (isSaving) {
-			showToast('Info', 'Save already in progress...', 1500, 'info');
+			showToast('Save already in progress...', 'info');
 			return;
 		}
 
-		showToast('Info', 'Saving your note...', 1500, 'info');
+		showToast('Saving your note...', 'info');
 
 		let noteToSave = { ...EditorNoteData.value };
 
@@ -95,7 +95,7 @@
 
 			if (result.status !== 200) {
 				console.error('Failed to save note.');
-				showToast('Error', 'Failed to save note', 3000, 'error');
+				showToast('Failed to save note', 'error');
 				return;
 			}
 
@@ -113,7 +113,7 @@
 				`note:${EditorNoteData.value.slug}`,
 				btoa(unescape(encodeURIComponent(JSON.stringify(EditorNoteData.value))))
 			);
-			showToast('Success', 'Note saved successfully', 1000, 'success');
+			showToast('Note saved successfully', 'success');
 			if (isTitleChanged) {
 				setTimeout(() => {
 					window.location.href = `/${result.data.slug}`;
@@ -121,7 +121,7 @@
 			}
 		} catch (error) {
 			console.error(error);
-			showToast('Error', 'Failed to save note', 3000, 'error');
+			showToast('Failed to save note', 'error');
 		} finally {
 			isSaving = false;
 		}

@@ -6,7 +6,6 @@
 	import Diagram from '../components/diagram.svelte';
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
-	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import { onMount } from 'svelte';
 

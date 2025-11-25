@@ -18,7 +18,7 @@
 				aria-label="Copy share link to clipboard"
 				onclick={() => {
 					navigator.clipboard.writeText(`https://cnotes.pages.dev/${slug}/sharing`);
-					showToast('success', 'Link copied to clipboard!', 2500, 'success');
+					showToast('Link copied to clipboard!', 'success');
 				}}
 			>
 				<Icon icon="mdi:clipboard-outline" width="20" height="20" />

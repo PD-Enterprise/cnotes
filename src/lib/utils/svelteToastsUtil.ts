@@ -1,26 +1,26 @@
 // Imports
-import {
-    toasts,
-    ToastContainer as ToastContainerAny,
-    FlatToast as FlatToastAny
-} from 'svelte-toasts';
-import { theme } from "$lib/stores/store.svelte"
+import { toast } from '@zerodevx/svelte-toast';
 
-// Functions
-const showToast = (title: string, body: string, duration: number, type: string) => {
-    const toast = toasts.add({
-        title: title,
-        description: body,
-        duration: duration,
-        placement: 'bottom-right',
-        showProgress: true,
-        //@ts-ignore
-        type: type,
-        //@ts-ignore
-        theme: theme.value ? "light" : "dark",
-        onClick: () => { },
-        onRemove: () => { }
-    });
+// Variables
+const toastThemes = {
+	success: {
+		'--toastBackground': '#38a169',
+		'--toastColor': 'white',
+		'--toastBarBackground': '#2f855a'
+	},
+	info: {
+		'--toastBackground': '#3182ce',
+		'--toastColor': 'white',
+		'--toastBarBackground': '#2b6cb0'
+	},
+	error: {
+		'--toastBackground': '#e53e3e',
+		'--toastColor': 'white',
+		'--toastBarBackground': '#c53030'
+	}
 };
 
-export { showToast };
+// Functions
+export const showToast = (message: string, type: 'success' | 'info' | 'error') => {
+	toast.push(message, { theme: toastThemes[type] });
+};

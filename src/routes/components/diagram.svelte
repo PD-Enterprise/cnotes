@@ -28,9 +28,8 @@
 		if (!validateNote(newNote)) {
 			console.error('Note is not in correct form to be added to database.');
 			showToast(
-				'Data type error.',
 				'The note is not in correct form. Please recheck your data.',
-				3000,
+
 				'error'
 			);
 			return;
@@ -45,12 +44,12 @@
 
 			const [success, error] = await addToDB(newNote);
 			if (error || !success) {
-				showToast('Error saving note...', 'There is an error with the editor.', 3000, 'error');
+				showToast('There is an error with the editor.', 'error');
 			}
-			showToast('Successfully added note', 'Note added successfully', 1000, 'success');
+			showToast('Note added successfully', 'success');
 			window.location.href = '/';
 		} else {
-			showToast('Error saving note...', 'There is an error with the editor.', 3000, 'error');
+			showToast('There is an error with the editor.', 'error');
 		}
 	}
 	async function addToDB(note: note) {
@@ -67,7 +66,7 @@
 			const result = await request.json();
 			switch (result.status) {
 				case 401:
-					showToast('Error', 'You must be logged in to save notes.', 3000, 'error');
+					showToast('You must be logged in to save notes.', 'error');
 					return functionReturn(false, true, 'Error adding note', null, null);
 				case 400:
 					return functionReturn(false, true, 'Error adding note', null, result.error);

@@ -1,17 +1,36 @@
 <script lang="ts">
 	// Imports
-	import {
-		toasts,
-		ToastContainer as ToastContainerAny,
-		FlatToast as FlatToastAny
-	} from 'svelte-toasts';
-	import { onMount } from 'svelte';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	// Variables
-	const ToastContainer = ToastContainerAny as any;
-	const FlatToast = FlatToastAny as any;
+	const toastOptions = {
+		duration: 40,
+		initial: 1,
+		next: 0,
+		pausable: false,
+		dismissable: true,
+		reversed: false,
+		intro: { x: 0 },
+		theme: {},
+		classes: []
+	};
 </script>
 
-<svelte:component this={ToastContainer} let:data>
-	<svelte:component this={FlatToast} {data} />
-</svelte:component>
+<SvelteToast {toastOptions} />
+
+<style>
+	:global(.info) {
+		--toastBackground: blue;
+		--toastColor: white;
+	}
+
+	:global(.error) {
+		--toastBackground: red;
+		--toastColor: white;
+	}
+
+	:global(.success) {
+		--toastBackground: green;
+		--toastColor: white;
+	}
+</style>

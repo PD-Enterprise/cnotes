@@ -3,12 +3,12 @@
 	import '../app.css';
 	import { onMount, type Snippet } from 'svelte';
 	import Navbar from './components/navbar.svelte';
-	import SvelteToast from './components/svelteToast.svelte';
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { isAuthenticated } from '$lib/stores/store.svelte';
 	import NotLoggedIn from './components/notLoggedIn.svelte';
+	import SvelteToast from './components/svelteToast.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
@@ -40,8 +40,6 @@
 	});
 </script>
 
-<SvelteToast />
-
 {#if !isLoaded}
 	<Loader title="Loading Cnotes..." />
 {/if}
@@ -51,6 +49,7 @@
 		? 'opacity-100'
 		: 'opacity-0'} overflow-hidden transition-opacity duration-400"
 >
+	<SvelteToast />
 	{#if !isAuthenticated.value}
 		<NotLoggedIn />
 	{/if}

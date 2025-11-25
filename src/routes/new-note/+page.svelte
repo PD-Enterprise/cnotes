@@ -41,7 +41,7 @@
 					<div class="dropdown">
 						<select
 							bind:value={option}
-							class="menu bg-base-200 border-base-content z-[1] w-52 rounded border p-2 shadow-xl"
+							class="menu bg-base-200 border-base-content z-1 w-52 rounded border p-2 shadow-xl"
 						>
 							<option value="text">Text</option>
 							<option value="diagram">Diagram</option>
@@ -51,7 +51,7 @@
 						<div tabindex="0" role="button" class="btn btn-ghost info-text">
 							<Icon icon="material-symbols:info" width="22" height="22" />
 						</div>
-						<div class="compact dropdown-content card rounded-box bg-base-100 z-[1] w-64 shadow">
+						<div class="compact dropdown-content card rounded-box bg-base-100 z-1 w-64 shadow">
 							<div class="card-body">
 								<h2 class="card-title">component state is not held!!</h2>
 								<p>Save your work before switching</p>

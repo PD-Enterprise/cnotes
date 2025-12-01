@@ -43,7 +43,6 @@
 >
 	<div class="card-body bg-base-300 flex flex-col rounded p-1">
 		<div class="title-and-options flex flex-row justify-between gap-1">
-			<!-- Displays only the first few words of the title and replaces the rest with an ellipsis -->
 			<a class="note-title card-title w-full p-1" href="{notes.note.slug}/sharing">
 				{#if notes.note.title.split(' ').length > 4}
 					{notes.note.title.split(' ').slice(0, 4).join(' ') + '...'}

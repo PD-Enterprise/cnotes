@@ -38,6 +38,7 @@
 
 		if (result.status != 200) {
 			noteData = null;
+			getNoteFromLocalStorage(slug);
 			switch (result.status) {
 				case 401:
 					errorMessage = 'You must be logged in to view this note.'; // Message for unauthenticated users
@@ -53,27 +54,23 @@
 		}
 
 		const serverNote = result.data;
-		if (serverNote && serverNote != undefined) {
-			noteData = { ...serverNote };
-		} else {
-			onMount(() => {
-				const slug = $page.url.pathname.split('/home/')[1].split('/sharing')[0];
-				getNoteFromLocalStorage(slug);
-			});
-		}
+		noteData = { ...serverNote };
 	}
 	async function getNoteFromLocalStorage(slug: string) {
 		const storedNote = localStorage.getItem(`note:${slug}`);
 		if (storedNote) {
 			hasLocalNote = true;
 			try {
-				localNote = JSON.parse(decodeURIComponent(escape(atob(storedNote))));
-			} catch (e) {}
+				localNote = JSON.parse(decodeURIComponent(atob(storedNote)));
+			} catch (e) {
+				errorMessage = 'Failed to load note from local storage.';
+			}
 			noteData = { ...localNote };
 		}
 	}
 	onMount(() => {
-		getNoteFromLocalStorage($page.url.pathname.split('/sharing')[0].split('/')[1]);
+		const slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
+		getNoteFromLocalStorage(slug);
 		getNoteFromServer();
 	});
 </script>

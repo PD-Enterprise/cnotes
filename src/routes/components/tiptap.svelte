@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { editor, EditorNoteData } from '$lib/stores/store.svelte';
+	import { EditorNoteData, editorState } from '$lib/stores/store.svelte';
 	import { Editor, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
+	import './tiptap-editor.css';
 	import 'katex/dist/katex.min.css';
 	import Icon from '@iconify/svelte';
-	import './tiptap-editor.css';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
 	import Youtube from '@tiptap/extension-youtube';
@@ -14,8 +14,11 @@
 	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
 	import { TableKit } from '@tiptap/extension-table';
+	import Link from '@tiptap/extension-link';
+	import FileHandler from '@tiptap/extension-file-handler';
+	import Image from '@tiptap/extension-image';
 
-	let element: any;
+	let element: any = $state();
 	let { content, editable } = $props();
 	let isTableActive = $state(false);
 	let isParagraphActive = $state(false);
@@ -25,10 +28,8 @@
 	let isSubscriptActive = $state(false);
 	let isSuperscriptActive = $state(false);
 
-	// console.log(content);
-
 	onMount(() => {
-		editor.value = new Editor({
+		editorState.editor = new Editor({
 			element: element,
 			extensions: [
 				StarterKit,
@@ -77,14 +78,126 @@
 				TableKit.configure({
 					table: { resizable: true }
 				}),
-				Youtube
+				Youtube,
+				Link.configure({
+					openOnClick: false,
+					autolink: true,
+					defaultProtocol: 'https',
+					protocols: ['http', 'https'],
+					isAllowedUri: (url, ctx) => {
+						try {
+							// construct URL
+							const parsedUrl = url.includes(':')
+								? new URL(url)
+								: new URL(`${ctx.defaultProtocol}://${url}`);
+
+							// use default validation
+							if (!ctx.defaultValidate(parsedUrl.href)) {
+								return false;
+							}
+
+							// disallowed protocols
+							const disallowedProtocols = ['ftp', 'file', 'mailto'];
+							const protocol = parsedUrl.protocol.replace(':', '');
+
+							if (disallowedProtocols.includes(protocol)) {
+								return false;
+							}
+
+							// only allow protocols specified in ctx.protocols
+							const allowedProtocols = ctx.protocols.map((p) =>
+								typeof p === 'string' ? p : p.scheme
+							);
+
+							if (!allowedProtocols.includes(protocol)) {
+								return false;
+							}
+
+							// disallowed domains
+							const disallowedDomains = ['example-phishing.com', 'malicious-site.net'];
+							const domain = parsedUrl.hostname;
+
+							if (disallowedDomains.includes(domain)) {
+								return false;
+							}
+
+							// all checks have passed
+							return true;
+						} catch {
+							return false;
+						}
+					},
+					shouldAutoLink: (url) => {
+						try {
+							// construct URL
+							const parsedUrl = url.includes(':') ? new URL(url) : new URL(`https://${url}`);
+
+							// only auto-link if the domain is not in the disallowed list
+							const disallowedDomains = ['example-no-autolink.com', 'another-no-autolink.com'];
+							const domain = parsedUrl.hostname;
+
+							return !disallowedDomains.includes(domain);
+						} catch {
+							return false;
+						}
+					}
+				}),
+				Image,
+				FileHandler.configure({
+					allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
+					onDrop: (currentEditor, files, pos) => {
+						files.forEach((file) => {
+							const fileReader = new FileReader();
+
+							fileReader.readAsDataURL(file);
+							fileReader.onload = () => {
+								currentEditor
+									.chain()
+									.insertContentAt(pos, {
+										type: 'image',
+										attrs: {
+											src: fileReader.result
+										}
+									})
+									.focus()
+									.run();
+							};
+						});
+					},
+					onPaste: (currentEditor, files, htmlContent) => {
+						files.forEach((file) => {
+							if (htmlContent) {
+								// if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
+								// you could extract the pasted file from this url string and upload it to a server for example
+								console.log(htmlContent); // eslint-disable-line no-console
+								return false;
+							}
+
+							const fileReader = new FileReader();
+
+							fileReader.readAsDataURL(file);
+							fileReader.onload = () => {
+								currentEditor
+									.chain()
+									.insertContentAt(currentEditor.state.selection.anchor, {
+										type: 'image',
+										attrs: {
+											src: fileReader.result
+										}
+									})
+									.focus()
+									.run();
+							};
+						});
+					}
+				})
 			],
 			content: 'Loading...',
-			onTransaction: () => {
-				editor.value = editor.value;
+			onTransaction: ({ editor }) => {
+				editorState.editor = editor;
 			},
 			onUpdate() {
-				EditorNoteData.value.content = editor.value.getHTML();
+				EditorNoteData.value.content = editorState.editor.getHTML();
 			},
 			editorProps: {
 				attributes: {
@@ -107,16 +220,14 @@
 		}
 	});
 	$effect(() => {
-		if (editor.value && content !== undefined && content !== null) {
-			if (editor.value.getHTML() !== content) {
-				editor.value.commands.setContent(content);
+		if (editorState.editor && content !== undefined && content !== null) {
+			if (editorState.editor.getHTML() !== content) {
+				editorState.editor.commands.setContent(content);
 			}
 		}
 	});
 	onDestroy(() => {
-		if (editor.value) {
-			editor.value.destroy();
-		}
+		editorState.editor?.destroy();
 	});
 </script>
 
@@ -135,29 +246,53 @@
 							aria-label={`Heading ${level}`}
 							onclick={() => {
 								// @ts-expect-error
-								editor.value.chain().focus().toggleHeading({ level }).run();
+								editorState.editor.chain().focus().toggleHeading({ level }).run();
 							}}
 						>
 							H{level}
 						</button>
 					{/each}
+
 					<button
 						aria-label="Paragraph"
 						title="Paragraph"
 						onclick={() => {
-							editor.value.chain().focus().setParagraph().run();
-							isParagraphActive = editor.value.isActive('paragraph');
+							editorState.editor.chain().focus().setParagraph().run();
+							isParagraphActive = editorState.editor.isActive('paragraph');
 						}}
 						class:active={isParagraphActive}
 						class="editor-button btn"><Icon icon="fa6-solid:paragraph" /></button
 					>
 					<button
+						aria-label="Bold"
+						title="Bold"
+						onclick={() => {
+							editorState.editor?.chain().focus().toggleBold().run();
+							isBoldActive = editorState.editor.isActive('bold');
+						}}
+						class="editor-button"
+						class:active={isBoldActive}
+					>
+						<Icon icon="fa6-solid:bold" />
+					</button>
+					<button
+						aria-label="Italic"
+						title="Italic"
+						onclick={() => {
+							editorState.editor?.chain().focus().toggleItalic().run();
+						}}
+						class="editor-button"
+						class:active={editorState.editor?.isActive('italic')}
+					>
+						<Icon icon="fa6-solid:italic" />
+					</button>
+					<button
 						aria-label="Underline"
 						title="Underline"
 						class="editor-button btn"
 						onclick={() => {
-							editor.value.chain().focus().toggleUnderline().run();
-							isUnderlineActive = editor.value.isActive('underline');
+							editorState.editor.chain().focus().toggleUnderline().run();
+							isUnderlineActive = editorState.editor.isActive('underline');
 						}}
 						class:active={isUnderlineActive}><Icon icon="fa6-solid:underline" /></button
 					>
@@ -166,40 +301,17 @@
 						title="Highlight"
 						class="editor-button btn"
 						onclick={() => {
-							editor.value.chain().focus().toggleHighlight().run();
-							isHighlightActive = editor.value.isActive('highlight');
+							editorState.editor.chain().focus().toggleHighlight().run();
+							isHighlightActive = editorState.editor.isActive('highlight');
 						}}
 						class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
 					>
 					<button
-						aria-label="Bold"
-						title="Bold"
-						onclick={() => {
-							editor.value?.chain().focus().toggleBold().run();
-							isBoldActive = editor.value.isActive('bold');
-						}}
-						class="editor-button"
-						class:active={isBoldActive}
-					>
-						<Icon icon="fa6-solid:bold" />
-					</button>
-					<!-- <button
-						aria-label="Italic"
-						title="Italic"
-						onclick={() => {
-							editor.value?.chain().focus().toggleItalic().run();
-						}}
-						class="editor-button"
-						class:active={editor.value?.isActive('italic')}
-					>
-						<Icon icon="fa6-solid:italic" />
-					</button> -->
-					<button
 						aria-label="Subscript"
 						title="Subscript"
 						onclick={() => {
-							editor.value?.chain().focus().toggleSubscript().run();
-							isSubscriptActive = editor.value.isActive('subscript');
+							editorState.editor?.chain().focus().toggleSubscript().run();
+							isSubscriptActive = editorState.editor.isActive('subscript');
 						}}
 						class="editor-button"
 						class:active={isSubscriptActive}
@@ -210,8 +322,8 @@
 						aria-label="Superscript"
 						title="Superscript"
 						onclick={() => {
-							editor.value?.chain().focus().toggleSuperscript().run();
-							isSuperscriptActive = editor.value.isActive('superscript');
+							editorState.editor?.chain().focus().toggleSuperscript().run();
+							isSuperscriptActive = editorState.editor.isActive('superscript');
 						}}
 						class="editor-button"
 						class:active={isSuperscriptActive}
@@ -222,7 +334,7 @@
 						aria-label="Table"
 						title="Table"
 						onclick={() => {
-							editor.value
+							editorState.editor
 								.chain()
 								.focus()
 								.insertTable({ rows: 3, cols: 2, withHeaderRow: false })
@@ -239,8 +351,8 @@
 							aria-label="Add Row After"
 							title="Add Row After"
 							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().addRowAfter().run();
+								if (editorState) {
+									editorState.editor.chain().focus().addRowAfter().run();
 								}
 							}}
 							class="editor-button"
@@ -251,8 +363,8 @@
 							aria-label="Add Column After"
 							title="Add Column After"
 							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().addColumnAfter().run();
+								if (editorState) {
+									editorState.editor.chain().focus().addColumnAfter().run();
 								}
 							}}
 							class="editor-button"
@@ -263,8 +375,8 @@
 							aria-label="Delete Row"
 							title="Delete Row"
 							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteRow().run();
+								if (editorState) {
+									editorState.editor.chain().focus().deleteRow().run();
 								}
 							}}
 							class="editor-button"
@@ -275,8 +387,8 @@
 							aria-label="Delete Column"
 							title="Delete Column"
 							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteColumn().run();
+								if (editorState) {
+									editorState.editor.chain().focus().deleteColumn().run();
 								}
 							}}
 							class="editor-button"
@@ -287,8 +399,8 @@
 							aria-label="Delete Table"
 							title="Delete Table"
 							onclick={() => {
-								if (editor) {
-									editor.value.chain().focus().deleteTable().run();
+								if (editorState) {
+									editorState.editor.chain().focus().deleteTable().run();
 								}
 							}}
 							class="editor-button"
@@ -302,7 +414,7 @@
 						onclick={() => {
 							const url = prompt('Enter Youtube URL');
 							if (url) {
-								editor.value
+								editorState.editor
 									.chain()
 									.focus()
 									.setYoutubeVideo({
@@ -314,7 +426,7 @@
 							}
 						}}
 						class="editor-button"
-						class:active={editor.value?.isActive('Youtube')}
+						class:active={editorState.editor?.isActive('Youtube')}
 					>
 						<Icon icon="mdi:youtube" width="24" height="24" />
 					</button>
@@ -368,90 +480,11 @@
 		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
 		transition-duration: 100ms;
 	}
-	.editor-button.dark,
-	:global(.dark) .editor-button {
-		background-color: rgba(31, 41, 55, 0.8);
-		color: #e5e7eb;
-	}
 	.editor-button.active {
 		background-color: #f3f4f6;
 		box-shadow:
 			0 10px 15px -3px rgba(0, 0, 0, 0.1),
 			0 4px 6px -4px rgba(0, 0, 0, 0.1);
-	}
-	.editor-button.active.dark,
-	:global(.dark) .editor-button.active {
-		background-color: #374151;
-	}
-	.tiptap table {
-		border-collapse: collapse;
-		margin: 0;
-		overflow: hidden;
-		table-layout: fixed;
-		width: 100%;
-	}
-	.tiptap table td,
-	.tiptap table th {
-		border: 1px solid #e5e7eb;
-		box-sizing: border-box;
-		min-width: 1em;
-		padding: 6px 8px;
-		position: relative;
-		vertical-align: top;
-	}
-	.tiptap table td > *,
-	.tiptap table th > * {
-		margin-bottom: 0;
-	}
-	.tiptap table th {
-		background-color: #f3f4f6;
-		font-weight: bold;
-		text-align: left;
-	}
-	.tiptap table .selectedCell:after {
-		background: rgba(200, 200, 200, 0.4);
-		content: '';
-		left: 0;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		pointer-events: none;
-		position: absolute;
-		z-index: 2;
-	}
-	.tiptap table .column-resize-handle {
-		background-color: #8b5cf6;
-		bottom: -2px;
-		pointer-events: none;
-		position: absolute;
-		right: -2px;
-		top: 0;
-		width: 4px;
-	}
-	.tiptap .tableWrapper {
-		margin: 1.5rem 0;
-		overflow-x: auto;
-	}
-	.tiptap.resize-cursor {
-		cursor: ew-resize;
-		cursor: col-resize;
-	}
-	:global(.dark) .tiptap table td,
-	:global(.dark) .tiptap table th {
-		border-color: #374151;
-	}
-	:global(.dark) .tiptap table th {
-		background-color: #1f2937;
-	}
-
-	:global(.dark) .tiptap table .selectedCell:after {
-		background: rgba(55, 65, 81, 0.4);
-	}
-	.table-controls {
-		display: flex;
-		align-items: center;
-		padding: 2px;
-		border-radius: 4px;
 	}
 	.editor-button {
 		position: relative;
@@ -467,5 +500,18 @@
 		padding: 4px 8px;
 		border-radius: 4px;
 		z-index: 10;
+	}
+	.editor-button.active.dark,
+	:global(.dark) .editor-button.active {
+		background-color: #374151;
+	}
+	.editor-button.active.dark,
+	:global(.dark) .editor-button.active {
+		background-color: #374151;
+	}
+	.editor-button.dark,
+	:global(.dark) .editor-button {
+		background-color: rgba(31, 41, 55, 0.8);
+		color: #e5e7eb;
 	}
 </style>

@@ -1,142 +1,282 @@
+.tiptap table {
+	border-collapse: collapse;
+	margin: 0;
+	overflow: hidden;
+	table-layout: fixed;
+	width: 100%;
+}
+.tiptap table td,
+.tiptap table th {
+	border: 1px solid #e5e7eb;
+	box-sizing: border-box;
+	min-width: 1em;
+	padding: 6px 8px;
+	position: relative;
+	vertical-align: top;
+}
+.tiptap table td > *,
+.tiptap table th > * {
+	margin-bottom: 0;
+}
+.tiptap table th {
+	background-color: #f3f4f6;
+	font-weight: bold;
+	text-align: left;
+}
+.tiptap table .selectedCell:after {
+	background: rgba(200, 200, 200, 0.4);
+	content: '';
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 2;
+}
+.tiptap table .column-resize-handle {
+	background-color: #8b5cf6;
+	bottom: -2px;
+	pointer-events: none;
+	position: absolute;
+	right: -2px;
+	top: 0;
+	width: 4px;
+}
+.tiptap .tableWrapper {
+	margin: 1.5rem 0;
+	overflow-x: auto;
+}
+.tiptap.resize-cursor {
+	cursor: ew-resize;
+	cursor: col-resize;
+}
+:global(.dark) .tiptap table td,
+:global(.dark) .tiptap table th {
+	border-color: #374151;
+}
+:global(.dark) .tiptap table th {
+	background-color: #1f2937;
+}
+
+:global(.dark) .tiptap table .selectedCell:after {
+	background: rgba(55, 65, 81, 0.4);
+}
+.table-controls {
+	display: flex;
+	align-items: center;
+	padding: 2px;
+	border-radius: 4px;
+}
+.tiptap table {
+	border-collapse: collapse;
+	margin: 0;
+	overflow: hidden;
+	table-layout: fixed;
+	width: 100%;
+}
+.tiptap table td,
+.tiptap table th {
+	border: 1px solid #e5e7eb;
+	box-sizing: border-box;
+	min-width: 1em;
+	padding: 6px 8px;
+	position: relative;
+	vertical-align: top;
+}
+.tiptap table td > *,
+.tiptap table th > * {
+	margin-bottom: 0;
+}
+.tiptap table th {
+	background-color: #f3f4f6;
+	font-weight: bold;
+	text-align: left;
+}
+.tiptap table .selectedCell:after {
+	background: rgba(200, 200, 200, 0.4);
+	content: '';
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 2;
+}
+.tiptap table .column-resize-handle {
+	background-color: #8b5cf6;
+	bottom: -2px;
+	pointer-events: none;
+	position: absolute;
+	right: -2px;
+	top: 0;
+	width: 4px;
+}
+.tiptap .tableWrapper {
+	margin: 1.5rem 0;
+	overflow-x: auto;
+}
+.tiptap.resize-cursor {
+	cursor: ew-resize;
+	cursor: col-resize;
+}
+:global(.dark) .tiptap table td,
+:global(.dark) .tiptap table th {
+	border-color: #374151;
+}
+:global(.dark) .tiptap table th {
+	background-color: #1f2937;
+}
+
+:global(.dark) .tiptap table .selectedCell:after {
+	background: rgba(55, 65, 81, 0.4);
+}
+.table-controls {
+	display: flex;
+	align-items: center;
+	padding: 2px;
+	border-radius: 4px;
+}
 Table styles .ProseMirror table {
-    border-collapse: collapse;
-    margin: 0;
-    overflow: hidden;
-    table-layout: fixed;
-    width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+	overflow: hidden;
+	table-layout: fixed;
+	width: 100%;
 }
 
 .ProseMirror table td,
 .ProseMirror table th,
 table td,
 table th {
-    border: 1px solid #e5e7eb;
-    box-sizing: border-box;
-    min-width: 1em;
-    padding: 6px 8px;
-    position: relative;
-    vertical-align: top;
-    white-space: normal !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
+	border: 1px solid #e5e7eb;
+	box-sizing: border-box;
+	min-width: 1em;
+	padding: 6px 8px;
+	position: relative;
+	vertical-align: top;
+	white-space: normal !important;
+	word-break: break-word !important;
+	overflow-wrap: break-word !important;
 }
 
 .ProseMirror table th {
-    background-color: #f3f4f6;
-    font-weight: bold;
-    text-align: left;
+	background-color: #f3f4f6;
+	font-weight: bold;
+	text-align: left;
 }
 
 .ProseMirror table .selectedCell:after {
-    background: rgba(200, 200, 200, 0.4);
-    content: '';
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    pointer-events: none;
-    position: absolute;
-    z-index: 2;
+	background: rgba(200, 200, 200, 0.4);
+	content: '';
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 2;
 }
 
 .ProseMirror table .column-resize-handle {
-    background-color: #8b5cf6;
-    bottom: -2px;
-    pointer-events: none;
-    position: absolute;
-    right: -2px;
-    top: 0;
-    width: 4px;
+	background-color: #8b5cf6;
+	bottom: -2px;
+	pointer-events: none;
+	position: absolute;
+	right: -2px;
+	top: 0;
+	width: 4px;
 }
 
 .ProseMirror .tableWrapper {
-    margin: 1.5rem 0;
-    overflow-x: auto;
+	margin: 1.5rem 0;
+	overflow-x: auto;
 }
 
 .ProseMirror.resize-cursor {
-    cursor: ew-resize;
-    cursor: col-resize;
+	cursor: ew-resize;
+	cursor: col-resize;
 }
 
 /* Dark mode */
 .dark .ProseMirror table td,
 .dark .ProseMirror table th {
-    border-color: #374151;
+	border-color: #374151;
 }
 
 .dark .ProseMirror table th {
-    background-color: #1f2937;
+	background-color: #1f2937;
 }
 
 .dark .ProseMirror table .selectedCell:after {
-    background: rgba(55, 65, 81, 0.4);
+	background: rgba(55, 65, 81, 0.4);
 }
 
 .table-controls {
-    display: flex;
-    align-items: center;
-    padding: 2px;
-    border-radius: 4px;
+	display: flex;
+	align-items: center;
+	padding: 2px;
+	border-radius: 4px;
 }
 
 /* Table styles */
 table {
-    border-collapse: collapse;
-    margin: 0;
-    overflow: hidden;
-    table-layout: fixed;
-    width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+	overflow: hidden;
+	table-layout: fixed;
+	width: 100%;
 }
 
 table th {
-    background-color: #1f2937;
-    font-weight: bold;
-    text-align: left;
+	background-color: #1f2937;
+	font-weight: bold;
+	text-align: left;
 }
 
 table .selectedCell:after {
-    background: rgba(200, 200, 200, 0.4);
-    content: '';
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    pointer-events: none;
-    position: absolute;
-    z-index: 2;
+	background: rgba(200, 200, 200, 0.4);
+	content: '';
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 2;
 }
 
 table .column-resize-handle {
-    background-color: #8b5cf6;
-    bottom: -2px;
-    pointer-events: none;
-    position: absolute;
-    right: -2px;
-    top: 0;
-    width: 4px;
+	background-color: #8b5cf6;
+	bottom: -2px;
+	pointer-events: none;
+	position: absolute;
+	right: -2px;
+	top: 0;
+	width: 4px;
 }
 
 .tableWrapper {
-    margin: 1.5rem 0;
-    overflow-x: auto;
+	margin: 1.5rem 0;
+	overflow-x: auto;
 }
 
 .resize-cursor {
-    cursor: ew-resize;
-    cursor: col-resize;
+	cursor: ew-resize;
+	cursor: col-resize;
 }
 
 /* Dark mode */
 .dark table td,
 .dark table th {
-    border-color: #374151;
+	border-color: #374151;
 }
 
 .dark table th {
-    background-color: #1f2937;
+	background-color: #1f2937;
 }
 
 .dark table .selectedCell:after {
-    background: rgba(55, 65, 81, 0.4);
+	background: rgba(55, 65, 81, 0.4);
 }

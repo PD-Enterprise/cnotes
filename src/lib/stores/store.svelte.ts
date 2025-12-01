@@ -15,7 +15,7 @@ export const error = $state(null);
 export const sync = writable(false);
 
 // Editor state
-export const editor = $state<{ value: Editor | null }>({ value: null });
+export const editorState = $state<{ editor: Editor | null }>({ editor: null });
 export const EditorNoteData = $state<{ value: note }>({
 	value: {
 		title: '',

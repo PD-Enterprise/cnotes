@@ -152,10 +152,6 @@
 		});
 
 		$effect(() => {
-			console.log(initialTitle);
-		});
-
-		$effect(() => {
 			if (excalidrawAPI) {
 				// Destructure the three arguments: elements, appState, and files
 				excalidrawAPI.onChange((elements, files) => {

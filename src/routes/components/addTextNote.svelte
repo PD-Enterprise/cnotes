@@ -3,7 +3,7 @@
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { editor, isAuthenticated } from '$lib/stores/store.svelte';
+	import { editorState, isAuthenticated } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import Tiptap from '../components/tiptap.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
@@ -26,7 +26,7 @@
 			);
 			return;
 		}
-		const rawHtml = editor.value.getHTML();
+		const rawHtml = editorState.editor.getHTML();
 		newNote.content = DOMPurify.sanitize(rawHtml);
 		newNote.type = 'text';
 

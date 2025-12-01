@@ -75,7 +75,7 @@
 		<div class="drawer-side is-drawer-close:overflow-visible">
 			<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
 			<div
-				class="bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64 flex min-h-full w-82 flex-col items-start"
+				class="bg-base-200 is-drawer-close:w-82 is-drawer-open:w-82 flex min-h-full w-82 flex-col items-start"
 			>
 				<div class="flex flex-col gap-4 p-2">
 					<div class="top-bar flex flex-row gap-2">

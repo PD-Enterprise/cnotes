@@ -33,7 +33,6 @@
 		return new Promise((resolve) => {
 			document.startViewTransition(async () => {
 				resolve();
-
 				await navigation.complete;
 			});
 		});
@@ -66,12 +65,50 @@
 		margin: 0;
 		padding: 0;
 	}
-	::view-transition-old(root),
-	::view-transition-new(root) {
-		animation: none;
+	::view-transition-old(note-card-*) {
+		animation:
+			fade-out 0.25s both,
+			zoom-out-transition 0.25s both;
 	}
+	::view-transition-new(note-card-*) {
+		animation:
+			fade-in 0.25s both,
+			zoom-in-transition 0.25s both;
+	}
+	@keyframes zoom-out-transition {
+		from {
+			opacity: 1;
+			transform: scale(1);
+		}
+		to {
+			opacity: 0.5;
+			transform: scale(1.1);
+		}
+	}
+	@keyframes zoom-in-transition {
+		from {
+			opacity: 0.5;
+			transform: scale(1.1);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+	::view-transition-old(root) {
+		animation: fade-out 0.25s both;
+	}
+
 	::view-transition-new(root) {
-		animation: fade-in 0.1s ease-in;
+		animation: fade-in 0.25s both;
+	}
+	@keyframes fade-out {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
 	}
 	@keyframes fade-in {
 		from {
@@ -80,5 +117,11 @@
 		to {
 			opacity: 1;
 		}
+	}
+	::view-transition-old(note-title-*) {
+		opacity: 0;
+	}
+	::view-transition-new(note-title-*) {
+		opacity: 1;
 	}
 </style>

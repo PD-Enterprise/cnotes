@@ -189,7 +189,7 @@
 						<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
 						<div class="drawer-content flex flex-col gap-2">
 							<div class="buttons flex gap-3">
-								<div class="sidebar-toggle hidden p-1">
+								<div class="sidebar-toggle hidden">
 									<label for="my-drawer-4" aria-label="open sidebar" class="btn btn-ghost">
 										<Icon icon="meteor-icons:sidebar" width="22" height="22" />
 									</label>

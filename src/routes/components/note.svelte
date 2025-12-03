@@ -40,10 +40,15 @@
 	tabindex="0"
 	class="note card border-base-content flex gap-2.5 border shadow-2xl"
 	id={notes.note.slug}
+	style="view-transition-name: note-card-{notes.note.slug}"
 >
 	<div class="card-body bg-base-300 flex flex-col rounded p-1">
 		<div class="title-and-options flex flex-row justify-between gap-1">
-			<a class="note-title card-title w-full p-1" href="{notes.note.slug}/sharing">
+			<a
+				class="note-title card-title w-full p-1"
+				href="{notes.note.slug}/sharing"
+				style="view-transition-name: note-title-{notes.note.slug}"
+			>
 				{#if notes.note.title.split(' ').length > 4}
 					{notes.note.title.split(' ').slice(0, 4).join(' ') + '...'}
 				{:else}
@@ -186,6 +191,7 @@
 		flex-direction: column;
 		overflow-y: hidden;
 		cursor: pointer;
+		contain: layout;
 	}
 	.note {
 		transition:

@@ -25,6 +25,7 @@
 	});
 	let localNote = null;
 	let hasLocalNote = false;
+	let slug: string = $state();
 
 	// Functions
 	async function getNoteFromServer() {
@@ -69,17 +70,17 @@
 		}
 	}
 	onMount(() => {
-		const slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
+		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
 		getNoteFromLocalStorage(slug);
 		getNoteFromServer();
 	});
 </script>
 
-<div class="main">
+<div class="main" style="view-transition-name: note-card-{slug}">
 	{#if noteData}
 		<div class="content flex h-full flex-col">
 			<div class="metadata-box bg-base-200 flex flex-col gap-1 p-2">
-				<h1 class="w-full p-1 text-2xl font-bold">
+				<h1 class="w-full p-1 text-2xl font-bold" style="view-transition-name: note-title-{slug}">
 					{noteData.title}
 				</h1>
 				<div class="meta-data flex flex-col flex-wrap items-center justify-center">

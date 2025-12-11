@@ -32,6 +32,9 @@
 	let isCenterAlignActive = $state(false);
 	let isRightAlignActive = $state(false);
 	let isJustifyAlignActive = $state(false);
+	let heading1Active = $state(false);
+	let heading2Active = $state(false);
+	let heading3Active = $state(false);
 
 	onMount(() => {
 		editorState.editor = new Editor({
@@ -142,6 +145,7 @@
 			content: 'Loading...',
 			onTransaction: ({ editor }) => {
 				editorState.editor = editor;
+
 				isParagraphActive = editor.isActive('paragraph');
 				isUnderlineActive = editor.isActive('underline');
 				isHighlightActive = editor.isActive('highlight');
@@ -153,6 +157,9 @@
 				isCenterAlignActive = editor.isActive({ textAlign: 'center' });
 				isRightAlignActive = editor.isActive({ textAlign: 'right' });
 				isJustifyAlignActive = editor.isActive({ textAlign: 'justify' });
+				heading1Active = editor.isActive('heading', { level: 1 });
+				heading2Active = editor.isActive('heading', { level: 2 });
+				heading3Active = editor.isActive('heading', { level: 3 });
 			},
 			onUpdate() {
 				EditorNoteData.value.content = editorState.editor.getHTML();
@@ -195,21 +202,39 @@
 			class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl"
 		>
 			<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
-				{#each { length: 3 } as _, index}
-					{@const level = index + 1}
-					<button
-						class="editor-button is-active"
-						title={`Heading ${level}`}
-						aria-label={`Heading ${level}`}
-						onclick={() => {
-							// @ts-expect-error
-							editorState.editor.chain().focus().toggleHeading({ level }).run();
-						}}
-					>
-						H{level}
-					</button>
-				{/each}
-
+				<button
+					class="editor-button is-active"
+					title="Heading 1"
+					aria-label="Heading 1"
+					onclick={() => {
+						editorState.editor.commands.toggleHeading({ level: 1 });
+					}}
+					class:active={heading1Active}
+				>
+					H1
+				</button>
+				<button
+					class="editor-button is-active"
+					title="Heading 2"
+					aria-label="Heading 2"
+					onclick={() => {
+						editorState.editor.commands.toggleHeading({ level: 2 });
+					}}
+					class:active={heading2Active}
+				>
+					H2
+				</button>
+				<button
+					class="editor-button is-active"
+					title="Heading 3"
+					aria-label="Heading 3"
+					onclick={() => {
+						editorState.editor.commands.toggleHeading({ level: 3 });
+					}}
+					class:active={heading3Active}
+				>
+					H3
+				</button>
 				<button
 					aria-label="Paragraph"
 					title="Paragraph"

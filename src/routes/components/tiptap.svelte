@@ -458,7 +458,13 @@
 	<div bind:this={element} class="editor bg-base-300 rounded-br-md rounded-bl-md" id="editor"></div>
 </div>
 
-<div class="editor-button active dark hidden"></div>
+<!-- I am truly very sorry to whoever is going to see this in the future,
+ this was causing a weird bug on the frontend,
+ so i had to do this..
+ Please forgive me... -->
+{#if false}
+	<div class="editor-button active dark hidden"></div>
+{/if}
 
 <style>
 	.editor-container {

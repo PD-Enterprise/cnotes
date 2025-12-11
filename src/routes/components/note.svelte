@@ -180,11 +180,9 @@
 	</div>
 </dialog>
 
-<div class="note-content hidden"></div>
-
 <style>
 	.note {
-		--note-width: 16em;
+		--note-width: 15em;
 		--note-height: 11em;
 		width: var(--note-width);
 		height: var(--note-height);

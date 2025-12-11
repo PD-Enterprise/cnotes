@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { EditorNoteData, editorState } from '$lib/stores/store.svelte';
-	import { Editor, mergeAttributes } from '@tiptap/core';
+	import { Editor, isActive, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
 	import './tiptap-editor.css';
@@ -25,8 +25,13 @@
 	let isUnderlineActive = $state(false);
 	let isHighlightActive = $state(false);
 	let isBoldActive = $state(false);
+	let isItalicActive = $state(false);
 	let isSubscriptActive = $state(false);
 	let isSuperscriptActive = $state(false);
+	let isLeftAlignActive = $state(false);
+	let isCenterAlignActive = $state(false);
+	let isRightAlignActive = $state(false);
+	let isJustifyAlignActive = $state(false);
 
 	onMount(() => {
 		editorState.editor = new Editor({
@@ -137,8 +142,17 @@
 			content: 'Loading...',
 			onTransaction: ({ editor }) => {
 				editorState.editor = editor;
-
+				isParagraphActive = editor.isActive('paragraph');
+				isUnderlineActive = editor.isActive('underline');
+				isHighlightActive = editor.isActive('highlight');
 				isBoldActive = editor.isActive('bold');
+				isItalicActive = editor.isActive('italic');
+				isSubscriptActive = editor.isActive('subscript');
+				isSuperscriptActive = editor.isActive('superscript');
+				isLeftAlignActive = editor.isActive({ textAlign: 'left' });
+				isCenterAlignActive = editor.isActive({ textAlign: 'center' });
+				isRightAlignActive = editor.isActive({ textAlign: 'right' });
+				isJustifyAlignActive = editor.isActive({ textAlign: 'justify' });
 			},
 			onUpdate() {
 				EditorNoteData.value.content = editorState.editor.getHTML();
@@ -202,7 +216,8 @@
 					onclick={() => {
 						editorState.editor.chain().focus().setParagraph().run();
 					}}
-					class="editor-button btn"><Icon icon="fa6-solid:paragraph" /></button
+					class="editor-button btn"
+					class:active={isParagraphActive}><Icon icon="fa6-solid:paragraph" /></button
 				>
 				<button
 					aria-label="Bold"
@@ -222,7 +237,7 @@
 						editorState.editor?.chain().focus().toggleItalic().run();
 					}}
 					class="editor-button"
-					class:active={editorState.editor?.isActive('italic')}
+					class:active={isItalicActive}
 				>
 					<Icon icon="fa6-solid:italic" />
 				</button>
@@ -232,15 +247,19 @@
 					class="editor-button btn"
 					onclick={() => {
 						editorState.editor.chain().focus().toggleUnderline().run();
-					}}><Icon icon="fa6-solid:underline" /></button
+					}}
+					class:active={isUnderlineActive}
 				>
+					<Icon icon="fa6-solid:underline" />
+				</button>
 				<button
 					aria-label="Highlight"
 					title="Highlight"
 					class="editor-button btn"
 					onclick={() => {
 						editorState.editor.chain().focus().toggleHighlight().run();
-					}}><Icon icon="fa6-solid:highlighter" /></button
+					}}
+					class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
 				>
 				<button
 					aria-label="Subscript"
@@ -249,6 +268,7 @@
 						editorState.editor?.chain().focus().toggleSubscript().run();
 					}}
 					class="editor-button"
+					class:active={isSubscriptActive}
 				>
 					<Icon icon="fa6-solid:subscript" />
 				</button>
@@ -259,6 +279,7 @@
 						editorState.editor?.chain().focus().toggleSuperscript().run();
 					}}
 					class="editor-button"
+					class:active={isSuperscriptActive}
 				>
 					<Icon icon="fa6-solid:superscript" />
 				</button>
@@ -266,19 +287,21 @@
 					aria-label="Left"
 					title="Left"
 					onclick={() => {
-						editorState.editor?.commands.setTextAlign('left');
+						editorState.editor?.commands.toggleTextAlign('left');
 					}}
 					class="editor-button"
+					class:active={isLeftAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+					<Icon icon="material-symbols:format-align-left-rounded" width="24" height="24" />
 				</button>
 				<button
 					aria-label="Center"
 					title="Center"
 					onclick={() => {
-						editorState.editor?.commands.setTextAlign('center');
+						editorState.editor?.commands.toggleTextAlign('center');
 					}}
 					class="editor-button"
+					class:active={isCenterAlignActive}
 				>
 					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
 				</button>
@@ -286,21 +309,23 @@
 					aria-label="Right"
 					title="Right"
 					onclick={() => {
-						editorState.editor?.commands.setTextAlign('right');
+						editorState.editor?.commands.toggleTextAlign('right');
 					}}
 					class="editor-button"
+					class:active={isRightAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+					<Icon icon="material-symbols:format-align-right-rounded" width="24" height="24" />
 				</button>
 				<button
 					aria-label="Justify"
 					title="Justify"
 					onclick={() => {
-						editorState.editor?.commands.setTextAlign('justify');
+						editorState.editor?.commands.toggleTextAlign('justify');
 					}}
 					class="editor-button"
+					class:active={isJustifyAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+					<Icon icon="material-symbols:format-align-justify-rounded" width="24" height="24" />
 				</button>
 				<button
 					aria-label="Table"

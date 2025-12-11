@@ -137,6 +137,8 @@
 			content: 'Loading...',
 			onTransaction: ({ editor }) => {
 				editorState.editor = editor;
+
+				isBoldActive = editor.isActive('bold');
 			},
 			onUpdate() {
 				EditorNoteData.value.content = editorState.editor.getHTML();
@@ -178,255 +180,228 @@
 		<div
 			class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl"
 		>
-			<div class="button-group">
-				<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
-					<div class="text button-group">
-						{#each { length: 3 } as _, index}
-							{@const level = index + 1}
-							<button
-								class="editor-button is-active"
-								title={`Heading ${level}`}
-								aria-label={`Heading ${level}`}
-								onclick={() => {
-									// @ts-expect-error
-									editorState.editor.chain().focus().toggleHeading({ level }).run();
-								}}
-							>
-								H{level}
-							</button>
-						{/each}
+			<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
+				{#each { length: 3 } as _, index}
+					{@const level = index + 1}
+					<button
+						class="editor-button is-active"
+						title={`Heading ${level}`}
+						aria-label={`Heading ${level}`}
+						onclick={() => {
+							// @ts-expect-error
+							editorState.editor.chain().focus().toggleHeading({ level }).run();
+						}}
+					>
+						H{level}
+					</button>
+				{/each}
 
-						<button
-							aria-label="Paragraph"
-							title="Paragraph"
-							onclick={() => {
-								editorState.editor.chain().focus().setParagraph().run();
-								isParagraphActive = editorState.editor.isActive('paragraph');
-							}}
-							class:active={isParagraphActive}
-							class="editor-button btn"><Icon icon="fa6-solid:paragraph" /></button
-						>
-					</div>
-					<div class="text-styling button-group">
-						<button
-							aria-label="Bold"
-							title="Bold"
-							onclick={() => {
-								editorState.editor?.chain().focus().toggleBold().run();
-								isBoldActive = editorState.editor.isActive('bold');
-							}}
-							class="editor-button"
-							class:active={isBoldActive}
-						>
-							<Icon icon="fa6-solid:bold" />
-						</button>
-						<button
-							aria-label="Italic"
-							title="Italic"
-							onclick={() => {
-								editorState.editor?.chain().focus().toggleItalic().run();
-							}}
-							class="editor-button"
-							class:active={editorState.editor?.isActive('italic')}
-						>
-							<Icon icon="fa6-solid:italic" />
-						</button>
-						<button
-							aria-label="Underline"
-							title="Underline"
-							class="editor-button btn"
-							onclick={() => {
-								editorState.editor.chain().focus().toggleUnderline().run();
-								isUnderlineActive = editorState.editor.isActive('underline');
-							}}
-							class:active={isUnderlineActive}><Icon icon="fa6-solid:underline" /></button
-						>
-						<button
-							aria-label="Highlight"
-							title="Highlight"
-							class="editor-button btn"
-							onclick={() => {
-								editorState.editor.chain().focus().toggleHighlight().run();
-								isHighlightActive = editorState.editor.isActive('highlight');
-							}}
-							class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
-						>
-						<div class="text-position button-group">
-							<button
-								aria-label="Subscript"
-								title="Subscript"
-								onclick={() => {
-									editorState.editor?.chain().focus().toggleSubscript().run();
-									isSubscriptActive = editorState.editor.isActive('subscript');
-								}}
-								class="editor-button"
-								class:active={isSubscriptActive}
-							>
-								<Icon icon="fa6-solid:subscript" />
-							</button>
-							<button
-								aria-label="Superscript"
-								title="Superscript"
-								onclick={() => {
-									editorState.editor?.chain().focus().toggleSuperscript().run();
-									isSuperscriptActive = editorState.editor.isActive('superscript');
-								}}
-								class="editor-button"
-								class:active={isSuperscriptActive}
-							>
-								<Icon icon="fa6-solid:superscript" />
-							</button>
-						</div>
-						<div class="text-alignment button-group">
-							<button
-								aria-label="Left"
-								title="Left"
-								onclick={() => {
-									editorState.editor?.commands.setTextAlign('left');
-								}}
-								class="editor-button"
-							>
-								Left
-							</button>
-							<button
-								aria-label="Center"
-								title="Center"
-								onclick={() => {
-									editorState.editor?.commands.setTextAlign('center');
-								}}
-								class="editor-button"
-							>
-								Center
-							</button>
-							<button
-								aria-label="Right"
-								title="Right"
-								onclick={() => {
-									editorState.editor?.commands.setTextAlign('right');
-								}}
-								class="editor-button"
-							>
-								Right
-							</button>
-							<button
-								aria-label="Justify"
-								title="Justify"
-								onclick={() => {
-									editorState.editor?.commands.setTextAlign('justify');
-								}}
-								class="editor-button"
-							>
-								Justify
-							</button>
-						</div>
-					</div>
-					<div class="button-group table">
-						<button
-							aria-label="Table"
-							title="Table"
-							onclick={() => {
-								editorState.editor
-									.chain()
-									.focus()
-									.insertTable({ rows: 3, cols: 2, withHeaderRow: false })
-									.run();
-								isTableActive = true;
-							}}
-							class="editor-button"
-							class:active={isTableActive}
-						>
-							<Icon icon="fa6-solid:table" />
-						</button>
-						{#if isTableActive}
-							<div class="table-options button-group">
-								<button
-									aria-label="Add Row After"
-									title="Add Row After"
-									onclick={() => {
-										if (editorState) {
-											editorState.editor.chain().focus().addRowAfter().run();
-										}
-									}}
-									class="editor-button"
-								>
-									<Icon icon="majesticons:add-row" width="24" height="24" />
-								</button>
-								<button
-									aria-label="Add Column After"
-									title="Add Column After"
-									onclick={() => {
-										if (editorState) {
-											editorState.editor.chain().focus().addColumnAfter().run();
-										}
-									}}
-									class="editor-button"
-								>
-									<Icon icon="majesticons:add-column" width="24" height="24" />
-								</button>
-								<button
-									aria-label="Delete Row"
-									title="Delete Row"
-									onclick={() => {
-										if (editorState) {
-											editorState.editor.chain().focus().deleteRow().run();
-										}
-									}}
-									class="editor-button"
-								>
-									<Icon icon="fluent:table-delete-row-20-regular" width="20" height="20" />
-								</button>
-								<button
-									aria-label="Delete Column"
-									title="Delete Column"
-									onclick={() => {
-										if (editorState) {
-											editorState.editor.chain().focus().deleteColumn().run();
-										}
-									}}
-									class="editor-button"
-								>
-									<Icon icon="fluent:table-delete-column-20-regular" width="20" height="20" />
-								</button>
-								<button
-									aria-label="Delete Table"
-									title="Delete Table"
-									onclick={() => {
-										if (editorState) {
-											editorState.editor.chain().focus().deleteTable().run();
-										}
-									}}
-									class="editor-button"
-								>
-									<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
-								</button>
-							</div>
-						{/if}
-					</div>
-					<div class="extras button-group">
-						<button
-							aria-label="Youtube"
-							title="YouTube"
-							onclick={() => {
-								const url = prompt('Enter Youtube URL');
-								if (url) {
-									editorState.editor
-										.chain()
-										.focus()
-										.setYoutubeVideo({
-											src: url,
-											width: Math.max(320, 10) || 640,
-											height: Math.max(180, 10) || 480
-										})
-										.run();
-								}
-							}}
-							class="editor-button"
-							class:active={editorState.editor?.isActive('Youtube')}
-						>
-							<Icon icon="mdi:youtube" width="24" height="24" />
-						</button>
-					</div>
-				</div>
+				<button
+					aria-label="Paragraph"
+					title="Paragraph"
+					onclick={() => {
+						editorState.editor.chain().focus().setParagraph().run();
+					}}
+					class="editor-button btn"><Icon icon="fa6-solid:paragraph" /></button
+				>
+				<button
+					aria-label="Bold"
+					title="Bold"
+					onclick={() => {
+						editorState.editor?.chain().focus().toggleBold().run();
+					}}
+					class="editor-button"
+					class:active={isBoldActive}
+				>
+					<Icon icon="fa6-solid:bold" />
+				</button>
+				<button
+					aria-label="Italic"
+					title="Italic"
+					onclick={() => {
+						editorState.editor?.chain().focus().toggleItalic().run();
+					}}
+					class="editor-button"
+					class:active={editorState.editor?.isActive('italic')}
+				>
+					<Icon icon="fa6-solid:italic" />
+				</button>
+				<button
+					aria-label="Underline"
+					title="Underline"
+					class="editor-button btn"
+					onclick={() => {
+						editorState.editor.chain().focus().toggleUnderline().run();
+					}}><Icon icon="fa6-solid:underline" /></button
+				>
+				<button
+					aria-label="Highlight"
+					title="Highlight"
+					class="editor-button btn"
+					onclick={() => {
+						editorState.editor.chain().focus().toggleHighlight().run();
+					}}><Icon icon="fa6-solid:highlighter" /></button
+				>
+				<button
+					aria-label="Subscript"
+					title="Subscript"
+					onclick={() => {
+						editorState.editor?.chain().focus().toggleSubscript().run();
+					}}
+					class="editor-button"
+				>
+					<Icon icon="fa6-solid:subscript" />
+				</button>
+				<button
+					aria-label="Superscript"
+					title="Superscript"
+					onclick={() => {
+						editorState.editor?.chain().focus().toggleSuperscript().run();
+					}}
+					class="editor-button"
+				>
+					<Icon icon="fa6-solid:superscript" />
+				</button>
+				<button
+					aria-label="Left"
+					title="Left"
+					onclick={() => {
+						editorState.editor?.commands.setTextAlign('left');
+					}}
+					class="editor-button"
+				>
+					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+				</button>
+				<button
+					aria-label="Center"
+					title="Center"
+					onclick={() => {
+						editorState.editor?.commands.setTextAlign('center');
+					}}
+					class="editor-button"
+				>
+					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+				</button>
+				<button
+					aria-label="Right"
+					title="Right"
+					onclick={() => {
+						editorState.editor?.commands.setTextAlign('right');
+					}}
+					class="editor-button"
+				>
+					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+				</button>
+				<button
+					aria-label="Justify"
+					title="Justify"
+					onclick={() => {
+						editorState.editor?.commands.setTextAlign('justify');
+					}}
+					class="editor-button"
+				>
+					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+				</button>
+				<button
+					aria-label="Table"
+					title="Table"
+					onclick={() => {
+						editorState.editor
+							.chain()
+							.focus()
+							.insertTable({ rows: 3, cols: 2, withHeaderRow: false })
+							.run();
+						isTableActive = true;
+					}}
+					class="editor-button"
+					class:active={isTableActive}
+				>
+					<Icon icon="fa6-solid:table" />
+				</button>
+				{#if isTableActive}
+					<button
+						aria-label="Add Row After"
+						title="Add Row After"
+						onclick={() => {
+							if (editorState) {
+								editorState.editor.chain().focus().addRowAfter().run();
+							}
+						}}
+						class="editor-button"
+					>
+						<Icon icon="majesticons:add-row" width="24" height="24" />
+					</button>
+					<button
+						aria-label="Add Column After"
+						title="Add Column After"
+						onclick={() => {
+							if (editorState) {
+								editorState.editor.chain().focus().addColumnAfter().run();
+							}
+						}}
+						class="editor-button"
+					>
+						<Icon icon="majesticons:add-column" width="24" height="24" />
+					</button>
+					<button
+						aria-label="Delete Row"
+						title="Delete Row"
+						onclick={() => {
+							if (editorState) {
+								editorState.editor.chain().focus().deleteRow().run();
+							}
+						}}
+						class="editor-button"
+					>
+						<Icon icon="fluent:table-delete-row-20-regular" width="20" height="20" />
+					</button>
+					<button
+						aria-label="Delete Column"
+						title="Delete Column"
+						onclick={() => {
+							if (editorState) {
+								editorState.editor.chain().focus().deleteColumn().run();
+							}
+						}}
+						class="editor-button"
+					>
+						<Icon icon="fluent:table-delete-column-20-regular" width="20" height="20" />
+					</button>
+					<button
+						aria-label="Delete Table"
+						title="Delete Table"
+						onclick={() => {
+							if (editorState) {
+								editorState.editor.chain().focus().deleteTable().run();
+							}
+						}}
+						class="editor-button"
+					>
+						<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
+					</button>
+				{/if}
+				<button
+					aria-label="Youtube"
+					title="YouTube"
+					onclick={() => {
+						const url = prompt('Enter Youtube URL');
+						if (url) {
+							editorState.editor
+								.chain()
+								.focus()
+								.setYoutubeVideo({
+									src: url,
+									width: Math.max(320, 10) || 640,
+									height: Math.max(180, 10) || 480
+								})
+								.run();
+						}
+					}}
+					class="editor-button"
+					class:active={editorState.editor?.isActive('Youtube')}
+				>
+					<Icon icon="mdi:youtube" width="24" height="24" />
+				</button>
 			</div>
 		</div>
 	{/if}
@@ -436,12 +411,6 @@
 <style>
 	.editor-container {
 		overflow: hidden;
-	}
-	.button-group {
-		display: flex;
-		flex-direction: row;
-		gap: 0.5rem;
-		width: auto;
 	}
 	.editor {
 		height: calc(100vh - 180px);

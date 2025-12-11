@@ -458,6 +458,8 @@
 	<div bind:this={element} class="editor bg-base-300 rounded-br-md rounded-bl-md" id="editor"></div>
 </div>
 
+<div class="editor-button active dark hidden"></div>
+
 <style>
 	.editor-container {
 		overflow: hidden;

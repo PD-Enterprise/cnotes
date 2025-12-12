@@ -1,0 +1,20 @@
+
+> cnotes@2.6.5 dev
+> vite dev
+
+
+  VITE v7.2.7  ready in 2765 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at assertConfig (file:///app/node_modules/@auth/sveltekit/node_modules/@auth/core/lib/utils/assert.js:60:16)
+    at Auth (file:///app/node_modules/@auth/sveltekit/node_modules/@auth/core/index.js:72:29)
+    at async auth (/app/node_modules/@auth/sveltekit/dist/actions.js:87:22)
+    at async load (/app/src/routes/+layout.server.ts:9:19)
+    at async fn (/app/node_modules/@sveltejs/kit/src/runtime/server/page/load_data.js:98:19)
+
+[1;31m[500] GET /[0m
+Error: There was a problem with the server configuration. Check the server logs for more information.
+    at auth (node_modules/@auth/sveltekit/dist/actions.js:90:11)
+    at async load (src/routes/+layout.server.ts:6:18)

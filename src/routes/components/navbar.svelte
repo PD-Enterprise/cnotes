@@ -69,7 +69,7 @@
 					<Icon icon="tabler:align-left" width="24" height="24" />
 				</button>
 				<ul
-					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-1 mt-3 flex hidden gap-2 p-2 shadow-md"
+					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-1 mt-3 hidden gap-2 p-2 shadow-md"
 					id="menu"
 				>
 					<li>

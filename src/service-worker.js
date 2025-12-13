@@ -17,9 +17,9 @@ self.addEventListener('install', (event) => {
         await cache.addAll(ASSETS);
     }
 
-    console.log('installing service worker for version', version);
-    console.log('caching assets', ASSETS);
-    console.log('caching build', build);
+    // console.log('installing service worker for version', version);
+    // console.log('caching assets', ASSETS);
+    // console.log('caching build', build);
 
     event.waitUntil(addFilesToCache());
 });
@@ -72,7 +72,7 @@ self.addEventListener('fetch', (event) => {
             const response = await cache.match(event.request);
 
             if (response) {
-                console.log(`Returning from Cache`, event.request.url);
+                // console.log(`Returning from Cache`, event.request.url);
                 return response;
             }
 

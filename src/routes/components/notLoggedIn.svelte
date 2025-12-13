@@ -1,9 +1,13 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
+		const slug = $page.url.pathname.split('/')[1];
+		console.log(slug);
+
 		const dialog = document.getElementById('my_modal_2');
-		if (dialog) {
+		if (dialog && slug != 'login') {
 			// @ts-expect-error
 			dialog.showModal();
 		}

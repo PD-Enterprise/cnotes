@@ -7,10 +7,14 @@
 		name: 'User Name',
 		image: ''
 	});
-	userObject = {
-		name: data.session.user.name,
-		image: data.session.user.image
-	};
+	onMount(() => {
+		if (data.session.user) {
+			userObject = {
+				name: data.session.user.name,
+				image: data.session.user.image
+			};
+		}
+	});
 </script>
 
 <div class="user flex items-center gap-3 rounded p-1">

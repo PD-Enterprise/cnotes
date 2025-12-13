@@ -24,4 +24,5 @@ vite.config.ts.timestamp-*
 # lock-file
 pnpm-lock.yaml
 
+# IDE
 .vscode

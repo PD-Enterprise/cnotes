@@ -13,7 +13,7 @@
 	};
 </script>
 
-<a class="user flex items-center gap-3 rounded p-1" href="/">
+<div class="user flex items-center gap-3 rounded p-1">
 	<div class="avatar">
 		<div class="bg-base-300 h-10 rounded-full">
 			{#if userObject.image == ''}
@@ -28,4 +28,4 @@
 			{userObject.name}
 		</span>
 	</div>
-</a>
+</div>

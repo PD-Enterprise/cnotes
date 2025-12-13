@@ -6,16 +6,17 @@
 		ExcalidrawInitialDataState
 	} from '@excalidraw/excalidraw/types/types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import Loader from './loader.svelte';
 
-	let props: ExcalidrawProps = $props();
 	let rootEl: HTMLElement;
-	// @ts-expect-error
+	let props = $props();
 	let content = props.content || '{"elements": [], "files": {}}';
-
 	let initialData: ExcalidrawInitialDataState;
+	let isExcalidrawEditorLoaded = $state(false);
+
 	try {
 		const parsedContent = JSON.parse(content);
-		if (parsedContent.elements || parsedContent) {
+		if ((parsedContent && parsedContent.elements) || parsedContent.files) {
 			initialData = parsedContent;
 		} else {
 			initialData = { elements: [], appState: {} };
@@ -46,12 +47,17 @@
 				})
 			]);
 			const excalidraw = createElement(Excalidraw, excalidrawProps, [welcome, menu]);
+			isExcalidrawEditorLoaded = true;
 			root.render(excalidraw);
 		});
 
 		return () => root.unmount();
 	});
 </script>
+
+{#if !isExcalidrawEditorLoaded}
+	<Loader title="Loading Excalidraw..." />
+{/if}
 
 <div bind:this={rootEl} class="root"></div>
 

@@ -9,6 +9,7 @@
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
+	import UserComponent from './user-component.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
@@ -54,32 +55,26 @@
 
 <SvelteToast />
 
-<div class="navbar bg-base-300">
+<div class="navbar bg-base-200 z-1 shadow-sm">
 	<div class="navbar-start">
 		{#if isHome}
 			<div class="dropdown">
-				<div tabindex="0" role="button" class="btn btn-ghost">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h8m-8 6h16"
-						/>
-					</svg>
-				</div>
-				<ul
-					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-[1] mt-3 flex gap-2 p-2 shadow"
+				<button
+					class="btn btn-ghost"
+					onclick={() => {
+						const menuElement = document.getElementById('menu') as HTMLDivElement;
+						menuElement.classList.toggle('hidden');
+					}}
 				>
-					<!-- <li>
-					<UserButton />
-				</li> -->
+					<Icon icon="tabler:align-left" width="24" height="24" />
+				</button>
+				<ul
+					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-1 mt-3 hidden gap-2 p-2 shadow-md"
+					id="menu"
+				>
+					<li>
+						<UserComponent {data} />
+					</li>
 					<li>
 						<label class="flex cursor-pointer gap-2">
 							<svg
@@ -147,11 +142,5 @@
 	.navbar {
 		cursor: default;
 		position: fixed;
-		z-index: 1000;
-	}
-	@media (max-width: 466px) {
-		.menu-buttons {
-			display: block;
-		}
 	}
 </style>

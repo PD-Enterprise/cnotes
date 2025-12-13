@@ -51,10 +51,12 @@
 						<div tabindex="0" role="button" class="btn btn-ghost info-text">
 							<Icon icon="material-symbols:info" width="22" height="22" />
 						</div>
-						<div class="compact dropdown-content card rounded-box bg-base-100 z-1 w-64 shadow">
-							<div class="card-body">
-								<h2 class="card-title">component state is not held!!</h2>
-								<p>Save your work before switching</p>
+						<div
+							class="compact dropdown-content card rounded-box bg-base-100 z-100 h-auto w-64 shadow"
+						>
+							<div class="card-body p-2">
+								<p class="card-title">component state is not held!!!</p>
+								<p class="card-body p-0">Save your work before switching</p>
 							</div>
 						</div>
 					</div>

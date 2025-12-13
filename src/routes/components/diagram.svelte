@@ -113,7 +113,6 @@
 
 <style>
 	.main-component {
-		animation: fadeInDown 0.5s ease-in-out;
 		height: calc(100vh - 140px);
 	}
 	/* Button styling */
@@ -129,18 +128,5 @@
 	.btn:active {
 		transform: translateY(0);
 		box-shadow: none;
-	}
-
-	/* Animations */
-	@keyframes fadeInDown {
-		from {
-			opacity: 0;
-			transform: translateY(-50px);
-		}
-
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
 	}
 </style>

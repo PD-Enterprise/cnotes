@@ -28,7 +28,7 @@
 	let isK_12: string = $state('true');
 	let initialTitle: string = $state('');
 	let isTitleChanged: boolean = $state(false);
-	let localNote = null;
+	let localNote: any = null;
 	let hasLocalNote = false;
 
 	// Functions
@@ -171,18 +171,16 @@
 				excalidrawAPI.onChange((elements, files) => {
 					// console.log('Elements:', elements);
 					// console.log('Files:', files);
-
 					if (elements.length > 0) {
 						const currentContent = JSON.stringify({ elements: elements, files: files });
 						const originalContent = JSON.stringify({
-							elements: JSON.parse(originalNote.notescontent).elements,
-							files: JSON.parse(originalNote.notescontent).files
+							elements: JSON.parse(originalNote.content).elements,
+							files: JSON.parse(originalNote.content).files
 						});
-
 						excalidrawIsDirty = currentContent !== originalContent;
 					} else {
 						excalidrawIsDirty =
-							originalNote && originalNote.notescontent !== '{"elements": [], "files": {}}';
+							originalNote && originalNote.content !== '{"elements": [], "files": {}}';
 					}
 				});
 			}
@@ -192,16 +190,13 @@
 
 {#if isAuthenticated.value}
 	<div class="main">
-		<!-- {#await getNote()}
-			<Loader title="Loading your note..." />
-		{:then} -->
 		{#if error}
 			{error}
 		{:else if EditorNoteData.value}
 			<div class="note flex h-full flex-col gap-2 rounded-md">
-				<div class="drawer lg:drawer-open">
+				<div class="drawer h-full lg:drawer-open">
 					<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
-					<div class="drawer-content flex flex-col gap-2">
+					<div class="drawer-content flex h-full flex-col gap-2">
 						<div class="buttons flex gap-3">
 							<div class="sidebar-toggle hidden">
 								<label for="my-drawer-4" aria-label="open sidebar" class="btn btn-ghost">
@@ -238,7 +233,7 @@
 								>
 							</div>
 						</div>
-						<div class="editor h-full">
+						<div class="editor flex-1">
 							{#if EditorNoteData.value.type == 'text'}
 								<Tiptap content={EditorNoteData.value.content} editable={true} />
 							{:else if EditorNoteData.value.type == 'diagram'}

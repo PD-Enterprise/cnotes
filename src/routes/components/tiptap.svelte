@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { EditorNoteData, editorState } from '$lib/stores/store.svelte';
+	import { EditorNoteData, editorState, theme } from '$lib/stores/store.svelte';
 	import { Editor, isActive, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
@@ -179,6 +179,14 @@
 				}
 			}
 		});
+
+		const tipexController = document.getElementById('editor') as HTMLDivElement;
+		if (theme.value == true) {
+			tipexController.classList.remove('dark');
+		} else {
+			tipexController.classList.add('dark');
+		}
+
 		if (!editable) {
 			const editorElement = document.getElementById('editor') as HTMLDivElement;
 			editorElement.style = 'border: none';
@@ -196,11 +204,9 @@
 	});
 </script>
 
-<div class="editor-container flex h-full flex-col p-0">
+<div class="editor-container flex h-full flex-col p-0" id="editor">
 	{#if editable}
-		<div
-			class="tipex-controller control-group dark flex flex-row rounded-tl rounded-tr p-2 shadow-xl"
-		>
+		<div class="tipex-controller control-group flex flex-row rounded-tl rounded-tr p-2 shadow-xl">
 			<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
 				<button
 					class="editor-button is-active"

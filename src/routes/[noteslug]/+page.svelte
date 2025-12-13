@@ -6,7 +6,6 @@
 	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
 	import { page } from '$app/stores';
 	import Tiptap from '../components/tiptap.svelte';
-	import Loader from '../components/loader.svelte';
 	import Excalidraw from '../components/Excalidraw.svelte';
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 	import ShareModel from '../components/shareModel.svelte';

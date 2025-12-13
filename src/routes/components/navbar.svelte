@@ -9,6 +9,7 @@
 	import { page } from '$app/stores';
 	import Icon from '@iconify/svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
+	import UserComponent from './user-component.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
@@ -77,9 +78,9 @@
 				<ul
 					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-[1] mt-3 flex gap-2 p-2 shadow"
 				>
-					<!-- <li>
-					<UserButton />
-				</li> -->
+					<li>
+						<UserComponent {data} />
+					</li>
 					<li>
 						<label class="flex cursor-pointer gap-2">
 							<svg

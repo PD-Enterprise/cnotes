@@ -470,6 +470,7 @@
  Please forgive me... -->
 {#if false}
 	<div class="editor-button active dark hidden"></div>
+	<div class="tipex-controller dark"></div>
 {/if}
 
 <style>

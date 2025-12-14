@@ -1,10 +1,10 @@
 <div class="book">
-	<div class="page bg-gray-500"></div>
-	<div class="page bg-gray-500"></div>
-	<div class="page bg-gray-500"></div>
-	<div class="page bg-gray-500"></div>
-	<div class="page bg-gray-500"></div>
-	<div class="page bg-gray-500"></div>
+	<div class="page z-10 bg-gray-500"></div>
+	<div class="page bg-gray-400"></div>
+	<div class="page bg-gray-400"></div>
+	<div class="page bg-gray-400"></div>
+	<div class="page bg-gray-400"></div>
+	<div class="page z-10 bg-gray-500"></div>
 </div>
 
 <style>
@@ -27,6 +27,7 @@
 		animation: open var(--duration) infinite;
 	}
 	.page:nth-child(1) {
+		height: 15%;
 		animation-delay: calc(var(--duration) * 0);
 	}
 	.page:nth-child(2) {
@@ -43,18 +44,29 @@
 		animation-delay: calc(var(--duration) / 6.5);
 	}
 	.page:nth-child(6) {
+		height: 15%;
 		animation-delay: calc(var(--duration) / 5.3);
 	}
 	@keyframes open {
 		0% {
 			transform: rotateZ(0deg);
+			visibility: visible;
 		}
 		40% {
-			transform: rotateZ(-160deg);
-		}
-		40%,
-		100% {
 			transform: rotateZ(-180deg);
+			visibility: visible;
+		}
+		80% {
+			transform: rotateZ(-180deg);
+			visibility: visible;
+		}
+		80.01% {
+			transform: rotateZ(0deg);
+			visibility: hidden;
+		}
+		100% {
+			transform: rotateZ(0deg);
+			visibility: hidden;
 		}
 	}
 </style>

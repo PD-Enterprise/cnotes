@@ -111,7 +111,7 @@
 <div class="main">
 	<div class="notes overflow-y-scroll p-3">
 		{#if notesStore.value && notesStore.value.length > 0}
-			<div class="notes-grid mb-17">
+			<div class="notes-grid mt-4 mb-17">
 				{#each getFilteredAndSortedNotes(notesStore) as note}
 					<Note {note} auth={data.data.session} />
 				{/each}

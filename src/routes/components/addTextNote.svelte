@@ -10,6 +10,7 @@
 	import type { functionReturnData, returnData } from '../interfaces';
 	import { functionReturn } from '$lib/utils/functionReturn';
 	import { onMount } from 'svelte';
+	import { validateAcademicLevel } from '$lib/utils/validateAcademicLevel';
 
 	// Variables
 	let props = $props();
@@ -17,7 +18,7 @@
 
 	// Functions
 	async function addNote() {
-		if (!validateNote(newNote)) {
+		if (!validateNote(newNote) || !validateAcademicLevel(newNote.academicLevel)) {
 			console.error('Note is not in correct form to be added to database.');
 			showToast(
 				'The note is not in correct form. Please recheck your data.',

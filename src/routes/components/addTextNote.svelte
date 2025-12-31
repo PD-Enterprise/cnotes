@@ -18,18 +18,20 @@
 
 	// Functions
 	async function addNote() {
-		if (!validateNote(newNote) || !validateAcademicLevel(newNote.academicLevel)) {
-			console.error('Note is not in correct form to be added to database.');
-			showToast(
-				'The note is not in correct form. Please recheck your data.',
-
-				'error'
-			);
-			return;
-		}
 		const rawHtml = editorState.editor.getHTML();
 		newNote.content = DOMPurify.sanitize(rawHtml);
 		newNote.type = 'text';
+
+		if (!validateNote(newNote)) {
+			console.error('Note is not in correct form to be added to database.');
+			showToast('The note is not in correct form. Please recheck your data.', 'error');
+			return;
+		}
+		if (!validateAcademicLevel(newNote.academicLevel)) {
+			console.error('Academic level is not in correct form to be added to database.');
+			showToast('The Academic Level must be between 1 and 12. Or UG, G, or PG.', 'error');
+			return;
+		}
 
 		const [success, error] = await addToDB(newNote);
 		if (error || !success) {

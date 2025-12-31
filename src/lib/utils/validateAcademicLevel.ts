@@ -1,13 +1,16 @@
 export function validateAcademicLevel(academicLevel: string): boolean {
-	if (typeof academicLevel === 'number') {
-		if (academicLevel < 1 || academicLevel > 12) {
+	if (academicLevel.match(/^[0-9]+$/)) {
+		const academicLevelAsNumber = parseInt(academicLevel);
+		if (academicLevelAsNumber >= 1 && academicLevelAsNumber <= 12) {
+			return true;
+		} else {
 			return false;
 		}
-	} else if (typeof academicLevel === 'string') {
-		if (academicLevel !== 'UG' && academicLevel !== 'G' && academicLevel !== 'PG') {
+	} else {
+		if (academicLevel === 'UG' || academicLevel === 'G' || academicLevel === 'PG') {
+			return true;
+		} else {
 			return false;
 		}
 	}
-
-	return true;
 }

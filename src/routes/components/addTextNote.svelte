@@ -74,17 +74,17 @@
 		<div class="header flex flex-col gap-3">
 			<div class="buttons flex flex-row gap-3">
 				<div class="save-button-container w-40">
-					{#if validateNote(newNote)}
-						<button
-							class="btn btn-accent btn-outline border-base-content h-12 border"
-							onclick={addNote}>Add Note</button
-						>
-					{:else}
+					<!-- {#if validateNote(newNote)} -->
+					<button
+						class="btn btn-accent btn-outline border-base-content h-12 border"
+						onclick={addNote}>Add Note</button
+					>
+					<!-- {:else}
 						<button
 							class="btn btn-disabled btn-accent btn-outline border-base-content h-12 border"
 							onclick={addNote}>Add Note</button
 						>
-					{/if}
+					{/if} -->
 				</div>
 			</div>
 		</div>

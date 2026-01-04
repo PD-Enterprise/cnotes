@@ -177,8 +177,9 @@
 				<Icon icon="ep:back" class="h-5 w-5" />
 			</button>
 		{/if}
-
-		<a class="btn btn-ghost text-2xl" href="/">{toTitleCase(title)}</a>
+		<a class="btn btn-ghost justify-starttext-2xl flex" id="note-title" href="/"
+			>{toTitleCase(title)}</a
+		>
 	</div>
 	<div class="navbar-end">
 		{#if isHome}
@@ -330,6 +331,16 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+	#note-title {
+		white-space: nowrap;
+		overflow-x: scroll;
+		display: flex;
+		justify-content: start;
+		width: calc(100vw - 55px);
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
 	.search-bar {
 		transition:
 			transform 0.18s cubic-bezier(0.4, 0.2, 0.2, 1),
@@ -365,6 +376,10 @@
 		transform: scale(1.015);
 	}
 	@media (max-width: 600px) {
+		#note-title {
+			font-size: 1em;
+			padding: 0.2em;
+		}
 		.search-input {
 			width: 50%;
 		}

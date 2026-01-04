@@ -11,6 +11,7 @@
 	import ShareModel from '../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import Icon from '@iconify/svelte';
+	import { getNotes } from '$lib/api/get-notes';
 
 	// Variables
 	let error: string = $state('');
@@ -194,7 +195,7 @@
 			{error}
 		{:else if EditorNoteData.value}
 			<div class="note flex h-full flex-col gap-2 rounded-md">
-				<div class="drawer h-full lg:drawer-open">
+				<div class="drawer lg:drawer-open h-full">
 					<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
 					<div class="drawer-content flex h-full flex-col gap-2">
 						<div class="buttons flex gap-3">

@@ -20,6 +20,7 @@
 	let isHome = $state(true);
 	let title = $state('Home');
 	let shouldShowSearchResults: boolean = $state(false);
+	let shouldShowFilterMenu: boolean = $state(false);
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -61,6 +62,11 @@
 			const searchBar = document.querySelector('.search-bar');
 			if (searchBar && !searchBar.contains(event.target as Node)) {
 				shouldShowSearchResults = false;
+			}
+
+			const filterDropdown = document.querySelector('.filter-dropdown');
+			if (shouldShowFilterMenu && filterDropdown && !filterDropdown.contains(event.target as Node)) {
+				shouldShowFilterMenu = false;
 			}
 		});
 	});
@@ -190,26 +196,26 @@
 								}
 							}}
 						/>
-						<div class="dropdown">
-							<div
-								tabindex="0"
-								role="button"
+						<div class="filter-dropdown">
+							<button
 								title="Filter Notes"
 								class="filter-notes btn btn-circle border-base-content bg-base-100 hover:bg-base-300 border"
+								onclick={() => {
+									shouldShowFilterMenu = !shouldShowFilterMenu;
+								}}
 							>
 								<Icon icon="fa6-solid:filter" />
-							</div>
-
-							<div
-								class="filter-menu dropdown-content menu search-results bg-base-100 absolute right-0 mt-2 flex flex-row gap-2 rounded-md p-3 shadow"
-							>
-								<fieldset
-									class="filter-section fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4"
+							</button>
+							{#if shouldShowFilterMenu}
+								<div
+									class="filter-menu dropdown-content menu search-results bg-base-100 absolute right-0 mt-2 flex flex-row gap-2 rounded-md p-3 shadow"
 								>
-									<legend class="fieldset-legend">Academic Level:</legend>
-									<label class="label flex flex-col items-start">
+									<fieldset
+										class="filter-section fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4"
+									>
+										<legend class="fieldset-legend">Academic Level:</legend>
 										{#each Array.from(new Set(notesStore.value.map((note) => note.academicLevel))) as grade, i}
-											<label class="flex items-center gap-2 rounded p-1">
+											<label class="hover:bg-base-300 flex items-center gap-2 rounded p-1">
 												<input
 													type="radio"
 													name="grade-filter"
@@ -220,7 +226,7 @@
 												<span class="text-base">{grade}</span>
 											</label>
 										{/each}
-										<label class="flex items-center gap-2 rounded p-1">
+										<label class="hover:bg-base-300 flex items-center gap-2 rounded p-1">
 											<input
 												type="radio"
 												name="grade-filter"
@@ -231,16 +237,14 @@
 											/>
 											<span class="text-base">All Academic Levels</span>
 										</label>
-									</label>
-								</fieldset>
+									</fieldset>
 
-								<fieldset
-									class="filter-section fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4"
-								>
-									<legend class="fieldset-legend">Topics:</legend>
-									<label class="label flex flex-col items-start">
+									<fieldset
+										class="filter-section fieldset bg-base-100 border-base-300 rounded-box w-64 border p-4"
+									>
+										<legend class="fieldset-legend">Topics:</legend>
 										{#each Array.from(new Set(notesStore.value.map((note) => note.topic))) as subject, i}
-											<label class="flex items-center gap-2 rounded p-1">
+											<label class="hover:bg-base-300 flex items-center gap-2 rounded p-1">
 												<input
 													type="radio"
 													name="subject-filter"
@@ -251,7 +255,7 @@
 												<span class="text-base">{subject}</span>
 											</label>
 										{/each}
-										<label class="flex items-center gap-2 rounded p-1">
+										<label class="hover:bg-base-300 flex items-center gap-2 rounded p-1">
 											<input
 												type="radio"
 												name="subject-filter"
@@ -262,9 +266,9 @@
 											/>
 											<span class="text-base">All Topics</span>
 										</label>
-									</label>
-								</fieldset>
-							</div>
+									</fieldset>
+								</div>
+							{/if}
 						</div>
 					</div>
 					{#if shouldShowSearchResults}

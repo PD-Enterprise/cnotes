@@ -7,7 +7,6 @@
 	import Icon from '@iconify/svelte';
 	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
-	import { isAuthenticated } from '$lib/stores/store.svelte';
 
 	// Variables
 	let errorMessage: string = $state('');
@@ -21,11 +20,13 @@
 		visibility: '',
 		year: '',
 		language: '',
-		keywords: ''
+		keywords: '',
+		dateUpdated: ''
 	});
 	let localNote = null;
 	let hasLocalNote = false;
 	let slug: string = $state();
+	let shouldShowMetadata: boolean = $state(false);
 
 	// Functions
 	async function getNoteFromServer() {
@@ -69,6 +70,7 @@
 			noteData = { ...localNote };
 		}
 	}
+
 	onMount(() => {
 		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
 		getNoteFromLocalStorage(slug);
@@ -80,31 +82,33 @@
 	{#if noteData}
 		<div class="content flex h-full flex-col">
 			<div class="metadata-box bg-base-200 flex flex-col gap-1 p-2">
-				<h1 class="w-full p-1 text-2xl font-bold" style="view-transition-name: note-title-{slug}">
-					{noteData.title}
-				</h1>
-				<div class="meta-data flex flex-col flex-wrap items-center justify-center">
-					{#each Object.keys(noteData) as noteDataKey}
-						{#if ['dateCreated', 'academicLevel', 'topic', 'visibility', 'language'].includes(noteDataKey)}
-							<div class="mx-auto">
-								<div class="label text-center">
-									<span class="label-text">
-										{toTitleCase(noteDataKey)}:
-									</span>
-								</div>
-								{#if noteDataKey == 'academicLevel'}
-									{#if Number(noteData[noteDataKey])}
-										<p class="label-body text-center">{noteData[noteDataKey]}th grade</p>
+				{#if shouldShowMetadata}
+					<h1 class="w-full p-1 text-2xl font-bold" style="view-transition-name: note-title-{slug}">
+						{noteData.title}
+					</h1>
+					<div class="meta-data flex flex-col flex-wrap items-center justify-center">
+						{#each Object.keys(noteData) as noteDataKey}
+							{#if ['dateCreated', 'academicLevel', 'topic', 'visibility', 'language'].includes(noteDataKey)}
+								<div class="mx-auto">
+									<div class="label text-center">
+										<span class="label-text">
+											{toTitleCase(noteDataKey)}:
+										</span>
+									</div>
+									{#if noteDataKey == 'academicLevel'}
+										{#if Number(noteData[noteDataKey])}
+											<p class="label-body text-center">{noteData[noteDataKey]}th grade</p>
+										{:else}
+											<p class="label-body text-center">{noteData[noteDataKey]}</p>
+										{/if}
 									{:else}
 										<p class="label-body text-center">{noteData[noteDataKey]}</p>
 									{/if}
-								{:else}
-									<p class="label-body text-center">{noteData[noteDataKey]}</p>
-								{/if}
-							</div>
-						{/if}
-					{/each}
-				</div>
+								</div>
+							{/if}
+						{/each}
+					</div>
+				{/if}
 				<div class="buttons flex flex-row gap-2">
 					<button
 						class="share-btn btn btn-success p-2"
@@ -119,6 +123,18 @@
 					<a class="edit-btn btn btn-accent p-2" href={`/${noteData.slug}`}
 						>Edit<Icon icon="mage:edit" width="24" height="24" /></a
 					>
+					<button
+						class="metadata-btn btn btn-ghost p-2"
+						onclick={() => {
+							shouldShowMetadata = !shouldShowMetadata;
+						}}
+					>
+						{#if shouldShowMetadata}
+							<Icon icon="tabler:eye-off" width="24" height="24" />
+						{:else}
+							<Icon icon="tabler:eye" width="24" height="24" />
+						{/if}
+					</button>
 				</div>
 			</div>
 			{#if noteData.type == 'text'}

@@ -62,7 +62,7 @@
 		if (storedNote) {
 			hasLocalNote = true;
 			try {
-				localNote = JSON.parse(decodeURIComponent(atob(storedNote)));
+				localNote = JSON.parse(atob(storedNote));
 			} catch (e) {
 				errorMessage = 'Failed to load note from local storage.';
 			}

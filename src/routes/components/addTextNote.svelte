@@ -60,6 +60,7 @@
 				case 400:
 					return functionReturn(false, true, 'Error adding note', null, result.error);
 				case 200:
+					localStorage.setItem(`note:${note.slug}`, btoa(JSON.stringify(note)));
 					return functionReturn(true, false, 'Note added successfully', result.data, null);
 				default:
 					return functionReturn(false, true, 'Error adding note', null, null);

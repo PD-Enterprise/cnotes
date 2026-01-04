@@ -62,7 +62,7 @@
 		if (storedNote) {
 			hasLocalNote = true;
 			try {
-				localNote = JSON.parse(atob(storedNote));
+				localNote = JSON.parse(storedNote);
 			} catch (e) {
 				error = 'Failed to load note from local storage.';
 			}
@@ -122,7 +122,7 @@
 			// Save to localStorage
 			localStorage.setItem(
 				`note:${EditorNoteData.value.slug}`,
-				btoa(JSON.stringify(EditorNoteData.value))
+				JSON.stringify(EditorNoteData.value)
 			);
 			showToast('Note saved successfully', 'success');
 			if (isTitleChanged) {

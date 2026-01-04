@@ -65,7 +65,11 @@
 			}
 
 			const filterDropdown = document.querySelector('.filter-dropdown');
-			if (shouldShowFilterMenu && filterDropdown && !filterDropdown.contains(event.target as Node)) {
+			if (
+				shouldShowFilterMenu &&
+				filterDropdown &&
+				!filterDropdown.contains(event.target as Node)
+			) {
 				shouldShowFilterMenu = false;
 			}
 		});

@@ -24,8 +24,7 @@
 				let noteData: any;
 				try {
 					const decodedString = atob(encodedData || '');
-					const uint8Array = new Uint8Array([...decodedString].map((c) => c.charCodeAt(0)));
-					noteData = JSON.parse(new TextDecoder().decode(uint8Array));
+					noteData = JSON.parse(decodedString);
 				} catch (e) {
 					try {
 						noteData = JSON.parse(encodedData || '{}');
@@ -91,9 +90,7 @@
 	}
 	async function persistNotesInLocalStorage() {
 		for (const note of notesStore.value) {
-			const encryptedNote = btoa(
-				String.fromCharCode(...new TextEncoder().encode(JSON.stringify(note)))
-			);
+			const encryptedNote = JSON.stringify(note);
 			localStorage.setItem(`note:${note.slug}`, encryptedNote);
 		}
 	}

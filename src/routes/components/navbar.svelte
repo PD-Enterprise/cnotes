@@ -177,7 +177,7 @@
 				<Icon icon="ep:back" class="h-5 w-5" />
 			</button>
 		{/if}
-		<a class="btn btn-ghost justify-starttext-2xl flex" id="note-title" href="/"
+		<a class="btn btn-ghost flex justify-start text-2xl" id="note-title" href="/"
 			>{toTitleCase(title)}</a
 		>
 	</div>

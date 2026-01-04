@@ -37,8 +37,8 @@
 		}
 		// Sort notes by date (latest first)
 		localNotes = tempNotes.sort((a, b) => {
-			const dateA = new Date(a.dateCreated || 0).getTime();
-			const dateB = new Date(b.dateCreated || 0).getTime();
+			const dateA = new Date(a.dateUpdated || 0).getTime();
+			const dateB = new Date(b.dateUpdated || 0).getTime();
 			return dateB - dateA;
 		});
 		if (hasLocalNotes) {
@@ -80,8 +80,8 @@
 
 		if (result.data && result.data != undefined && result.data.length > 0) {
 			const serverNotes: note[] = result.data.sort((a, b) => {
-				const dateA = new Date(a.dateCreated || 0).getTime();
-				const dateB = new Date(b.dateCreated || 0).getTime();
+				const dateA = new Date(a.dateUpdated || 0).getTime();
+				const dateB = new Date(b.dateUpdated || 0).getTime();
 				return dateB - dateA;
 			});
 			notesStore.value = serverNotes;

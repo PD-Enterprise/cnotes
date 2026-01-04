@@ -6,6 +6,7 @@ export type note = {
 	content: string;
 
 	dateCreated: string;
+	dateUpdated: string;
 	academicLevel: string;
 	topic: string;
 

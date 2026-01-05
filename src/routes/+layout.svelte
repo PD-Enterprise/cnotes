@@ -9,6 +9,7 @@
 	import { isAuthenticated } from '$lib/stores/store.svelte';
 	import NotLoggedIn from './components/notLoggedIn.svelte';
 	import SvelteToast from './components/svelteToast.svelte';
+	import { page } from '$app/state';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
@@ -50,7 +51,9 @@
 >
 	<SvelteToast />
 	{#if !isAuthenticated.value}
-		<NotLoggedIn />
+		{#if !(page.url.pathname.endsWith('/login') || page.url.pathname.endsWith('/sharing'))}
+			<NotLoggedIn />
+		{/if}
 	{/if}
 	<div class="navbar">
 		<Navbar {data} />

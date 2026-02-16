@@ -380,8 +380,18 @@
 			font-size: 1em;
 			padding: 0.2em;
 		}
+		.search-bar {
+			font-size: 0.8em;
+		}
+	}
+	@media (max-width: 490px) {
 		.search-input {
-			width: 50%;
+			display: none;
+		}
+	}
+	@media (max-width: 330px) {
+		.search-input {
+			display: none;
 		}
 	}
 	/* Add Note button styles moved to the left for cleaner layout */

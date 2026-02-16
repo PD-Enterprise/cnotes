@@ -129,16 +129,8 @@
 		height: 100%;
 	}
 	.notes-grid {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
 		gap: 20px;
-	}
-	@media (max-width: 600px) {
-		.notes-grid {
-			display: flex;
-			flex-direction: column;
-			flex-wrap: nowrap;
-		}
 	}
 </style>

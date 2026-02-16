@@ -182,9 +182,7 @@
 
 <style>
 	.note {
-		--note-width: 15em;
 		--note-height: 11em;
-		width: var(--note-width);
 		height: var(--note-height);
 		flex-direction: column;
 		overflow-y: hidden;
@@ -205,13 +203,5 @@
 	}
 	.note:focus {
 		border: 2px solid #4a90e2;
-	}
-	@media (max-width: 600px) {
-		.note {
-			width: 100%;
-		}
-		.note-meta {
-			justify-content: flex-end;
-		}
 	}
 </style>

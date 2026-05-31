@@ -3,7 +3,7 @@ import { returnJson } from '$lib/utils/returnJson.js';
 import { getNotes } from '$lib/api/get-notes';
 import { deleteNote } from '$lib/api/delete-note';
 
-export async function GET({ url, locals }) {
+export async function GET({ url, locals, request }) {
 	const session = await locals.getSession();
 	if (!session) {
 		return returnJson(401, 'Unauthorized', null, null);
@@ -11,7 +11,8 @@ export async function GET({ url, locals }) {
 
 	const email = session.user.email;
 
-	const [success, error, _, data] = await getNotes(email);
+	const cookieHeader = request.headers.get('cookie') || '';
+	const [success, error, _, data] = await getNotes(cookieHeader, email);
 	if (error || !success) {
 		return returnJson(500, 'Error fetching notes', null, error);
 	}

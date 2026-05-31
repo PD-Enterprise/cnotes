@@ -3,13 +3,10 @@
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { editorState, isAuthenticated } from '$lib/stores/store.svelte';
+	import { editorState } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import Tiptap from '../components/tiptap.svelte';
-	import { toTitleCase } from '$lib/utils/toTitleCase';
-	import type { functionReturnData, returnData } from '../interfaces';
 	import { functionReturn } from '$lib/utils/functionReturn';
-	import { onMount } from 'svelte';
 	import { validateAcademicLevel } from '$lib/utils/validateAcademicLevel';
 
 	// Variables
@@ -52,6 +49,7 @@
 				})
 			});
 			const result = await request.json();
+			console.log(result);
 
 			switch (result.status) {
 				case 401:

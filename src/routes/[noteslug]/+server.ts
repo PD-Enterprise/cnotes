@@ -5,7 +5,7 @@ import { returnJson } from '$lib/utils/returnJson';
 
 let email: string;
 
-export async function GET({ url, locals }) {
+export async function GET({ url, locals, request }) {
 	const slug = url.pathname.split('/')[1];
 
 	try {
@@ -18,7 +18,8 @@ export async function GET({ url, locals }) {
 		email = 'null';
 	}
 
-	const [success, error, message, data] = await getNote(email, slug);
+	const cookieHeader = request.headers.get('cookie') || '';
+	const [success, error, message, data] = await getNote(cookieHeader, slug);
 	if (error || !success) {
 		return returnJson(data, message, null, error);
 	}
@@ -38,7 +39,8 @@ export async function POST({ locals, request }) {
 	}
 	const email = session.user.email;
 
-	const [success, error, _, data] = await updateNote(email, noteData);
+	const cookieHeader = request.headers.get('cookie') || '';
+	const [success, error, _, data] = await updateNote(cookieHeader, noteData);
 	if (error || !success) {
 		return returnJson(500, 'Error updating note', null, error);
 	}

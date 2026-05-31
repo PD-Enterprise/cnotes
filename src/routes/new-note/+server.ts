@@ -18,7 +18,8 @@ export async function POST({ url, locals, request }) {
 	const year = new Date(body.note.dateCreated).getFullYear();
 	body.note.year = year;
 
-	const [success, error] = await newNote(email, body.note);
+	const cookieHeader = request.headers.get('cookie') || '';
+	const [success, error] = await newNote(cookieHeader, body.note);
 	if (error || !success) {
 		return returnJson(500, 'Error creating note', null, error);
 	}

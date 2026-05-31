@@ -5,16 +5,14 @@
 	import AddTextNote from '../components/addTextNote.svelte';
 	import Diagram from '../components/diagram.svelte';
 	import type { note } from '../types';
-	import { validateNote } from '$lib/utils/validateNote';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
-	import { onMount } from 'svelte';
-
 	// Variables
 	let option = $state('text');
 	let newNote: note = $state({
 		title: '',
 		content: '',
 		dateCreated: '',
+		dateUpdated: '',
 		academicLevel: '',
 		topic: '',
 		type: '',
@@ -27,7 +25,7 @@
 </script>
 
 <div class="main">
-	<div class="drawer lg:drawer-open">
+	<div class="drawer lg:drawer-open h-full">
 		<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content flex flex-col gap-2">
 			<div class="flex flex-row gap-2">

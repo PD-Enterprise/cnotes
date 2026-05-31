@@ -2,14 +2,14 @@ import config from '$lib/utils/apiConfig';
 import type { note } from '../../routes/types';
 import { functionReturn } from '../utils/functionReturn';
 
-export async function newNote(email: string, note: note) {
+export async function newNote(cookieHeader: string, note: note) {
 	const newNoteRequest = await fetch(`${config.apiUrl}cnotes/new-note/${note.type}`, {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			'Cookie': cookieHeader
 		},
 		body: JSON.stringify({
-			email: email,
 			note: note
 		})
 	});

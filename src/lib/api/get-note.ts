@@ -1,13 +1,13 @@
 import config from '$lib/utils/apiConfig';
 import { functionReturn } from '../utils/functionReturn';
 
-export async function getNote(email: string, slug: string) {
+export async function getNote(cookieHeader: string, slug: string) {
 	const getNoteRequest = await fetch(`${config.apiUrl}cnotes/note/${slug}`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			email: email
-		})
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			'Cookie': cookieHeader
+		}
 	});
 
 	const result = await getNoteRequest.json();

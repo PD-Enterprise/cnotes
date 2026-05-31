@@ -47,7 +47,7 @@
 			return;
 		}
 
-		const serverNote: note = result.data;
+		const serverNote: note = result.data[0];
 		originalNote = result.data;
 		// console.log('server note', serverNote);
 

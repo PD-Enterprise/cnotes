@@ -36,8 +36,6 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await request.json();
-		// console.log(result);
-
 		if (result.status != 200) {
 			noteData = null;
 			getNoteFromLocalStorage(slug);
@@ -55,7 +53,7 @@
 			}
 		}
 
-		const serverNote = result.data;
+		const serverNote = result.data[0];
 		noteData = { ...serverNote };
 	}
 	async function getNoteFromLocalStorage(slug: string) {

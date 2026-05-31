@@ -45,6 +45,7 @@
 			const [success, error] = await addToDB(newNote);
 			if (error || !success) {
 				showToast('There is an error with the editor.', 'error');
+				return;
 			}
 			showToast('Note added successfully', 'success');
 			window.location.href = '/';

@@ -27,7 +27,8 @@ export const EditorNoteData = $state<{ value: note }>({
 	value: {
 		title: '',
 		dateCreated: '',
-		academicLevel: undefined,
+		dateUpdated: '',
+		academicLevel: '',
 		topic: '',
 		content: '',
 		slug: '',

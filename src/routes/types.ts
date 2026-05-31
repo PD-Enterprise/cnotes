@@ -2,19 +2,16 @@ export type note = {
 	noteId?: number;
 	title: string;
 	slug?: string;
-
 	content: string;
-
 	dateCreated: string;
 	dateUpdated: string;
 	academicLevel: string;
 	topic: string;
-
 	type: string;
 	visibility: string;
-	year: string;
+	year?: string | number;
 	language: string;
-	keywords: string;
+	keywords?: string | null;
 };
 
 export type searchResult = {

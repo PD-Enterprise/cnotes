@@ -1,15 +1,13 @@
 import config from '$lib/utils/apiConfig';
 import { functionReturn } from '../utils/functionReturn';
 
-export async function deleteNote(email: string, slug: string) {
+export async function deleteNote(cookieHeader: string, slug: string) {
 	const deleteNoteRequest = await fetch(`${config.apiUrl}cnotes/note/${slug}/delete`, {
 		method: 'DELETE',
 		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify({
-			email: email
-		})
+			'Content-Type': 'application/json',
+			'Cookie': cookieHeader
+		}
 	});
 
 	const result = await deleteNoteRequest.json();

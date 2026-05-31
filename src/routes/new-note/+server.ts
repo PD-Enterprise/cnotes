@@ -18,6 +18,13 @@ export async function POST({ url, locals, request }) {
 	const year = new Date(body.note.dateCreated).getFullYear();
 	body.note.year = year;
 
+	const slug = body.note.title
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/(^-|-$)/g, '');
+	body.note.slug = slug;
+
 	const cookieHeader = request.headers.get('cookie') || '';
 	const [success, error] = await newNote(cookieHeader, body.note);
 	if (error || !success) {

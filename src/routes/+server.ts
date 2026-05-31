@@ -29,10 +29,10 @@ export async function DELETE({ locals, request }) {
 		return returnJson(401, 'Unauthorized', null, null);
 	}
 
-	const email = session.user.email;
 	const slug = body.note.slug;
+	const cookieHeader = request.headers.get('cookie') || '';
 
-	const [success, error] = await deleteNote(email, slug);
+	const [success, error] = await deleteNote(cookieHeader, slug);
 	if (error || !success) {
 		return returnJson(500, 'Error deleting note', null, error);
 	}

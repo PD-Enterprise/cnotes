@@ -27,56 +27,6 @@
 
 <div class="main">
 	<div class="page-layout">
-		<div class="content-area">
-			<div class="top-bar flex flex-row gap-2">
-				<div class="sidebar-toggle hidden p-1">
-					<button
-						onclick={() => (sidebarOpen = !sidebarOpen)}
-						aria-label="open sidebar"
-						class="btn btn-ghost"
-					>
-						<Icon icon="meteor-icons:sidebar" width="22" height="22" />
-					</button>
-				</div>
-
-				<div class="type-selector p-2">
-					<div class="dropdown">
-						<select
-							bind:value={option}
-							class="menu bg-base-200 border-base-content z-1 w-52 rounded border p-2 shadow-xl"
-						>
-							<option value="text">Text</option>
-							<option value="diagram">Diagram</option>
-						</select>
-					</div>
-					<div class="dropdown dropdown-end">
-						<div tabindex="0" role="button" class="btn btn-ghost info-text">
-							<Icon icon="material-symbols:info" width="22" height="22" />
-						</div>
-						<div
-							class="compact dropdown-content card rounded-box bg-base-100 z-100 h-auto w-64 shadow"
-						>
-							<div class="card-body p-2">
-								<p class="card-title">component state is not held!!!</p>
-								<p class="card-body p-0">Save your work before switching</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="editors">
-				{#if option === 'text'}
-					<div class="text">
-						<AddTextNote {newNote} />
-					</div>
-				{:else if option === 'diagram'}
-					<div class="diagram mt-1 p-2">
-						<Diagram {newNote} />
-					</div>
-				{/if}
-			</div>
-		</div>
-
 		<aside class="metadata-sidebar bg-base-200" class:open={sidebarOpen}>
 			<div class="flex flex-col gap-4 p-2">
 				<div class="top-bar flex flex-row gap-2">
@@ -151,6 +101,56 @@
 				</div>
 			</div>
 		</aside>
+
+		<div class="content-area">
+			<div class="top-bar flex flex-row gap-2">
+				<div class="sidebar-toggle hidden p-1">
+					<button
+						onclick={() => (sidebarOpen = !sidebarOpen)}
+						aria-label="open sidebar"
+						class="btn btn-ghost"
+					>
+						<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+					</button>
+				</div>
+
+				<div class="type-selector p-2">
+					<div class="dropdown">
+						<select
+							bind:value={option}
+							class="menu bg-base-200 border-base-content z-1 w-52 rounded border p-2 shadow-xl"
+						>
+							<option value="text">Text</option>
+							<option value="diagram">Diagram</option>
+						</select>
+					</div>
+					<div class="dropdown dropdown-end">
+						<div tabindex="0" role="button" class="btn btn-ghost info-text">
+							<Icon icon="material-symbols:info" width="22" height="22" />
+						</div>
+						<div
+							class="compact dropdown-content card rounded-box bg-base-100 z-100 h-auto w-64 shadow"
+						>
+							<div class="card-body p-2">
+								<p class="card-title">component state is not held!!!</p>
+								<p class="card-body p-0">Save your work before switching</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="editors">
+				{#if option === 'text'}
+					<div class="text">
+						<AddTextNote {newNote} />
+					</div>
+				{:else if option === 'diagram'}
+					<div class="diagram mt-1 p-2">
+						<Diagram {newNote} />
+					</div>
+				{/if}
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -248,11 +248,11 @@
 		.metadata-sidebar {
 			position: fixed;
 			top: 64px;
-			right: 0;
+			left: 0;
 			height: calc(100vh - 64px);
 			width: 20rem;
 			z-index: 20;
-			transform: translateX(100%);
+			transform: translateX(-100%);
 			transition: transform 0.2s ease-out;
 			max-height: none;
 		}

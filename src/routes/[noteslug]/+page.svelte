@@ -31,6 +31,7 @@
 	let isTitleChanged: boolean = $state(false);
 	let localNote: any = null;
 	let hasLocalNote = false;
+	let editor: HTMLDivElement;
 
 	// Functions
 	async function getNote(slug: string) {
@@ -39,7 +40,6 @@
 			headers: { 'Content-Type': 'application/json' }
 		});
 		const result = await response.json();
-		// console.log(result);
 
 		if (!result.data || result.status != 200) {
 			console.error('Failed to fetch note data.');
@@ -48,7 +48,7 @@
 		}
 
 		const serverNote: note = result.data[0];
-		originalNote = result.data;
+		originalNote = serverNote;
 		// console.log('server note', serverNote);
 
 		if (serverNote && serverNote != undefined) {
@@ -153,39 +153,42 @@
 		getNote(slug);
 
 		window.addEventListener('keydown', handleSaveShortcut);
-		const editor = document.getElementById('editor') as HTMLDivElement;
+		editor = document.getElementById('editor') as HTMLDivElement;
+	});
 
-		$effect(() => {
-			if (!editor) {
-				return;
-			}
-			if (theme.value) {
-				editor.classList.remove('dark');
-			} else {
-				editor.classList.add('dark');
-			}
-		});
+	$effect(() => {
+		if (!editor) {
+			return;
+		}
+		if (theme.value) {
+			editor.classList.remove('dark');
+		} else {
+			editor.classList.add('dark');
+		}
+	});
 
-		$effect(() => {
-			if (excalidrawAPI) {
-				// Destructure the three arguments: elements, appState, and files
-				excalidrawAPI.onChange((elements, files) => {
-					// console.log('Elements:', elements);
-					// console.log('Files:', files);
-					if (elements.length > 0) {
-						const currentContent = JSON.stringify({ elements: elements, files: files });
-						const originalContent = JSON.stringify({
-							elements: JSON.parse(originalNote.content).elements,
-							files: JSON.parse(originalNote.content).files
-						});
-						excalidrawIsDirty = currentContent !== originalContent;
-					} else {
-						excalidrawIsDirty =
-							originalNote && originalNote.content !== '{"elements": [], "files": {}}';
-					}
-				});
-			}
-		});
+	$effect(() => {
+		if (excalidrawAPI) {
+			// Destructure the three arguments: elements, appState, and files
+			excalidrawAPI.onChange((elements, files) => {
+				// console.log('Elements:', elements);
+				// console.log('Files:', files);
+				if (elements.length > 0) {
+					const currentContent = JSON.stringify({ elements: elements, files: files });
+					const parsedContent = originalNote?.content
+						? JSON.parse(originalNote.content)
+						: { elements: [], files: {} };
+					const originalContent = JSON.stringify({
+						elements: parsedContent.elements || [],
+						files: parsedContent.files || {}
+					});
+					excalidrawIsDirty = currentContent !== originalContent;
+				} else {
+					excalidrawIsDirty =
+						originalNote && originalNote.content !== '{"elements": [], "files": {}}';
+				}
+			});
+		}
 	});
 </script>
 

@@ -15,6 +15,7 @@ export async function newNote(cookieHeader: string, note: note) {
 	});
 
 	const result = await newNoteRequest.json();
+	console.log(result)
 
 	if (result.status != 200) {
 		return functionReturn(false, true, result.message, result.status, result.error);

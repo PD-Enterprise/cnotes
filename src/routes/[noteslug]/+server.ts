@@ -20,6 +20,7 @@ export async function GET({ url, locals, request }) {
 
 	const cookieHeader = request.headers.get('cookie') || '';
 	const [success, error, message, data] = await getNote(cookieHeader, slug);
+	// console.log(data)
 	if (error || !success) {
 		return returnJson(data, message, null, error);
 	}

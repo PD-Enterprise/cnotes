@@ -19,7 +19,6 @@ export const load: LayoutServerLoad = async (event) => {
 				},
 			});
 			const result = await request.json();
-			console.log(result)
 		} catch (error) {
 			return {
 				status: 500,

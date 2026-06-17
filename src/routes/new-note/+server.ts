@@ -1,5 +1,4 @@
 import { returnJson } from '$lib/utils/returnJson';
-import type { returnData } from '../interfaces';
 import { newNote } from '$lib/api/new-note';
 
 export async function POST({ url, locals, request }) {
@@ -12,8 +11,6 @@ export async function POST({ url, locals, request }) {
 	if (!body) {
 		return returnJson(400, 'Invalid request body', null, null);
 	}
-
-	const email = session.user.email;
 
 	const year = new Date(body.note.dateCreated).getFullYear();
 	body.note.year = year;

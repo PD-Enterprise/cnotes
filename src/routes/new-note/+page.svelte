@@ -9,17 +9,17 @@
 	// Variables
 	let option = $state('text');
 	let newNote: note = $state({
-		title: 'Test',
-		content: 'test',
+		title: '',
+		content: '',
 		dateCreated: '',
 		dateUpdated: '',
-		academicLevel: '10',
-		topic: 'test',
-		type: 'text',
+		academicLevel: '',
+		topic: '',
+		type: '',
 		visibility: 'private',
-		year: '2026',
-		language: 'english',
-		keywords: 'test'
+		year: '',
+		language: '',
+		keywords: ''
 	});
 	let isK_12: string = $state('true');
 	let sidebarOpen = $state(false);

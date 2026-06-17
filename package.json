@@ -35,7 +35,7 @@
 	"dependencies": {
 		"@aarkue/tiptap-math-extension": "^1.4.0",
 		"@auth/core": "^0.40.0",
-		"@auth/sveltekit": "^1.10.0",
+		"@auth/sveltekit": "^1.11.2",
 		"@excalidraw/excalidraw": "^0.17.6",
 		"@iconify/svelte": "^5.0.1",
 		"@tailwindcss/vite": "^4.1.13",

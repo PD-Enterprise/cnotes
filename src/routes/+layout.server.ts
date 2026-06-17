@@ -7,16 +7,19 @@ export const load: LayoutServerLoad = async (event) => {
 
 	if (session) {
 		try {
+			const cookieHeader = event.cookies
+				.getAll()
+				.map(({ name, value }) => `${name}=${value}`)
+				.join('; ');
 			const request = await fetch(`${config.apiUrl}users/new-user`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name: session.user.name,
-					email: session.user.email,
-					avatarUrl: session.user.image
-				})
+				headers: {
+					'Content-Type': 'application/json',
+					'Cookie': cookieHeader
+				},
 			});
 			const result = await request.json();
+			console.log(result)
 		} catch (error) {
 			return {
 				status: 500,

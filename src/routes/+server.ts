@@ -11,6 +11,7 @@ export async function GET({ url, locals, request }) {
 
 	const email = session.user.email;
 	console.log(AUTH_SECRET)
+	console.log("length", AUTH_SECRET.length)
 	const cookieHeader = request.headers.get('cookie') || '';
 	try {
 		const [success, error, _, data] = await getNotes(cookieHeader, email);

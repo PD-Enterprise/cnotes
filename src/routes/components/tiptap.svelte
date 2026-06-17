@@ -36,44 +36,40 @@
 	let heading2Active = $state(false);
 	let heading3Active = $state(false);
 
+	const CustomHeading = Heading.extend({
+		renderHTML({ node, HTMLAttributes }) {
+			const level = node.attrs.level;
+			let classes = '';
+			switch (level) {
+				case 1:
+					classes = 'text-4xl font-bold';
+					break;
+				case 2:
+					classes = 'text-3xl font-semibold';
+					break;
+				case 3:
+					classes = 'text-2xl font-medium';
+					break;
+				case 4:
+					classes = 'text-xl';
+					break;
+				default:
+					classes = 'text-base';
+			}
+			return [
+				`h${level}`,
+				mergeAttributes(HTMLAttributes, { class: classes }),
+				0
+			];
+		}
+	});
+
 	onMount(() => {
 		editorState.editor = new Editor({
 			element: element,
 			extensions: [
 				StarterKit,
-				Heading.configure({
-					levels: [1, 2, 3],
-					HTMLAttributes: {
-						class: 'text-xl' // Default class if needed, or overridden below
-					}
-				}),
-				Heading.extend({
-					renderHTML({ node, HTMLAttributes }) {
-						const level = node.attrs.level;
-						let classes = '';
-						switch (level) {
-							case 1:
-								classes = 'text-4xl font-bold'; // Added font-bold for better visual distinction
-								break;
-							case 2:
-								classes = 'text-3xl font-semibold';
-								break;
-							case 3:
-								classes = 'text-2xl font-medium';
-								break;
-							case 4:
-								classes = 'text-xl';
-								break;
-							default:
-								classes = 'text-base';
-						}
-						return [
-							`h${level}`,
-							mergeAttributes(HTMLAttributes, { class: classes }), // Merge existing attributes with your new class
-							0
-						];
-					}
-				}),
+				CustomHeading.configure({ levels: [1, 2, 3] }),
 				Underline,
 				Highlight.configure({
 					multicolor: true

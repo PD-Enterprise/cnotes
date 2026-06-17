@@ -26,9 +26,14 @@ export async function POST({ url, locals, request }) {
 	body.note.slug = slug;
 
 	const cookieHeader = request.headers.get('cookie') || '';
-	const [success, error] = await newNote(cookieHeader, body.note);
-	if (error || !success) {
-		return returnJson(500, 'Error creating note', null, error);
+	try {
+		const [success, error] = await newNote(cookieHeader, body.note);
+		if (error || !success) {
+			return returnJson(500, 'Error creating note', null, error);
+		}
+		return returnJson(200, 'Note created successfully', null, null);
+	} catch (e) {
+		console.error('Error calling backend:', e);
+		return returnJson(503, 'Backend service unavailable', null, e);
 	}
-	return returnJson(200, 'Note created successfully', null, null);
 }

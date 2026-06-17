@@ -19,12 +19,16 @@ export async function GET({ url, locals, request }) {
 	}
 
 	const cookieHeader = request.headers.get('cookie') || '';
-	const [success, error, message, data] = await getNote(cookieHeader, slug);
-	// console.log(data)
-	if (error || !success) {
-		return returnJson(data, message, null, error);
+	try {
+		const [success, error, message, data] = await getNote(cookieHeader, slug);
+		if (error || !success) {
+			return returnJson(data, message, null, error);
+		}
+		return returnJson(200, 'Note fetched successfully', data, null);
+	} catch (e) {
+		console.error('Error calling backend:', e);
+		return returnJson(503, 'Backend service unavailable', null, e);
 	}
-	return returnJson(200, 'Note fetched successfully', data, null);
 }
 
 export async function POST({ locals, request }) {
@@ -41,9 +45,14 @@ export async function POST({ locals, request }) {
 	const email = session.user.email;
 
 	const cookieHeader = request.headers.get('cookie') || '';
-	const [success, error, _, data] = await updateNote(cookieHeader, noteData);
-	if (error || !success) {
-		return returnJson(500, 'Error updating note', null, error);
+	try {
+		const [success, error, _, data] = await updateNote(cookieHeader, noteData);
+		if (error || !success) {
+			return returnJson(500, 'Error updating note', null, error);
+		}
+		return returnJson(200, 'Note updated successfully', data, null);
+	} catch (e) {
+		console.error('Error calling backend:', e);
+		return returnJson(503, 'Backend service unavailable', null, e);
 	}
-	return returnJson(200, 'Note updated successfully', data, null);
 }

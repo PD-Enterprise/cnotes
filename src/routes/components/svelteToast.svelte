@@ -16,7 +16,7 @@
 	};
 </script>
 
-<SvelteToast {toastOptions} />
+<SvelteToast options={toastOptions} />
 
 <style>
 	:global(.info) {

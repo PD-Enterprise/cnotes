@@ -7,6 +7,7 @@ export function returnJson(status: number, message: string, data: any, error: an
 			message: message,
 			data: data,
 			error: error
-		})
+		}),
+		{ status }
 	);
 }

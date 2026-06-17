@@ -12,11 +12,16 @@ export async function GET({ url, locals, request }) {
 	const email = session.user.email;
 
 	const cookieHeader = request.headers.get('cookie') || '';
-	const [success, error, _, data] = await getNotes(cookieHeader, email);
-	if (error || !success) {
-		return returnJson(500, 'Error fetching notes', null, error);
+	try {
+		const [success, error, _, data] = await getNotes(cookieHeader, email);
+		if (error || !success) {
+			return returnJson(500, 'Error fetching notes', null, error);
+		}
+		return returnJson(200, 'Notes fetched successfully', data, null);
+	} catch (e) {
+		console.error('Error calling backend:', e);
+		return returnJson(503, 'Backend service unavailable', null, e);
 	}
-	return returnJson(200, 'Notes fetched successfully', data, null);
 }
 
 export async function DELETE({ locals, request }) {
@@ -32,9 +37,14 @@ export async function DELETE({ locals, request }) {
 	const slug = body.note.slug;
 	const cookieHeader = request.headers.get('cookie') || '';
 
-	const [success, error] = await deleteNote(cookieHeader, slug);
-	if (error || !success) {
-		return returnJson(500, 'Error deleting note', null, error);
+	try {
+		const [success, error] = await deleteNote(cookieHeader, slug);
+		if (error || !success) {
+			return returnJson(500, 'Error deleting note', null, error);
+		}
+		return returnJson(200, 'Note deleted successfully', null, null);
+	} catch (e) {
+		console.error('Error calling backend:', e);
+		return returnJson(503, 'Backend service unavailable', null, e);
 	}
-	return returnJson(200, 'Note deleted successfully', null, null);
 }

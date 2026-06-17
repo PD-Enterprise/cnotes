@@ -1,7 +1,7 @@
-import config from '$lib/utils/apiConfig';
 import { returnJson } from '$lib/utils/returnJson.js';
 import { getNotes } from '$lib/api/get-notes';
 import { deleteNote } from '$lib/api/delete-note';
+import { AUTH_SECRET } from "$env/static/private"
 
 export async function GET({ url, locals, request }) {
 	const session = await locals.getSession();
@@ -10,7 +10,7 @@ export async function GET({ url, locals, request }) {
 	}
 
 	const email = session.user.email;
-
+	console.log(AUTH_SECRET)
 	const cookieHeader = request.headers.get('cookie') || '';
 	try {
 		const [success, error, _, data] = await getNotes(cookieHeader, email);

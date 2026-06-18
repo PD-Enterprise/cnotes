@@ -71,10 +71,19 @@
 				<div class="h-7 w-7 rounded-full bg-gradient-to-br from-[#cdbcff] to-[#b29bf2]"></div>
 				<span class="text-2xl font-semibold text-white">Cnotes</span>
 			</div>
-			<nav class="flex items-center gap-8 text-base text-gray-200">
-				<a href="#features" class="transition-colors hover:text-white">products</a>
-				<a href="#pricing" class="transition-colors hover:text-white">about</a>
-				<a href="/blog" class="transition-colors hover:text-white">blog</a>
+			<nav class="flex items-center gap-6 text-base text-gray-200">
+				<a href="#features" class="flex items-center gap-1.5 transition-colors hover:text-white">
+					<Icon icon="material-symbols:inventory-2-outline" class="h-5 w-5" />
+					products
+				</a>
+				<a href="#pricing" class="flex items-center gap-1.5 transition-colors hover:text-white">
+					<Icon icon="material-symbols:info-outline" class="h-5 w-5" />
+					about
+				</a>
+				<a href="/blog" class="flex items-center gap-1.5 transition-colors hover:text-white">
+					<Icon icon="material-symbols:newspaper" class="h-5 w-5" />
+					blog
+				</a>
 			</nav>
 		</div>
 	</header>
@@ -213,7 +222,7 @@
 				class="text-gray-400 transition-colors hover:text-white"
 				aria-label="GitHub"
 			>
-				<Icon icon="mdi:github" class="h-6 w-6" />
+				<Icon icon="material-symbols:code" class="h-6 w-6" />
 			</a>
 		</div>
 	</footer>

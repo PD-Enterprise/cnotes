@@ -4,6 +4,7 @@
 	import type { note, searchResult } from './types';
 	import { notesStore } from '$lib/stores/store.svelte';
 	import Note from './components/note.svelte';
+	import Landing from './components/landing.svelte';
 	import { getFilteredAndSortedNotes } from '$lib/utils/getFilteredAndSortedNotes';
 
 	// Variables
@@ -105,21 +106,25 @@
 	});
 </script>
 
-<div class="main">
-	<div class="notes overflow-y-scroll p-3">
-		{#if notesStore.value && notesStore.value.length > 0}
-			<div class="notes-grid mt-4 mb-17">
-				{#each getFilteredAndSortedNotes(notesStore) as note}
-					<Note {note} auth={data.data.session} />
-				{/each}
-			</div>
-		{:else if errorMessage}
-			<p class="errorMessage">{errorMessage}</p>
-		{:else}
-			<p class="loadingNotes">No notes found.</p>
-		{/if}
+{#if !data.data.session}
+	<Landing />
+{:else}
+	<div class="main">
+		<div class="notes overflow-y-scroll p-3">
+			{#if notesStore.value && notesStore.value.length > 0}
+				<div class="notes-grid mt-4 mb-17">
+					{#each getFilteredAndSortedNotes(notesStore) as note}
+						<Note {note} auth={data.data.session} />
+					{/each}
+				</div>
+			{:else if errorMessage}
+				<p class="errorMessage">{errorMessage}</p>
+			{:else}
+				<p class="loadingNotes">No notes found.</p>
+			{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.main {

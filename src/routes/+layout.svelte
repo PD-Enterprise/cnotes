@@ -13,6 +13,7 @@
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let isLoaded = $state(false);
+	let isLanding = $derived(!data.session && page.url.pathname === '/');
 
 	onMount(() => {
 		setTimeout(() => {
@@ -50,15 +51,17 @@
 		: 'opacity-0'} overflow-hidden transition-opacity duration-400"
 >
 	<SvelteToast />
-	{#if !isAuthenticated.value}
+	{#if !isAuthenticated.value && !isLanding}
 		{#if !(page.url.pathname.endsWith('/login') || page.url.pathname.endsWith('/sharing'))}
 			<NotLoggedIn />
 		{/if}
 	{/if}
-	<div class="navbar">
-		<Navbar {data} />
-	</div>
-	<div class="content">
+	{#if !isLanding}
+		<div class="navbar">
+			<Navbar {data} />
+		</div>
+	{/if}
+	<div class="content {isLanding ? 'min-h-0 flex-1 overflow-y-auto' : ''}">
 		{@render children()}
 	</div>
 </div>

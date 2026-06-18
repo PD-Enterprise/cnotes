@@ -63,7 +63,7 @@
 	];
 </script>
 
-<div class="min-h-screen w-full overflow-y-auto bg-[#141218] text-gray-100">
+<div class="min-h-full w-full bg-[#141218] text-gray-100">
 	<!-- Navbar -->
 	<header class="sticky top-0 z-40 w-full border-b border-white/5 bg-[#33313a]/95 backdrop-blur">
 		<div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">

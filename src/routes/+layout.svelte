@@ -61,7 +61,7 @@
 			<Navbar {data} />
 		</div>
 	{/if}
-	<div class="content {isLanding ? 'min-h-0 flex-1 overflow-hidden' : ''}">
+	<div class="content {isLanding ? 'min-h-0 flex-1 overflow-y-auto' : ''}">
 		{@render children()}
 	</div>
 </div>

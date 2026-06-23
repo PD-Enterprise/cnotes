@@ -1,6 +1,7 @@
 import { returnJson } from '$lib/utils/returnJson.js';
 import { getNotes } from '$lib/api/get-notes';
 import { deleteNote } from '$lib/api/delete-note';
+import config from '$lib/utils/apiConfig.js';
 
 export async function GET({ url, locals, request }) {
 	const session = await locals.getSession();

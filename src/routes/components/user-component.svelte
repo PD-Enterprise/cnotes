@@ -7,12 +7,14 @@
 		name: 'User Name',
 		image: ''
 	});
+
 	onMount(() => {
-		if (data.session.user) {
-			userObject = {
-				name: data.session.user.name,
-				image: data.session.user.image
-			};
+		if (!data.session || data.session == null) {
+			return;
+		}
+		userObject = {
+			name: data.session.user.name,
+			image: data.session.user.image
 		}
 	});
 </script>

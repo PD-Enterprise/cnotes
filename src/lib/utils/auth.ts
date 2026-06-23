@@ -1,4 +1,4 @@
-import { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET } from "$env/static/private"
+import { AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET, AUTH_SECRET, INTERNAL_KEY } from "$env/static/private"
 import type { Provider } from "@auth/core/providers"
 import { SvelteKitAuth } from "@auth/sveltekit"
 import Google from "@auth/sveltekit/providers/google"
@@ -20,7 +20,8 @@ export const { handle, signIn, signOut } = SvelteKitAuth({
             await fetch(`${config.apiUrl}users/new-user`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${INTERNAL_KEY}`
                 },
                 body: JSON.stringify({
                     email: user.email,

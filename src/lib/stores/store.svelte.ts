@@ -23,6 +23,21 @@ export const sync = writable(false);
 
 // Editor state
 export const editorState = $state<{ editor: Editor | null }>({ editor: null });
+export const newNoteData = $state<{ value: note }>({
+	value: {
+		title: '',
+		dateCreated: '',
+		dateUpdated: '',
+		academicLevel: '',
+		topic: '',
+		content: '',
+		type: '',
+		visibility: 'private',
+		year: '',
+		language: '',
+		keywords: ''
+	}
+});
 export const EditorNoteData = $state<{ value: note }>({
 	value: {
 		title: '',

@@ -3,34 +3,30 @@
 	import type { note } from '../types';
 	import { validateNote } from '$lib/utils/validateNote';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { editorState } from '$lib/stores/store.svelte';
+	import { editorState, newNoteData } from '$lib/stores/store.svelte';
 	import DOMPurify from 'dompurify';
 	import Tiptap from '../components/tiptap.svelte';
 	import { functionReturn } from '$lib/utils/functionReturn';
 	import { validateAcademicLevel } from '$lib/utils/validateAcademicLevel';
 
-	// Variables
-	let props = $props();
-	let newNote: note = props.newNote;
-
 	// Functions
 	async function addNote() {
 		const rawHtml = editorState.editor.getHTML();
-		newNote.content = DOMPurify.sanitize(rawHtml);
-		newNote.type = 'text';
+		newNoteData.value.content = DOMPurify.sanitize(rawHtml);
+		newNoteData.value.type = 'text';
 
-		if (!validateNote(newNote)) {
+		if (!validateNote(newNoteData.value)) {
 			console.error('Note is not in correct form to be added to database.');
 			showToast('The note is not in correct form. Please recheck your data.', 'error');
 			return;
 		}
-		if (!validateAcademicLevel(newNote.academicLevel)) {
+		if (!validateAcademicLevel(newNoteData.value.academicLevel)) {
 			console.error('Academic level is not in correct form to be added to database.');
 			showToast('The Academic Level must be between 1 and 12. Or UG, G, or PG.', 'error');
 			return;
 		}
 
-		const [success, error] = await addToDB(newNote);
+		const [success, error] = await addToDB(newNoteData.value);
 		if (error || !success) {
 			showToast('There is an error with the editor.', 'error');
 			return;
@@ -75,22 +71,15 @@
 		<div class="header flex flex-col gap-3">
 			<div class="buttons flex flex-row gap-3">
 				<div class="save-button-container w-40">
-					<!-- {#if validateNote(newNote)} -->
 					<button
-						class="btn btn-accent btn-outline border-base-content h-12 border"
-						onclick={addNote}>Add Note</button
-					>
-					<!-- {:else}
-						<button
-							class="btn btn-disabled btn-accent btn-outline border-base-content h-12 border"
+							class="btn btn-accent btn-outline border-base-content h-12 border"
 							onclick={addNote}>Add Note</button
 						>
-					{/if} -->
 				</div>
 			</div>
 		</div>
 		<div class="editor h-full">
-			<Tiptap content={newNote.content} editable={true} />
+			<Tiptap content={newNoteData.value.content} editable={true} />
 		</div>
 	</div>
 </div>

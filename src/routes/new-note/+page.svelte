@@ -4,23 +4,10 @@
 	// import { onMount } from 'svelte';
 	import AddTextNote from '../components/addTextNote.svelte';
 	import Diagram from '../components/diagram.svelte';
-	import type { note } from '../types';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
+	import { newNoteData } from '$lib/stores/store.svelte';
 	// Variables
 	let option = $state('text');
-	let newNote: note = $state({
-		title: '',
-		content: '',
-		dateCreated: '',
-		dateUpdated: '',
-		academicLevel: '',
-		topic: '',
-		type: '',
-		visibility: 'private',
-		year: '',
-		language: '',
-		keywords: ''
-	});
 	let isK_12: string = $state('true');
 	let sidebarOpen = $state(false);
 </script>
@@ -33,7 +20,7 @@
 					<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
 				</div>
 				<div class="new-note-data flex w-72 flex-row flex-wrap gap-3">
-					{#each Object.keys(newNote) as newNoteKey}
+					{#each Object.keys(newNoteData.value) as newNoteKey}
 						{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
 							<label class="form-control">
 								<div class="label">
@@ -43,7 +30,7 @@
 									<input
 										type="date"
 										class="input-bordered input metadata-input-field"
-										bind:value={newNote[newNoteKey]}
+										bind:value={newNoteData.value[newNoteKey]}
 										required
 										placeholder="Date Created"
 									/>
@@ -62,13 +49,13 @@
 												type="text"
 												class="input-bordered input metadata-input-field"
 												required
-												bind:value={newNote[newNoteKey]}
+												bind:value={newNoteData.value[newNoteKey]}
 												placeholder={toTitleCase(newNoteKey)}
 											/>
 										{:else}
 											<select
 												class="select select-bordered metadata-input-field"
-												bind:value={newNote[newNoteKey]}
+												bind:value={newNoteData.value[newNoteKey]}
 												required
 											>
 												<option value="UG">Undergraduate (UG)</option>
@@ -80,7 +67,7 @@
 								{:else if newNoteKey == 'visibility'}
 									<select
 										class="select select-bordered metadata-input-field"
-										bind:value={newNote[newNoteKey]}
+										bind:value={newNoteData.value[newNoteKey]}
 										required
 									>
 										<option value="private">Private</option>
@@ -91,7 +78,7 @@
 										type="text"
 										class="input-bordered input metadata-input-field"
 										required
-										bind:value={newNote[newNoteKey]}
+										bind:value={newNoteData.value[newNoteKey]}
 										placeholder={toTitleCase(newNoteKey)}
 									/>
 								{/if}
@@ -118,6 +105,9 @@
 					<div class="dropdown">
 						<select
 							bind:value={option}
+							onchange={()=>{
+								newNoteData.value.content = ""
+							}}
 							class="menu bg-base-200 border-base-content z-1 w-52 rounded border p-2 shadow-xl"
 						>
 							<option value="text">Text</option>
@@ -142,11 +132,11 @@
 			<div class="editors">
 				{#if option === 'text'}
 					<div class="text">
-						<AddTextNote {newNote} />
+						<AddTextNote />
 					</div>
 				{:else if option === 'diagram'}
 					<div class="diagram mt-1 p-2">
-						<Diagram {newNote} />
+						<Diagram />
 					</div>
 				{/if}
 			</div>

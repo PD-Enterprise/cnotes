@@ -1,15 +1,12 @@
 <script lang="ts">
 	import { functionReturn } from '$lib/utils/functionReturn';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import { validateAcademicLevel } from '$lib/utils/validateAcademicLevel';
 	import { validateNote } from '$lib/utils/validateNote';
+	import { newNoteData } from '$lib/stores/store.svelte';
 	import type { note } from '../types';
 	import Excalidraw from './Excalidraw.svelte';
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
-
-	// Variables
-	let isValid: boolean = $state(false);
-	let props = $props();
-	let newNote: note = props.newNote;
 
 	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 
@@ -25,33 +22,34 @@
 	// });
 
 	async function addNote() {
-		if (!validateNote(newNote)) {
-			console.error('Note is not in correct form to be added to database.');
-			showToast(
-				'The note is not in correct form. Please recheck your data.',
-
-				'error'
-			);
+		if (!excalidrawAPI) {
+			showToast('There is an error with the editor.', 'error');
 			return;
 		}
 
-		if (excalidrawAPI) {
-			const elements = excalidrawAPI.getSceneElements();
-			const files = excalidrawAPI.getFiles();
+		const elements = excalidrawAPI.getSceneElements();
+		const files = excalidrawAPI.getFiles();
+		newNoteData.value.content = JSON.stringify({ elements: elements, files: files });
+		newNoteData.value.type = 'diagram';
 
-			newNote.content = JSON.stringify({ elements: elements, files: files });
-			newNote.type = 'diagram';
-
-			const [success, error] = await addToDB(newNote);
-			if (error || !success) {
-				showToast('There is an error with the editor.', 'error');
-				return;
-			}
-			showToast('Note added successfully', 'success');
-			window.location.href = '/';
-		} else {
-			showToast('There is an error with the editor.', 'error');
+		if (!validateNote(newNoteData.value)) {
+			console.error('Note is not in correct form to be added to database.');
+			showToast('The note is not in correct form. Please recheck your data.', 'error');
+			return;
 		}
+		if (!validateAcademicLevel(newNoteData.value.academicLevel)) {
+			console.error('Academic level is not in correct form to be added to database.');
+			showToast('The Academic Level must be between 1 and 12. Or UG, G, or PG.', 'error');
+			return;
+		}
+
+		const [success, error] = await addToDB(newNoteData.value);
+		if (error || !success) {
+			showToast('There is an error with the editor.', 'error');
+			return;
+		}
+		showToast('Note added successfully', 'success');
+		window.location.href = '/';
 	}
 	async function addToDB(note: note) {
 		try {
@@ -88,17 +86,10 @@
 		<div class="header flex flex-col gap-3">
 			<div class="buttons flex flex-row gap-3">
 				<div class="save-button-container w-40">
-					{#if validateNote(newNote)}
 						<button
 							class="btn btn-accent btn-outline border-base-content h-12 border"
 							onclick={addNote}>Add Note</button
 						>
-					{:else}
-						<button
-							class="btn btn-disabled btn-accent btn-outline border-base-content h-12 border"
-							onclick={addNote}>Add Note</button
-						>
-					{/if}
 				</div>
 			</div>
 		</div>

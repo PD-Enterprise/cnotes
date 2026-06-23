@@ -4,7 +4,7 @@
 
 	// Variables
 	const toastOptions = {
-		duration: 40,
+		duration: 1000,
 		initial: 1,
 		next: 0,
 		pausable: false,

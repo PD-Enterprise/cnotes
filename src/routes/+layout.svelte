@@ -19,8 +19,7 @@
 			isLoaded = true;
 		}, 50);
 	});
-
-	if (!data.session || !data.session == null) {
+	if (!data.session || data.session == null) {
 		isAuthenticated.value = false;
 	} else {
 		isAuthenticated.value = true;

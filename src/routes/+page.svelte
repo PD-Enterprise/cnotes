@@ -52,8 +52,13 @@
 		});
 		const result = await response.json();
 
-		// Remove notes from localStorage that are not present in the server version
-		if (result.data && Array.isArray(result.data)) {
+		if (result.status == 401) {
+			errorMessage = 'You are not logged in. Please login to continue.';
+			return;
+		}
+
+		if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+			// Remove notes from localStorage that are not present in the server version
 			const serverSlugs = new Set(result.data.map((note) => note.slug));
 			let changed = false;
 			for (let i = 0; i < localStorage.length; i++) {
@@ -66,19 +71,11 @@
 					}
 				}
 			}
-			// Update notesStore to immediately reflect the change
 			if (changed) {
 				const updatedNotes = notesStore.value.filter((note) => serverSlugs.has(note.slug));
 				notesStore.value = updatedNotes;
 			}
-		}
 
-		if (result.status == 401) {
-			errorMessage = 'You are not logged in. Please login to continue.';
-			return;
-		}
-
-		if (result.data && result.data != undefined && result.data.length > 0) {
 			const serverNotes: note[] = result.data.sort((a, b) => {
 				const dateA = new Date(a.dateUpdated || 0).getTime();
 				const dateB = new Date(b.dateUpdated || 0).getTime();

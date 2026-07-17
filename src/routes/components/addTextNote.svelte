@@ -78,7 +78,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="editor h-full">
+		<div class="editor flex-1 min-h-0">
 			<Tiptap content={newNoteData.value.content} editable={true} />
 		</div>
 	</div>
@@ -86,6 +86,7 @@
 
 <style>
 	.main-component {
-		height: calc(100vh - 200px);
+		min-height: calc(100vh - 65px);
+		height: 100%;
 	}
 </style>

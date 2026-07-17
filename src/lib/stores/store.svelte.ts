@@ -62,3 +62,5 @@ export const EditorNoteData = $state<{ value: note }>({
 		keywords: ''
 	}
 });
+
+export const sidebarOpen = $state({ value: true });

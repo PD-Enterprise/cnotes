@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { EditorNoteData, editorState, theme } from '$lib/stores/store.svelte';
+	import { EditorNoteData, editorState, theme, userData } from '$lib/stores/store.svelte';
 	import { Editor, isActive, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
 	import MathExtension from '@aarkue/tiptap-math-extension';
 	import './tiptap-editor.css';
 	import 'katex/dist/katex.min.css';
 	import Icon from '@iconify/svelte';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
 	import Youtube from '@tiptap/extension-youtube';
@@ -14,8 +15,8 @@
 	import Superscript from '@tiptap/extension-superscript';
 	import Highlight from '@tiptap/extension-highlight';
 	import { TableKit } from '@tiptap/extension-table';
-	import FileHandler from '@tiptap/extension-file-handler';
 	import Image from '@tiptap/extension-image';
+	import ImageUploadModal from './ImageUploadModal.svelte';
 	import TextAlign from '@tiptap/extension-text-align';
 
 	let element: any = $state();
@@ -35,6 +36,28 @@
 	let heading1Active = $state(false);
 	let heading2Active = $state(false);
 	let heading3Active = $state(false);
+	let imageUploadCount = $state(0);
+	let imageLimit = $derived(
+		userData.value.membership === 'tier-1'
+			? 3
+			: userData.value.membership === 'tier-2' || userData.value.membership === 'tier-3'
+				? 5
+				: 0
+	);
+	let remainingUploads = $derived(imageLimit - imageUploadCount);
+
+	function countImages(html: string): number {
+		return (html.match(/<img\s/g) || []).length;
+	}
+
+	function handleImageUpload() {
+		if (remainingUploads <= 0) {
+			showToast('Image upload limit reached', 'error');
+			return;
+		}
+		const dialog = document.getElementById('image_upload_modal') as HTMLDialogElement | null;
+		dialog?.showModal();
+	}
 
 	const CustomHeading = Heading.extend({
 		renderHTML({ node, HTMLAttributes }) {
@@ -56,11 +79,7 @@
 				default:
 					classes = 'text-base';
 			}
-			return [
-				`h${level}`,
-				mergeAttributes(HTMLAttributes, { class: classes }),
-				0
-			];
+			return [`h${level}`, mergeAttributes(HTMLAttributes, { class: classes }), 0];
 		}
 	});
 
@@ -83,62 +102,14 @@
 					table: { resizable: true }
 				}),
 				Youtube,
-				Image,
-				FileHandler.configure({
-					allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-					onDrop: (currentEditor, files, pos) => {
-						files.forEach((file) => {
-							const fileReader = new FileReader();
-
-							fileReader.readAsDataURL(file);
-							fileReader.onload = () => {
-								currentEditor
-									.chain()
-									.insertContentAt(pos, {
-										type: 'image',
-										attrs: {
-											src: fileReader.result
-										}
-									})
-									.focus()
-									.run();
-							};
-						});
-					},
-					onPaste: (currentEditor, files, htmlContent) => {
-						files.forEach((file) => {
-							if (htmlContent) {
-								// if there is htmlContent, stop manual insertion & let other extensions handle insertion via inputRule
-								// you could extract the pasted file from this url string and upload it to a server for example
-								console.log(htmlContent); // eslint-disable-line no-console
-								return false;
-							}
-
-							const fileReader = new FileReader();
-
-							fileReader.readAsDataURL(file);
-							fileReader.onload = () => {
-								currentEditor
-									.chain()
-									.insertContentAt(currentEditor.state.selection.anchor, {
-										type: 'image',
-										attrs: {
-											src: fileReader.result
-										}
-									})
-									.focus()
-									.run();
-							};
-						});
-					}
-				}),
+				Image.configure({ inline: true }),
 				TextAlign.configure({
 					types: ['heading', 'paragraph'],
 					alignments: ['left', 'center', 'right', 'justify'],
 					defaultAlignment: 'left'
 				})
 			],
-			content: 'Loading...',
+			content: content || '',
 			onTransaction: ({ editor }) => {
 				editorState.editor = editor;
 
@@ -162,8 +133,7 @@
 			},
 			editorProps: {
 				attributes: {
-					class: 'p-2 focus:outline-none overflow-y-scroll',
-					style: 'height: 100%'
+					class: 'tiptap focus:outline-none'
 				}
 			},
 			editable: editable,
@@ -189,9 +159,19 @@
 		}
 	});
 	$effect(() => {
-		if (editorState.editor && content !== undefined && content !== null) {
-			if (editorState.editor.getHTML() !== content) {
-				editorState.editor.commands.setContent(content);
+		const html = EditorNoteData.value.content;
+		if (html) {
+			imageUploadCount = countImages(html);
+		} else {
+			imageUploadCount = countImages(content || '');
+		}
+	});
+
+	$effect(() => {
+		const noteContent = EditorNoteData.value.content;
+		if (editorState.editor && noteContent) {
+			if (editorState.editor.getHTML() !== noteContent) {
+				editorState.editor.commands.setContent(noteContent, { emitUpdate: false });
 			}
 		}
 	});
@@ -200,9 +180,9 @@
 	});
 </script>
 
-<div class="editor-container flex h-full flex-col p-0" id="editor">
+<div class="editor-container flex w-full flex-col p-0" id="editor" style="height: calc(100vh - 65px - 1rem); min-height: 400px;">
 	{#if editable}
-		<div class="tipex-controller control-group flex flex-row rounded-tl rounded-tr p-2 shadow-xl">
+		<div class="tipex-controller control-group flex flex-row">
 			<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">
 				<button
 					class="editor-button is-active"
@@ -454,11 +434,25 @@
 				>
 					<Icon icon="mdi:youtube" width="24" height="24" />
 				</button>
+				<!-- <button
+					aria-label="Image"
+					title="Image ({remainingUploads} remaining)"
+					onclick={handleImageUpload}
+					class="editor-button"
+					class:opacity-50={remainingUploads <= 0}
+					class:cursor-not-allowed={remainingUploads <= 0}
+				>
+					<Icon icon="fa6-solid:image" />
+				</button> -->
 			</div>
 		</div>
 	{/if}
-	<div bind:this={element} class="editor bg-base-300 rounded-br-md rounded-bl-md" id="editor"></div>
+	<div bind:this={element} class="editor" id="editor"></div>
 </div>
+
+<ImageUploadModal
+	onInsert={(url) => editorState.editor?.chain().focus().setImage({ src: url }).run()}
+/>
 
 <!-- I am truly very sorry to whoever is going to see this in the future,
  this was causing a weird bug on the frontend,
@@ -472,54 +466,64 @@
 <style>
 	.editor-container {
 		overflow: hidden;
+		border-radius: var(--radius-box);
+		box-shadow:
+			0 1px 3px 0 rgba(0, 0, 0, 0.06),
+			0 1px 2px -1px rgba(0, 0, 0, 0.06);
 	}
 	.editor {
-		height: calc(100vh - 180px);
-		min-height: calc(var(--spacing) * 96);
-		border-width: 1px;
-		border-color: var(--color-gray-500);
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		border: var(--border) solid var(--color-base-300);
 		border-top: none;
+		background-color: var(--color-base-100);
+		padding: 1rem 1rem;
+		font-size: 1rem;
+		line-height: 1.75;
+		color: var(--color-base-content);
 	}
 	.tipex-controller {
-		background-color: #f3f4f6;
+		background-color: var(--color-base-200);
 		z-index: 10;
 		align-items: center;
 		justify-content: space-between;
-		border-width: 1px;
-		border-color: var(--color-gray-500);
-	}
-	.tipex-controller.dark,
-	:global(.dark) .tipex-controller {
-		background-color: #171717;
+		border: var(--border) solid var(--color-base-300);
+		border-bottom: none;
+		border-radius: var(--radius-box) var(--radius-box) 0 0;
+		padding: 0.375rem 0.75rem;
+		gap: 0.25rem;
 	}
 	.tipex-basic-controller-wrapper {
 		display: flex;
-		gap: 0.5rem;
+		flex-wrap: wrap;
+		gap: 0.125rem;
 	}
 	.editor-button {
-		background-color: #f3f4f6;
-		color: #374151;
-		display: flex;
-		height: 2.5rem;
-		width: 2.5rem;
+		background-color: transparent;
+		color: color-mix(in srgb, var(--color-base-content) 70%, transparent);
+		display: inline-flex;
+		height: 2.125rem;
+		width: 2.125rem;
 		cursor: pointer;
 		align-items: center;
 		justify-content: center;
-		border-radius: 0.375rem;
+		border-radius: var(--radius-field);
 		border: 0;
 		padding: 0;
 		font-size: 0.75rem;
-		transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-		transition-duration: 100ms;
+		font-weight: 500;
+		transition: all 120ms;
+		position: relative;
+	}
+	.editor-button:hover {
+		background-color: var(--color-base-300);
+		color: var(--color-base-content);
 	}
 	.editor-button.active {
-		background-color: #f3f4f6;
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -4px rgba(0, 0, 0, 0.1);
-	}
-	.editor-button {
-		position: relative;
+		background-color: var(--color-base-300);
+		color: var(--color-base-content);
+		box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
 	}
 	.editor-button:hover::after {
 		content: attr(title);
@@ -527,23 +531,14 @@
 		top: 100%;
 		left: 50%;
 		transform: translateX(-50%);
-		background-color: rgba(0, 0, 0, 0.8);
-		color: #fff;
-		padding: 4px 8px;
-		border-radius: 4px;
-		z-index: 10;
-	}
-	.editor-button.active.dark,
-	:global(.dark) .editor-button.active {
-		background-color: #374151;
-	}
-	.editor-button.active.dark,
-	:global(.dark) .editor-button.active {
-		background-color: #374151;
-	}
-	.editor-button.dark,
-	:global(.dark) .editor-button {
-		background-color: rgba(31, 41, 55, 0.8);
-		color: #e5e7eb;
+		background-color: color-mix(in srgb, var(--color-neutral) 90%, transparent);
+		color: var(--color-neutral-content);
+		padding: 3px 7px;
+		border-radius: var(--radius-field);
+		z-index: 20;
+		font-size: 0.7rem;
+		white-space: nowrap;
+		pointer-events: none;
+		margin-top: 2px;
 	}
 </style>

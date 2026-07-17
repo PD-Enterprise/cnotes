@@ -13,14 +13,22 @@
 		searchQuery,
 		searchResults,
 		selectedAcademicLevel,
-		selectedTopic
+		selectedTopic,
+		sidebarOpen
 	} from '$lib/stores/store.svelte';
 
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
+	let isNotePage = $state(false);
 	let title = $state('Home');
 	let shouldShowSearchResults: boolean = $state(false);
 	let shouldShowFilterMenu: boolean = $state(false);
+
+	function openSidebar() {
+		sidebarOpen.value = true;
+		const drawer = document.getElementById('my-drawer-4') as HTMLInputElement;
+		if (drawer) drawer.checked = true;
+	}
 
 	onMount(() => {
 		const localTheme = localStorage.getItem('theme');
@@ -42,9 +50,15 @@
 			// console.log($page.url.pathname);
 			if ($page.url.pathname == '/') {
 				isHome = true;
+				isNotePage = false;
 				title = 'Home';
 			} else {
 				isHome = false;
+				isNotePage =
+					$page.url.pathname.split('/')[1] !== 'new-note' &&
+					$page.url.pathname.split('/')[1] !== 'login' &&
+					$page.url.pathname.split('/')[1] !== 'logout' &&
+					!$page.url.pathname.endsWith('/sharing');
 				// console.log($page.url.pathname);
 				if (
 					$page.url.pathname.split('/')[1] == 'new-note' ||
@@ -182,6 +196,11 @@
 		>
 	</div>
 	<div class="navbar-end">
+		{#if isNotePage && !sidebarOpen.value}
+			<button onclick={openSidebar} class="btn btn-ghost btn-sm">
+				<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+			</button>
+		{/if}
 		{#if isHome}
 			<div class="header bg-base-200 flex grow gap-3 p-2">
 				<div class="search-bar bg-base-100 grow rounded-md p-1">

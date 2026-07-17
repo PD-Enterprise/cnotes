@@ -3,7 +3,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import type { note } from '../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import { theme, EditorNoteData, isAuthenticated } from '$lib/stores/store.svelte';
+	import { theme, EditorNoteData, isAuthenticated, sidebarOpen } from '$lib/stores/store.svelte';
 	import { page } from '$app/stores';
 	import Tiptap from '../components/tiptap.svelte';
 	import Excalidraw from '../components/Excalidraw.svelte';
@@ -32,6 +32,14 @@
 	let localNote: any = null;
 	let hasLocalNote = false;
 	let editor: HTMLDivElement;
+	let isDrawerOpen = $state(true);
+
+	function closeDrawer() {
+		isDrawerOpen = false;
+		sidebarOpen.value = false;
+		const drawer = document.getElementById('my-drawer-4') as HTMLInputElement;
+		drawer.checked = false;
+	}
 
 	// Functions
 	async function getNote(slug: string) {
@@ -41,19 +49,18 @@
 		});
 		const result = await response.json();
 
-		if (!result.data || result.status != 200) {
-			console.error('Failed to fetch note data.');
-			error = 'Failed to fetch note data.';
+		if (!result.data || result.status != 200 || !result.data[0]) {
+			if (!hasLocalNote) {
+				error = 'Failed to fetch note data.';
+			}
 			return;
 		}
 
 		const serverNote: note = result.data[0];
 		originalNote = serverNote;
-		// console.log('server note', serverNote);
 
 		if (serverNote && serverNote != undefined) {
 			EditorNoteData.value = { ...serverNote };
-			// console.log(EditorNoteData.value.notescontent);
 			initialTitle = EditorNoteData.value.title;
 		}
 	}
@@ -67,6 +74,8 @@
 				error = 'Failed to load note from local storage.';
 			}
 			originalNote = { ...localNote };
+			EditorNoteData.value = { ...localNote };
+			initialTitle = EditorNoteData.value.title;
 		}
 	}
 	export async function saveNote() {
@@ -152,6 +161,13 @@
 
 		window.addEventListener('keydown', handleSaveShortcut);
 		editor = document.getElementById('editor') as HTMLDivElement;
+
+		const drawer = document.getElementById('my-drawer-4') as HTMLInputElement;
+		drawer.checked = true;
+		drawer.addEventListener('change', () => {
+			isDrawerOpen = drawer.checked;
+			sidebarOpen.value = drawer.checked;
+		});
 	});
 
 	$effect(() => {
@@ -196,46 +212,10 @@
 			{error}
 		{:else if EditorNoteData.value}
 			<div class="note flex h-full flex-col gap-2 rounded-md">
-				<div class="drawer lg:drawer-open h-full">
+				<div class="drawer drawer-end lg:drawer-open h-full" class:drawer-closed={!sidebarOpen.value}>
 					<input id="my-drawer-4" type="checkbox" class="drawer-toggle" />
-					<div class="drawer-content flex h-full flex-col gap-2">
-						<div class="buttons flex gap-3">
-							<div class="sidebar-toggle hidden">
-								<label for="my-drawer-4" aria-label="open sidebar" class="btn btn-ghost">
-									<Icon icon="meteor-icons:sidebar" width="22" height="22" />
-								</label>
-							</div>
-							<div class="save-button">
-								{#if isChanged}
-									<button class="btn btn-accent btn-outline shadow-xl" onclick={saveNote}
-										>Save</button
-									>
-								{:else}
-									<button class="btn btn-accent btn-outline shadow-xl" disabled>Save</button>
-								{/if}
-								<button
-									class="btn btn-success"
-									onclick={() => {
-										const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-										share_modal.showModal();
-									}}
-									>Share<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="size-6"
-										><path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-										/></svg
-									></button
-								>
-							</div>
-						</div>
-						<div class="editor flex-1">
+					<div class="drawer-content flex h-full flex-col">
+						<div class="editor flex min-h-0 flex-1 overflow-y-auto">
 							{#if EditorNoteData.value.type == 'text'}
 								<Tiptap content={EditorNoteData.value.content} editable={true} />
 							{:else if EditorNoteData.value.type == 'diagram'}
@@ -253,38 +233,111 @@
 					<div class="drawer-side is-drawer-close:overflow-visible">
 						<label for="my-drawer-4" aria-label="close sidebar" class="drawer-overlay"></label>
 						<div
-							class="bg-base-200 is-drawer-close:w-82 is-drawer-open:w-82 flex min-h-full w-82 flex-col items-start"
+							class="bg-base-200 is-drawer-close:w-82 is-drawer-open:w-82 flex h-full w-82 flex-col"
 						>
-							<div class="flex flex-col gap-4 p-2">
-								<div class="top-bar flex flex-row gap-2">
-									<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
+							<div class="flex items-center gap-2 p-2">
+								<button
+									class="btn btn-ghost btn-sm"
+									aria-label="close sidebar"
+									onclick={closeDrawer}
+								>
+									<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+								</button>
+								<div class="save-button flex flex-1 gap-2">
+									{#if isChanged}
+										<button class="btn btn-accent btn-outline flex-1 shadow-xl" onclick={saveNote}
+											>Save</button
+										>
+									{:else}
+										<button class="btn btn-accent btn-outline flex-1 shadow-xl" disabled
+											>Save</button
+										>
+									{/if}
+									<button
+										class="btn btn-success"
+										onclick={() => {
+											const share_modal = document.getElementById(
+												'share_modal'
+											) as HTMLDialogElement;
+											share_modal.showModal();
+										}}
+										>Share<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="size-6"
+											><path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+											/></svg
+										></button
+									>
 								</div>
-								<div class="new-note-data flex w-72 flex-row flex-wrap gap-3">
-									{#each Object.keys(EditorNoteData.value) as newNoteKey}
-										{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
-											<label class="form-control">
-												<div class="label">
-													<span class="label-text">{toTitleCase(newNoteKey)}:</span>
-												</div>
-												{#if newNoteKey == 'dateCreated'}
-													<input
-														type="date"
-														class="input-bordered input metadata-input-field"
-														bind:value={EditorNoteData.value[newNoteKey]}
-														required
-														placeholder="Date Created"
-													/>
-												{:else if newNoteKey == 'academicLevel'}
-													<div class="academicLevel flex flex-wrap gap-5">
-														<select
-															class="select select-bordered metadata-input-field"
-															bind:value={isK_12}
-															required
-														>
-															<option value="true">K-12</option>
-															<option value="false">Not K-12</option>
-														</select>
-														{#if isK_12 == 'true'}
+							</div>
+							<div class="flex min-h-0 flex-1 flex-col p-2">
+								<div class="flex flex-col gap-4">
+									<div class="top-bar flex flex-row gap-2">
+										<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
+									</div>
+									<div class="metadata h-[calc(100vh-200px)] overflow-y-auto">
+										<div class="new-note-data flex w-72 flex-row flex-wrap gap-3">
+											{#each Object.keys(EditorNoteData.value) as newNoteKey}
+												{#if ['title', 'dateCreated', 'academicLevel', 'topic', 'visibility', 'language', 'keywords'].includes(newNoteKey)}
+													<label class="form-control">
+														<div class="label">
+															<span class="label-text">{toTitleCase(newNoteKey)}:</span>
+														</div>
+														{#if newNoteKey == 'dateCreated'}
+															<input
+																type="date"
+																class="input-bordered input metadata-input-field"
+																bind:value={EditorNoteData.value[newNoteKey]}
+																required
+																placeholder="Date Created"
+															/>
+														{:else if newNoteKey == 'academicLevel'}
+															<div class="academicLevel flex flex-wrap gap-5">
+																<select
+																	class="select select-bordered metadata-input-field"
+																	bind:value={isK_12}
+																	required
+																>
+																	<option value="true">K-12</option>
+																	<option value="false">Not K-12</option>
+																</select>
+																{#if isK_12 == 'true'}
+																	<input
+																		type="text"
+																		class="input-bordered input metadata-input-field"
+																		required
+																		bind:value={EditorNoteData.value[newNoteKey]}
+																		placeholder={toTitleCase(newNoteKey)}
+																	/>
+																{:else}
+																	<select
+																		class="select select-bordered metadata-input-field"
+																		bind:value={EditorNoteData.value[newNoteKey]}
+																		required
+																	>
+																		<option value="UG">Undergraduate (UG)</option>
+																		<option value="G">Graduate (G)</option>
+																		<option value="PG">Postgraduate (PG)</option>
+																	</select>
+																{/if}
+															</div>
+														{:else if newNoteKey == 'visibility'}
+															<select
+																class="select select-bordered metadata-input-field"
+																bind:value={EditorNoteData.value[newNoteKey]}
+																required
+															>
+																<option value="private">Private</option>
+																<option value="public">Public</option>
+															</select>
+														{:else}
 															<input
 																type="text"
 																class="input-bordered input metadata-input-field"
@@ -292,39 +345,12 @@
 																bind:value={EditorNoteData.value[newNoteKey]}
 																placeholder={toTitleCase(newNoteKey)}
 															/>
-														{:else}
-															<select
-																class="select select-bordered metadata-input-field"
-																bind:value={EditorNoteData.value[newNoteKey]}
-																required
-															>
-																<option value="UG">Undergraduate (UG)</option>
-																<option value="G">Graduate (G)</option>
-																<option value="PG">Postgraduate (PG)</option>
-															</select>
 														{/if}
-													</div>
-												{:else if newNoteKey == 'visibility'}
-													<select
-														class="select select-bordered metadata-input-field"
-														bind:value={EditorNoteData.value[newNoteKey]}
-														required
-													>
-														<option value="private">Private</option>
-														<option value="public">Public</option>
-													</select>
-												{:else}
-													<input
-														type="text"
-														class="input-bordered input metadata-input-field"
-														required
-														bind:value={EditorNoteData.value[newNoteKey]}
-														placeholder={toTitleCase(newNoteKey)}
-													/>
+													</label>
 												{/if}
-											</label>
-										{/if}
-									{/each}
+											{/each}
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -347,9 +373,6 @@
 		height: calc(100vh - 65px);
 	}
 	@media (max-width: 1023px) {
-		.sidebar-toggle {
-			display: block;
-		}
 		.drawer-side {
 			height: calc(100vh - 64px);
 			margin-top: 64px;
@@ -357,5 +380,8 @@
 	}
 	.note {
 		padding: 5px;
+	}
+	.drawer-closed .drawer-side {
+		display: none;
 	}
 </style>

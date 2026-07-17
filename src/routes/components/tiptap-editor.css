@@ -1,218 +1,336 @@
-.tiptap table {
-	border-collapse: collapse;
-	margin: 0;
-	overflow: hidden;
-	table-layout: fixed;
-	width: 100%;
-}
-.tiptap table td,
-.tiptap table th {
-	border: 1px solid #e5e7eb;
-	box-sizing: border-box;
-	min-width: 1em;
-	padding: 6px 8px;
-	position: relative;
-	vertical-align: top;
-}
-.tiptap table td > *,
-.tiptap table th > * {
-	margin-bottom: 0;
-}
-.tiptap table th {
-	background-color: #f3f4f6;
-	font-weight: bold;
-	text-align: left;
-}
-.tiptap table .selectedCell:after {
-	background: rgba(200, 200, 200, 0.4);
-	content: '';
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	pointer-events: none;
-	position: absolute;
-	z-index: 2;
-}
-.tiptap table .column-resize-handle {
-	background-color: #8b5cf6;
-	bottom: -2px;
-	pointer-events: none;
-	position: absolute;
-	right: -2px;
-	top: 0;
-	width: 4px;
-}
-.tiptap .tableWrapper {
-	margin: 1.5rem 0;
-	overflow-x: auto;
-}
-.tiptap.resize-cursor {
-	cursor: ew-resize;
-	cursor: col-resize;
-}
-:global(.dark) .tiptap table td,
-:global(.dark) .tiptap table th {
-	border-color: #374151;
-}
-:global(.dark) .tiptap table th {
-	background-color: #1f2937;
+.tiptap,
+.ProseMirror {
+	outline: none;
+	color: var(--color-base-content);
 }
 
-:global(.dark) .tiptap table .selectedCell:after {
-	background: rgba(55, 65, 81, 0.4);
+/* ========== Prose ========== */
+.tiptap p,
+.ProseMirror p {
+	margin: 0.5em 0;
+	line-height: 1.75;
 }
-.table-controls {
-	display: flex;
-	align-items: center;
-	padding: 2px;
+
+.tiptap > *:first-child,
+.ProseMirror > *:first-child {
+	margin-top: 0;
+}
+
+/* ========== Headings ========== */
+.tiptap h1,
+.ProseMirror h1 {
+	font-size: 2em;
+	font-weight: 700;
+	line-height: 1.3;
+	margin: 0.6em 0 0.3em;
+	letter-spacing: -0.02em;
+	color: var(--color-base-content);
+}
+
+.tiptap h2,
+.ProseMirror h2 {
+	font-size: 1.5em;
+	font-weight: 650;
+	line-height: 1.35;
+	margin: 0.55em 0 0.25em;
+	letter-spacing: -0.01em;
+	color: var(--color-base-content);
+}
+
+.tiptap h3,
+.ProseMirror h3 {
+	font-size: 1.25em;
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 0.5em 0 0.2em;
+	color: var(--color-base-content);
+}
+
+.tiptap h4,
+.ProseMirror h4 {
+	font-size: 1.1em;
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 0.45em 0 0.15em;
+	color: var(--color-base-content);
+}
+
+.tiptap h5,
+.ProseMirror h5 {
+	font-size: 1em;
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 0.4em 0 0.1em;
+	color: var(--color-base-content);
+}
+
+.tiptap h6,
+.ProseMirror h6 {
+	font-size: 0.9em;
+	font-weight: 600;
+	line-height: 1.4;
+	margin: 0.4em 0 0.1em;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--color-base-content);
+}
+
+/* ========== Links ========== */
+.tiptap a,
+.ProseMirror a {
+	color: var(--color-primary);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, var(--color-primary) 40%, transparent);
+	text-underline-offset: 2px;
+	transition: text-decoration-color 150ms;
+}
+
+.tiptap a:hover,
+.ProseMirror a:hover {
+	text-decoration-color: var(--color-primary);
+}
+
+/* ========== Blockquotes ========== */
+.tiptap blockquote,
+.ProseMirror blockquote {
+	border-left: 3px solid var(--color-base-300);
+	margin: 1em 0;
+	padding: 0.5em 1em;
+	color: color-mix(in srgb, var(--color-base-content) 65%, transparent);
+	font-style: italic;
+	line-height: 1.7;
+}
+
+.tiptap blockquote p,
+.ProseMirror blockquote p {
+	margin: 0.3em 0;
+}
+
+/* ========== Inline code ========== */
+.tiptap code,
+.ProseMirror code {
+	background-color: var(--color-base-200);
 	border-radius: 4px;
+	font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+	font-size: 0.875em;
+	padding: 0.15em 0.4em;
 }
-.tiptap table {
-	border-collapse: collapse;
-	margin: 0;
-	overflow: hidden;
-	table-layout: fixed;
-	width: 100%;
-}
-.tiptap table td,
-.tiptap table th {
-	border: 1px solid #e5e7eb;
-	box-sizing: border-box;
-	min-width: 1em;
-	padding: 6px 8px;
-	position: relative;
-	vertical-align: top;
-}
-.tiptap table td > *,
-.tiptap table th > * {
-	margin-bottom: 0;
-}
-.tiptap table th {
-	background-color: #f3f4f6;
-	font-weight: bold;
-	text-align: left;
-}
-.tiptap table .selectedCell:after {
-	background: rgba(200, 200, 200, 0.4);
-	content: '';
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	pointer-events: none;
-	position: absolute;
-	z-index: 2;
-}
-.tiptap table .column-resize-handle {
-	background-color: #8b5cf6;
-	bottom: -2px;
-	pointer-events: none;
-	position: absolute;
-	right: -2px;
-	top: 0;
-	width: 4px;
-}
-.tiptap .tableWrapper {
-	margin: 1.5rem 0;
+
+/* ========== Code blocks ========== */
+.tiptap pre,
+.ProseMirror pre {
+	background-color: var(--color-neutral);
+	border-radius: 8px;
+	color: var(--color-neutral-content);
+	font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+	font-size: 0.875em;
+	line-height: 1.6;
+	margin: 1.2em 0;
 	overflow-x: auto;
-}
-.tiptap.resize-cursor {
-	cursor: ew-resize;
-	cursor: col-resize;
-}
-:global(.dark) .tiptap table td,
-:global(.dark) .tiptap table th {
-	border-color: #374151;
-}
-:global(.dark) .tiptap table th {
-	background-color: #1f2937;
+	padding: 1em 1.25em;
+	tab-size: 2;
 }
 
-:global(.dark) .tiptap table .selectedCell:after {
-	background: rgba(55, 65, 81, 0.4);
+.tiptap pre code,
+.ProseMirror pre code {
+	background: none;
+	border-radius: 0;
+	color: inherit;
+	font-size: inherit;
+	padding: 0;
 }
-.table-controls {
-	display: flex;
-	align-items: center;
-	padding: 2px;
-	border-radius: 4px;
+
+/* ========== Horizontal rule ========== */
+.tiptap hr,
+.ProseMirror hr {
+	border: none;
+	border-top: 1.5px solid var(--color-base-300);
+	margin: 2em 0;
 }
-Table styles .ProseMirror table {
-	border-collapse: collapse;
+
+/* ========== Lists ========== */
+.tiptap ul,
+.ProseMirror ul {
+	list-style-type: disc;
+	padding-left: 1.5em;
+	margin: 0.6em 0;
+}
+
+.tiptap ol,
+.ProseMirror ol {
+	list-style-type: decimal;
+	padding-left: 1.5em;
+	margin: 0.6em 0;
+}
+
+.tiptap li,
+.ProseMirror li {
+	margin: 0.25em 0;
+	line-height: 1.7;
+}
+
+.tiptap li p,
+.ProseMirror li p {
 	margin: 0;
-	overflow: hidden;
-	table-layout: fixed;
-	width: 100%;
 }
 
-.ProseMirror table td,
-.ProseMirror table th,
-table td,
-table th {
-	border: 1px solid #e5e7eb;
-	box-sizing: border-box;
-	min-width: 1em;
-	padding: 6px 8px;
-	position: relative;
-	vertical-align: top;
-	white-space: normal !important;
-	word-break: break-word !important;
-	overflow-wrap: break-word !important;
+.tiptap ul ul,
+.tiptap ol ul,
+.ProseMirror ul ul,
+.ProseMirror ol ul {
+	list-style-type: circle;
 }
 
-.ProseMirror table th {
-	background-color: #f3f4f6;
-	font-weight: bold;
-	text-align: left;
+.tiptap ul ul ul,
+.tiptap ol ul ul,
+.ProseMirror ul ul ul,
+.ProseMirror ol ul ul {
+	list-style-type: square;
 }
 
-.ProseMirror table .selectedCell:after {
-	background: rgba(200, 200, 200, 0.4);
-	content: '';
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
+/* ========== Task list ========== */
+.tiptap ul[data-type='taskList'],
+.ProseMirror ul[data-type='taskList'] {
+	list-style: none;
+	padding-left: 0;
+}
+
+.tiptap ul[data-type='taskList'] li,
+.ProseMirror ul[data-type='taskList'] li {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5em;
+}
+
+.tiptap ul[data-type='taskList'] li > label,
+.ProseMirror ul[data-type='taskList'] li > label {
+	flex-shrink: 0;
+	margin-top: 0.3em;
+}
+
+.tiptap ul[data-type='taskList'] li > label input[type='checkbox'],
+.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'] {
+	cursor: pointer;
+	width: 1.1em;
+	height: 1.1em;
+	border-radius: 3px;
+	accent-color: var(--color-primary);
+}
+
+/* ========== Images ========== */
+.tiptap img,
+.ProseMirror img {
+	border-radius: 6px;
+	display: block;
+	height: auto;
+	margin: 1.5em auto;
+	max-width: 100%;
+}
+
+.tiptap img.ProseMirror-selectednode,
+.ProseMirror img.ProseMirror-selectednode {
+	outline: 3px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+/* ========== YouTube embeds ========== */
+.tiptap iframe,
+.ProSeMirror iframe {
+	border-radius: 8px;
+	display: block;
+	margin: 1.5em auto;
+	max-width: 100%;
+}
+
+/* ========== Selection ========== */
+.tiptap ::selection,
+.ProseMirror ::selection {
+	background: color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+/* ========== Placeholder ========== */
+.tiptap p.is-editor-empty:first-child::before,
+.ProseMirror p.is-editor-empty:first-child::before {
+	color: color-mix(in srgb, var(--color-base-content) 40%, transparent);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
 	pointer-events: none;
-	position: absolute;
-	z-index: 2;
 }
 
-.ProseMirror table .column-resize-handle {
-	background-color: #8b5cf6;
-	bottom: -2px;
-	pointer-events: none;
-	position: absolute;
-	right: -2px;
-	top: 0;
-	width: 4px;
-}
-
+/* ========== Tables ========== */
+.tiptap .tableWrapper,
 .ProseMirror .tableWrapper {
-	margin: 1.5rem 0;
+	margin: 1.5em 0;
 	overflow-x: auto;
 }
 
+.tiptap table,
+.ProseMirror table {
+	border-collapse: collapse;
+	margin: 0;
+	overflow: hidden;
+	table-layout: fixed;
+	width: 100%;
+}
+
+.tiptap table td,
+.tiptap table th,
+.ProseMirror table td,
+.ProseMirror table th {
+	border: 1px solid var(--color-base-300);
+	box-sizing: border-box;
+	min-width: 1em;
+	padding: 8px 10px;
+	position: relative;
+	vertical-align: top;
+}
+
+.tiptap table td > *,
+.tiptap table th > *,
+.ProseMirror table td > *,
+.ProseMirror table th > * {
+	margin-bottom: 0;
+}
+
+.tiptap table th,
+.ProseMirror table th {
+	background-color: var(--color-base-200);
+	font-weight: 600;
+	text-align: left;
+}
+
+.tiptap table .selectedCell:after,
+.ProseMirror table .selectedCell:after {
+	background: color-mix(in srgb, var(--color-base-content) 8%, transparent);
+	content: '';
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+	position: absolute;
+	z-index: 2;
+}
+
+.tiptap table .column-resize-handle,
+.ProseMirror table .column-resize-handle {
+	background-color: var(--color-primary);
+	bottom: -2px;
+	pointer-events: none;
+	position: absolute;
+	right: -2px;
+	top: 0;
+	width: 4px;
+}
+
+.tiptap.resize-cursor,
 .ProseMirror.resize-cursor {
 	cursor: ew-resize;
 	cursor: col-resize;
 }
 
-/* Dark mode */
-.dark .ProseMirror table td,
-.dark .ProseMirror table th {
-	border-color: #374151;
-}
-
-.dark .ProseMirror table th {
-	background-color: #1f2937;
-}
-
-.dark .ProseMirror table .selectedCell:after {
-	background: rgba(55, 65, 81, 0.4);
-}
-
+/* ========== Table controls toolbar ========== */
 .table-controls {
 	display: flex;
 	align-items: center;
@@ -220,63 +338,24 @@ table th {
 	border-radius: 4px;
 }
 
-/* Table styles */
-table {
-	border-collapse: collapse;
-	margin: 0;
-	overflow: hidden;
-	table-layout: fixed;
-	width: 100%;
+/* ========== Highlight ========== */
+.tiptap mark,
+.ProseMirror mark {
+	background-color: var(--color-warning);
+	border-radius: 2px;
+	padding: 0.1em 0.2em;
+	color: var(--color-warning-content);
 }
 
-table th {
-	background-color: #1f2937;
-	font-weight: bold;
-	text-align: left;
+/* ========== Subscript / Superscript ========== */
+.tiptap sub,
+.ProseMirror sub {
+	font-size: 0.75em;
+	vertical-align: sub;
 }
 
-table .selectedCell:after {
-	background: rgba(200, 200, 200, 0.4);
-	content: '';
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	pointer-events: none;
-	position: absolute;
-	z-index: 2;
-}
-
-table .column-resize-handle {
-	background-color: #8b5cf6;
-	bottom: -2px;
-	pointer-events: none;
-	position: absolute;
-	right: -2px;
-	top: 0;
-	width: 4px;
-}
-
-.tableWrapper {
-	margin: 1.5rem 0;
-	overflow-x: auto;
-}
-
-.resize-cursor {
-	cursor: ew-resize;
-	cursor: col-resize;
-}
-
-/* Dark mode */
-.dark table td,
-.dark table th {
-	border-color: #374151;
-}
-
-.dark table th {
-	background-color: #1f2937;
-}
-
-.dark table .selectedCell:after {
-	background: rgba(55, 65, 81, 0.4);
+.tiptap sup,
+.ProseMirror sup {
+	font-size: 0.75em;
+	vertical-align: super;
 }

@@ -29,3 +29,10 @@ export type userType = {
 	sub: string;
 	updated_at: string;
 };
+
+export type UserData = {
+	name: string;
+	email: string;
+	image: string | null | undefined;
+	membership: 'tier-1' | 'tier-2' | 'tier-3' | undefined;
+};

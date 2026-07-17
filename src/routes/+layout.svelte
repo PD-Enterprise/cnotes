@@ -6,7 +6,7 @@
 	import type { PageData } from './$types';
 	import Loader from './components/loader.svelte';
 	import { onNavigate } from '$app/navigation';
-	import { isAuthenticated } from '$lib/stores/store.svelte';
+	import { isAuthenticated, userData } from '$lib/stores/store.svelte';
 	import NotLoggedIn from './components/notLoggedIn.svelte';
 	import SvelteToast from './components/svelteToast.svelte';
 	import { page } from '$app/state';
@@ -19,11 +19,22 @@
 			isLoaded = true;
 		}, 50);
 	});
-	if (!data.session || data.session == null) {
-		isAuthenticated.value = false;
-	} else {
-		isAuthenticated.value = true;
-	}
+	$effect(() => {
+		if (!data.session || data.session == null) {
+			isAuthenticated.value = false;
+		} else {
+			isAuthenticated.value = true;
+			const user = data.session.user;
+			if (user) {
+				userData.value = {
+					name: user?.name ? user?.name : '',
+					email: user?.email ? user?.email : '',
+					image: user?.image,
+					membership: data.membership
+				};
+			}
+		}
+	});
 
 	onNavigate((navigation) => {
 		if (!document.startViewTransition) {

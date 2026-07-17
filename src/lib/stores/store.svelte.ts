@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { note, searchResult } from '../../routes/types';
+import type { note, searchResult, UserData } from '../../routes/types';
 import { Editor } from '@tiptap/core';
 
 // Theme and UI state
@@ -18,6 +18,14 @@ export const searchResults = $state<{ value: searchResult[] }>({ value: [] });
 
 // Auth state
 export const isAuthenticated = $state({ value: false });
+export const userData = $state<{ value: UserData }>({
+	value: {
+		name: '',
+		email: '',
+		image: '',
+		membership: undefined
+	}
+});
 export const error = $state(null);
 export const sync = writable(false);
 

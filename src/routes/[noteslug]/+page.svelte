@@ -110,8 +110,6 @@
 				return;
 			}
 
-			EditorNoteData.value = noteToSave;
-
 			originalNote = JSON.parse(JSON.stringify(EditorNoteData.value));
 			excalidrawIsDirty = false;
 

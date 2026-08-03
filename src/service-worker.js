@@ -1,76 +1,70 @@
-
 /// <reference types="@sveltejs/kit" />
 import { build, files, version } from '$service-worker';
 
-const CACHE = `cache-${version}`;
+const CACHE = `cnotes-${version}`;
 
-const ASSETS = [
-	...build,
-	...files
-];
+const ASSETS = [...build, ...files];
+
+const OFFLINE_HTML = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline - Cnotes</title><style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;height:100dvh;margin:0;background:#1d232a;color:#fff;text-align:center;padding:1rem}h1{font-size:1.5rem}p{color:#888}</style></head><body><h1>You're offline</h1><p>Please check your connection and try again.</p></body></html>`;
 
 self.addEventListener('install', (event) => {
-	async function addFilesToCache() {
-		const cache = await caches.open(CACHE);
-		await cache.addAll(ASSETS);
-	}
-
-	event.waitUntil(addFilesToCache());
+	event.waitUntil(
+		caches
+			.open(CACHE)
+			.then((cache) => Promise.all(ASSETS.map((asset) => cache.add(asset).catch(() => {}))))
+			.then(() => self.skipWaiting())
+	);
 });
 
 self.addEventListener('activate', (event) => {
-	async function deleteOldCaches() {
-		for (const key of await caches.keys()) {
-			if (key !== CACHE) await caches.delete(key);
-		}
-	}
-
-	event.waitUntil(deleteOldCaches());
-	return self.clients.claim();
+	event.waitUntil(
+		caches
+			.keys()
+			.then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key))))
+			.then(() => self.clients.claim())
+	);
 });
 
 self.addEventListener('fetch', (event) => {
-	if (event.request.method !== 'GET') return;
+	const { request } = event;
+	const url = new URL(request.url);
 
-	const url = new URL(event.request.url);
 	if (url.origin !== self.location.origin) return;
+	if (request.method !== 'GET') return;
 
-	if (event.request.mode === 'navigate') {
-		event.respondWith(networkFirst(event.request));
+	if (url.pathname.startsWith('/_app/immutable/') || ASSETS.includes(url.pathname)) {
+		event.respondWith(cacheFirst(request));
 		return;
 	}
 
-	async function respond() {
-		const cache = await caches.open(CACHE);
-
-		if (ASSETS.includes(url.pathname)) {
-			const response = await cache.match(url.pathname);
-			if (response) return response;
-		}
-
-		try {
-			const response = await fetch(event.request);
-			if (!(response instanceof Response)) {
-				throw new Error('invalid response from fetch');
-			}
-			if (response.status === 200) {
-				cache.put(event.request, response.clone());
-			}
-			return response;
-		} catch (err) {
-			const response = await cache.match(event.request);
-			if (response) return response;
-			throw err;
-		}
+	if (request.mode === 'navigate') {
+		event.respondWith(networkFirst(request));
 	}
-
-	event.respondWith(respond());
 });
+
+async function cacheFirst(request) {
+	const cached = await caches.match(request);
+	if (cached) return cached;
+	try {
+		const response = await fetch(request);
+		if (response.ok) {
+			const cache = await caches.open(CACHE);
+			cache.put(request, response.clone());
+		}
+		return response;
+	} catch {
+		return new Response('Offline', { status: 503 });
+	}
+}
 
 async function networkFirst(request) {
 	try {
 		const response = await fetch(request);
-		if (response.ok && response.type === 'basic') {
+		if (
+			response.ok &&
+			response.type === 'basic' &&
+			response.headers.get('content-type')?.includes('text/html')
+		) {
 			const cache = await caches.open(CACHE);
 			cache.put(request, response.clone());
 		}
@@ -78,12 +72,11 @@ async function networkFirst(request) {
 	} catch {
 		const cached = await caches.match(request);
 		if (cached) return cached;
-		return new Response(
-			'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline - Cnotes</title><style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;height:100dvh;margin:0;background:#1d232a;color:#fff;text-align:center;padding:1rem}h1{font-size:1.5rem}p{color:#888}a{color:#60a5fa}</style></head><body><h1>You\'re offline</h1><p>Please check your connection and try again.</p></body></html>',
-			{
-				status: 503,
-				headers: { 'Content-Type': 'text/html; charset=utf-8' }
-			}
-		);
+		const shell = await caches.match('/');
+		if (shell) return shell;
+		return new Response(OFFLINE_HTML, {
+			status: 200,
+			headers: { 'Content-Type': 'text/html; charset=utf-8' }
+		});
 	}
 }

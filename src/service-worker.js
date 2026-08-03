@@ -2,85 +2,88 @@
 /// <reference types="@sveltejs/kit" />
 import { build, files, version } from '$service-worker';
 
-// Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;
 
 const ASSETS = [
-    ...build, // the app itself
-    ...files // everything in `static`
+	...build,
+	...files
 ];
 
 self.addEventListener('install', (event) => {
-    // Create a new cache and add all files to it
-    async function addFilesToCache() {
-        const cache = await caches.open(CACHE);
-        await cache.addAll(ASSETS);
-    }
+	async function addFilesToCache() {
+		const cache = await caches.open(CACHE);
+		await cache.addAll(ASSETS);
+	}
 
-    // console.log('installing service worker for version', version);
-    // console.log('caching assets', ASSETS);
-    // console.log('caching build', build);
-
-    event.waitUntil(addFilesToCache());
+	event.waitUntil(addFilesToCache());
 });
 
 self.addEventListener('activate', (event) => {
-    // Remove previous cached data from disk
-    async function deleteOldCaches() {
-        for (const key of await caches.keys()) {
-            if (key !== CACHE) await caches.delete(key);
-        }
-    }
+	async function deleteOldCaches() {
+		for (const key of await caches.keys()) {
+			if (key !== CACHE) await caches.delete(key);
+		}
+	}
 
-    event.waitUntil(deleteOldCaches());
+	event.waitUntil(deleteOldCaches());
+	return self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
-    // ignore POST requests etc
-    if (event.request.method !== 'GET') return;
+	if (event.request.method !== 'GET') return;
 
-    async function respond() {
-        const url = new URL(event.request.url);
-        const cache = await caches.open(CACHE);
+	const url = new URL(event.request.url);
+	if (url.origin !== self.location.origin) return;
 
-        // `build`/`files` can always be served from the cache
-        if (ASSETS.includes(url.pathname)) {
-            const response = await cache.match(url.pathname);
+	if (event.request.mode === 'navigate') {
+		event.respondWith(networkFirst(event.request));
+		return;
+	}
 
-            if (response) {
-                return response;
-            }
-        }
+	async function respond() {
+		const cache = await caches.open(CACHE);
 
-        // for everything else, try the network first, but
-        // fall back to the cache if we're offline
-        try {
-            const response = await fetch(event.request);
+		if (ASSETS.includes(url.pathname)) {
+			const response = await cache.match(url.pathname);
+			if (response) return response;
+		}
 
-            // if we're offline, fetch can return a value that is not a Response
-            // instead of throwing - and we can't pass this non-Response to respondWith
-            if (!(response instanceof Response)) {
-                throw new Error('invalid response from fetch');
-            }
+		try {
+			const response = await fetch(event.request);
+			if (!(response instanceof Response)) {
+				throw new Error('invalid response from fetch');
+			}
+			if (response.status === 200) {
+				cache.put(event.request, response.clone());
+			}
+			return response;
+		} catch (err) {
+			const response = await cache.match(event.request);
+			if (response) return response;
+			throw err;
+		}
+	}
 
-            if (response.status === 200) {
-                cache.put(event.request, response.clone());
-            }
-
-            return response;
-        } catch (err) {
-            const response = await cache.match(event.request);
-
-            if (response) {
-                // console.log(`Returning from Cache`, event.request.url);
-                return response;
-            }
-
-            // if there's no cache, then just error out
-            // as there is nothing we can do to respond to this request
-            throw err;
-        }
-    }
-
-    event.respondWith(respond());
+	event.respondWith(respond());
 });
+
+async function networkFirst(request) {
+	try {
+		const response = await fetch(request);
+		if (response.ok && response.type === 'basic') {
+			const cache = await caches.open(CACHE);
+			cache.put(request, response.clone());
+		}
+		return response;
+	} catch {
+		const cached = await caches.match(request);
+		if (cached) return cached;
+		return new Response(
+			'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Offline - Cnotes</title><style>body{font-family:system-ui,sans-serif;display:grid;place-items:center;height:100dvh;margin:0;background:#1d232a;color:#fff;text-align:center;padding:1rem}h1{font-size:1.5rem}p{color:#888}a{color:#60a5fa}</style></head><body><h1>You\'re offline</h1><p>Please check your connection and try again.</p></body></html>',
+			{
+				status: 503,
+				headers: { 'Content-Type': 'text/html; charset=utf-8' }
+			}
+		);
+	}
+}

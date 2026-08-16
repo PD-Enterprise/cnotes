@@ -10,7 +10,7 @@
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 	import ShareModel from '../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
-	import Icon from '@iconify/svelte';
+	import IconSidebar from '~icons/material-symbols/left-panel-open';
 	import { getNotes } from '$lib/api/get-notes';
 
 	// Variables
@@ -241,7 +241,7 @@
 									aria-label="close sidebar"
 									onclick={closeDrawer}
 								>
-									<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+									<IconSidebar width="22" height="22" />
 								</button>
 								<div class="save-button flex flex-1 gap-2">
 									{#if isChanged}

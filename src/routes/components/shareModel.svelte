@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import Icon from '@iconify/svelte';
+	import IconCopy from '~icons/material-symbols/content-copy';
 	import urlConfig from '$lib/utils/urlConfig';
 	import { onMount } from 'svelte';
 
@@ -21,7 +21,7 @@
 					showToast('Link copied to clipboard!', 'success');
 				}}
 			>
-				<Icon icon="mdi:clipboard-outline" width="20" height="20" />
+				<IconCopy width="20" height="20" />
 			</button>
 		</div>
 	</div>

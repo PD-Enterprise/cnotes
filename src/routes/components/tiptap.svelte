@@ -7,7 +7,25 @@
 	import MathExtension from '@aarkue/tiptap-math-extension';
 	import './tiptap-editor.css';
 	import 'katex/dist/katex.min.css';
-	import Icon from '@iconify/svelte';
+	import IconParagraph from '~icons/material-symbols/format-paragraph';
+	import IconBold from '~icons/material-symbols/format-bold';
+	import IconItalic from '~icons/material-symbols/format-italic';
+	import IconUnderline from '~icons/material-symbols/format-underlined';
+	import IconHighlight from '~icons/material-symbols/ink-highlighter';
+	import IconSubscript from '~icons/material-symbols/subscript';
+	import IconSuperscript from '~icons/material-symbols/superscript';
+	import IconAlignLeft from '~icons/material-symbols/format-align-left';
+	import IconAlignCenter from '~icons/material-symbols/format-align-center';
+	import IconAlignRight from '~icons/material-symbols/format-align-right';
+	import IconAlignJustify from '~icons/material-symbols/format-align-justify';
+	import IconTable from '~icons/material-symbols/table';
+	import IconAddRow from '~icons/material-symbols/add-row-below';
+	import IconAddColumn from '~icons/material-symbols/add-column-right';
+	import IconDeleteRow from '~icons/material-symbols/remove';
+	import IconDeleteColumn from '~icons/material-symbols/close';
+	import IconDeleteTable from '~icons/material-symbols/delete';
+	import IconYoutube from '~icons/material-symbols/smart-display';
+	import IconImage from '~icons/material-symbols/image';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
@@ -228,7 +246,7 @@
 						editorState.editor.chain().focus().setParagraph().run();
 					}}
 					class="editor-button btn"
-					class:active={isParagraphActive}><Icon icon="fa6-solid:paragraph" /></button
+					class:active={isParagraphActive}><IconParagraph /></button
 				>
 				<button
 					aria-label="Bold"
@@ -239,7 +257,7 @@
 					class="editor-button"
 					class:active={isBoldActive}
 				>
-					<Icon icon="fa6-solid:bold" />
+					<IconBold />
 				</button>
 				<button
 					aria-label="Italic"
@@ -250,7 +268,7 @@
 					class="editor-button"
 					class:active={isItalicActive}
 				>
-					<Icon icon="fa6-solid:italic" />
+					<IconItalic />
 				</button>
 				<button
 					aria-label="Underline"
@@ -261,7 +279,7 @@
 					}}
 					class:active={isUnderlineActive}
 				>
-					<Icon icon="fa6-solid:underline" />
+					<IconUnderline />
 				</button>
 				<button
 					aria-label="Highlight"
@@ -270,7 +288,7 @@
 					onclick={() => {
 						editorState.editor.chain().focus().toggleHighlight().run();
 					}}
-					class:active={isHighlightActive}><Icon icon="fa6-solid:highlighter" /></button
+					class:active={isHighlightActive}><IconHighlight /></button
 				>
 				<button
 					aria-label="Subscript"
@@ -281,7 +299,7 @@
 					class="editor-button"
 					class:active={isSubscriptActive}
 				>
-					<Icon icon="fa6-solid:subscript" />
+					<IconSubscript />
 				</button>
 				<button
 					aria-label="Superscript"
@@ -292,7 +310,7 @@
 					class="editor-button"
 					class:active={isSuperscriptActive}
 				>
-					<Icon icon="fa6-solid:superscript" />
+					<IconSuperscript />
 				</button>
 				<button
 					aria-label="Left"
@@ -303,7 +321,7 @@
 					class="editor-button"
 					class:active={isLeftAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-left-rounded" width="24" height="24" />
+					<IconAlignLeft width="24" height="24" />
 				</button>
 				<button
 					aria-label="Center"
@@ -314,7 +332,7 @@
 					class="editor-button"
 					class:active={isCenterAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-center-rounded" width="24" height="24" />
+					<IconAlignCenter width="24" height="24" />
 				</button>
 				<button
 					aria-label="Right"
@@ -325,7 +343,7 @@
 					class="editor-button"
 					class:active={isRightAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-right-rounded" width="24" height="24" />
+					<IconAlignRight width="24" height="24" />
 				</button>
 				<button
 					aria-label="Justify"
@@ -336,7 +354,7 @@
 					class="editor-button"
 					class:active={isJustifyAlignActive}
 				>
-					<Icon icon="material-symbols:format-align-justify-rounded" width="24" height="24" />
+					<IconAlignJustify width="24" height="24" />
 				</button>
 				<button
 					aria-label="Table"
@@ -352,7 +370,7 @@
 					class="editor-button"
 					class:active={isTableActive}
 				>
-					<Icon icon="fa6-solid:table" />
+					<IconTable />
 				</button>
 				{#if isTableActive}
 					<button
@@ -365,7 +383,7 @@
 						}}
 						class="editor-button"
 					>
-						<Icon icon="majesticons:add-row" width="24" height="24" />
+						<IconAddRow width="24" height="24" />
 					</button>
 					<button
 						aria-label="Add Column After"
@@ -377,7 +395,7 @@
 						}}
 						class="editor-button"
 					>
-						<Icon icon="majesticons:add-column" width="24" height="24" />
+						<IconAddColumn width="24" height="24" />
 					</button>
 					<button
 						aria-label="Delete Row"
@@ -389,7 +407,7 @@
 						}}
 						class="editor-button"
 					>
-						<Icon icon="fluent:table-delete-row-20-regular" width="20" height="20" />
+						<IconDeleteRow width="20" height="20" />
 					</button>
 					<button
 						aria-label="Delete Column"
@@ -401,7 +419,7 @@
 						}}
 						class="editor-button"
 					>
-						<Icon icon="fluent:table-delete-column-20-regular" width="20" height="20" />
+						<IconDeleteColumn width="20" height="20" />
 					</button>
 					<button
 						aria-label="Delete Table"
@@ -413,7 +431,7 @@
 						}}
 						class="editor-button"
 					>
-						<Icon icon="fluent-mdl2:delete-table" width="20" height="20" />
+						<IconDeleteTable width="20" height="20" />
 					</button>
 				{/if}
 				<button
@@ -436,7 +454,7 @@
 					class="editor-button"
 					class:active={editorState.editor?.isActive('Youtube')}
 				>
-					<Icon icon="mdi:youtube" width="24" height="24" />
+					<IconYoutube width="24" height="24" />
 				</button>
 				<!-- <button
 					aria-label="Image"
@@ -446,7 +464,7 @@
 					class:opacity-50={remainingUploads <= 0}
 					class:cursor-not-allowed={remainingUploads <= 0}
 				>
-					<Icon icon="fa6-solid:image" />
+					<IconImage />
 				</button> -->
 			</div>
 		</div>

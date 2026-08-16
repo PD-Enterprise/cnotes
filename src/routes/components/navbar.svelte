@@ -5,7 +5,11 @@
 	import SvelteToast from './svelteToast.svelte';
 	import type { PageData } from '../$types';
 	import { page } from '$app/stores';
-	import Icon from '@iconify/svelte';
+	import IconMenu from '~icons/material-symbols/menu';
+	import IconBack from '~icons/material-symbols/arrow-back';
+	import IconSidebar from '~icons/material-symbols/left-panel-open';
+	import IconFilter from '~icons/material-symbols/filter-list';
+	import IconEdit from '~icons/material-symbols/edit';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import UserComponent from './user-component.svelte';
 	import {
@@ -124,7 +128,7 @@
 						menuElement.classList.toggle('hidden');
 					}}
 				>
-					<Icon icon="tabler:align-left" width="24" height="24" />
+					<IconMenu width="24" height="24" />
 				</button>
 				<ul
 					class="menu dropdown-content menu-sm rounded-box bg-base-100 z-1 mt-3 hidden gap-2 p-2 shadow-md"
@@ -188,7 +192,7 @@
 				}}
 				class="btn btn-ghost btn-circle"
 			>
-				<Icon icon="ep:back" class="h-5 w-5" />
+				<IconBack class="h-5 w-5" />
 			</button>
 		{/if}
 		<a class="btn btn-ghost flex justify-start text-2xl" id="note-title" href="/"
@@ -198,7 +202,7 @@
 	<div class="navbar-end">
 		{#if isNotePage && !sidebarOpen.value}
 			<button onclick={openSidebar} class="btn btn-ghost btn-sm">
-				<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+				<IconSidebar width="22" height="22" />
 			</button>
 		{/if}
 		{#if isHome}
@@ -228,7 +232,7 @@
 									shouldShowFilterMenu = !shouldShowFilterMenu;
 								}}
 							>
-								<Icon icon="fa6-solid:filter" />
+								<IconFilter />
 							</button>
 							{#if shouldShowFilterMenu}
 								<div
@@ -325,14 +329,14 @@
 					<div class="add-note">
 						<a
 							class="addNoteButton btn border-base-content bg-accent text-accent-content border"
-							href="/new-note">Create <Icon icon="mage:edit" width="24" height="24" /></a
+							href="/new-note">Create <IconEdit width="24" height="24" /></a
 						>
 					</div>
 				{:else}
 					<div class="add-note">
 						<a
 							class="addNoteButton btn-disabled btn border-base-content bg-accent text-accent-content"
-							href="/new-note">Create <Icon icon="mage:edit" width="24" height="24" /></a
+							href="/new-note">Create <IconEdit width="24" height="24" /></a
 						>
 					</div>
 				{/if}

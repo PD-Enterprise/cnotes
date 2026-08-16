@@ -4,7 +4,10 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
-	import Icon from '@iconify/svelte';
+	import IconShare from '~icons/material-symbols/share-outline';
+	import IconEdit from '~icons/material-symbols/edit';
+	import IconEyeOff from '~icons/material-symbols/visibility-off';
+	import IconEye from '~icons/material-symbols/visibility';
 	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 
@@ -116,10 +119,10 @@
 						}}
 					>
 						Share
-						<Icon icon="material-symbols:share-outline" width="24" height="24" />
+						<IconShare width="24" height="24" />
 					</button>
 					<a class="edit-btn btn btn-accent p-2" href={`/${noteData.slug}`}
-						>Edit<Icon icon="mage:edit" width="24" height="24" /></a
+						>Edit<IconEdit width="24" height="24" /></a
 					>
 					<button
 						class="metadata-btn btn btn-ghost p-2"
@@ -128,9 +131,9 @@
 						}}
 					>
 						{#if shouldShowMetadata}
-							<Icon icon="tabler:eye-off" width="24" height="24" />
+							<IconEyeOff width="24" height="24" />
 						{:else}
-							<Icon icon="tabler:eye" width="24" height="24" />
+							<IconEye width="24" height="24" />
 						{/if}
 					</button>
 				</div>

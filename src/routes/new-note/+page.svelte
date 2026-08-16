@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from '@iconify/svelte';
+	import IconSidebar from '~icons/material-symbols/left-panel-open';
 
 	// import { onMount } from 'svelte';
 	import AddTextNote from '../components/addTextNote.svelte';
@@ -123,7 +123,7 @@
 						aria-label="open sidebar"
 						class="btn btn-ghost"
 					>
-						<Icon icon="meteor-icons:sidebar" width="22" height="22" />
+						<IconSidebar width="22" height="22" />
 					</button>
 				</div>
 			</div>

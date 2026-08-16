@@ -5,7 +5,9 @@
 	import { onMount } from 'svelte';
 	import config from '$lib/utils/apiConfig';
 	import { notesStore } from '$lib/stores/store.svelte';
-	import Icon from '@iconify/svelte';
+	import IconMore from '~icons/material-symbols/more-vert';
+	import IconEdit from '~icons/material-symbols/edit';
+	import IconDelete from '~icons/material-symbols/delete';
 
 	let notes = $props();
 
@@ -62,7 +64,7 @@
 						role="button"
 						class="btn btn-circle hover:bg-base-100 focus:border-base-content hover:border-base-content m-1 hover:border focus:border"
 					>
-						<Icon icon="bi:three-dots-vertical" width="18" height="18" />
+						<IconMore width="18" height="18" />
 					</div>
 					<ul
 						class="menu dropdown-content rounded-box bg-base-100 absolute top-8 right-8 flex flex-col gap-2 p-2 shadow-sm"
@@ -71,7 +73,7 @@
 							<li>
 								<a class="btn btn-success" href={`/${notes.note.slug}`}>
 									Edit
-									<Icon icon="mage:edit" width="20" height="20" />
+									<IconEdit width="20" height="20" />
 								</a>
 							</li>
 
@@ -86,14 +88,14 @@
 									}}
 								>
 									Delete
-									<Icon icon="mage:trash" width="20" height="20" />
+									<IconDelete width="20" height="20" />
 								</button>
 							</li>
 						{:else}
 							<li>
 								<a class="btn btn-success btn-disabled" href={`/${notes.note.slug}`}>
 									Edit
-									<Icon icon="mage:edit" width="20" height="20" />
+									<IconEdit width="20" height="20" />
 								</a>
 							</li>
 
@@ -108,7 +110,7 @@
 									}}
 								>
 									Delete
-									<Icon icon="mage:trash" width="20" height="20" />
+									<IconDelete width="20" height="20" />
 								</button>
 							</li>
 						{/if}

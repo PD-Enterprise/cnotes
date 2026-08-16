@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import { uploadImage } from '$lib/api/upload-image';
-	import Icon from '@iconify/svelte';
+	import IconWarning from '~icons/material-symbols/warning';
+	import IconCloudUpload from '~icons/material-symbols/cloud-upload';
 
 	let {
 		onInsert
@@ -181,7 +182,7 @@
 			</div>
 		{:else if promptCompress}
 			<div class="flex flex-col items-center gap-4 py-8">
-				<Icon icon="fa6-solid:triangle-exclamation" width="40" height="40" class="text-warning" />
+				<IconWarning width="40" height="40" class="text-warning" />
 				<p class="text-sm text-center">
 					The selected image exceeds <strong>9MB</strong>.
 					It will be resized and compressed before upload.
@@ -205,8 +206,7 @@
 				onclick={() => fileInput?.click()}
 				onkeydown={(e) => e.key === 'Enter' && fileInput?.click()}
 			>
-				<Icon
-					icon="fa6-solid:cloud-arrow-up"
+				<IconCloudUpload
 					width="48"
 					height="48"
 					class="opacity-50 mx-auto mb-2"

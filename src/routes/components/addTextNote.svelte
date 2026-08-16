@@ -9,8 +9,10 @@
 	import { functionReturn } from '$lib/utils/functionReturn';
 	import { validateAcademicLevel } from '$lib/utils/validateAcademicLevel';
 
+	let { addNote = $bindable() } = $props();
+
 	// Functions
-	async function addNote() {
+	async function handleAddNote() {
 		const rawHtml = editorState.editor.getHTML();
 		newNoteData.value.content = DOMPurify.sanitize(rawHtml);
 		newNoteData.value.type = 'text';
@@ -64,21 +66,15 @@
 			return functionReturn(false, true, 'Error adding note', null, error);
 		}
 	}
+
+	$effect(() => {
+		addNote = handleAddNote;
+	});
 </script>
 
 <div class="main-component">
 	<div class="content flex h-full flex-col gap-3 p-2 pl-3">
-		<div class="header flex flex-col gap-3">
-			<div class="buttons flex flex-row gap-3">
-				<div class="save-button-container w-40">
-					<button
-							class="btn btn-accent btn-outline border-base-content h-12 border"
-							onclick={addNote}>Add Note</button
-						>
-				</div>
-			</div>
-		</div>
-		<div class="editor flex-1 min-h-0">
+		<div class="editor min-h-0 flex-1">
 			<Tiptap content={newNoteData.value.content} editable={true} dataStore={newNoteData} />
 		</div>
 	</div>

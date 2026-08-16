@@ -8,6 +8,7 @@
 	import Excalidraw from './Excalidraw.svelte';
 	import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
+	let { addNote = $bindable() } = $props();
 	let excalidrawAPI: ExcalidrawImperativeAPI | undefined = $state();
 
 	// $effect(() => {
@@ -21,7 +22,7 @@
 	// 	}
 	// });
 
-	async function addNote() {
+	async function handleAddNote() {
 		if (!excalidrawAPI) {
 			showToast('There is an error with the editor.', 'error');
 			return;
@@ -79,20 +80,14 @@
 			return functionReturn(false, true, 'Error adding note', null, error);
 		}
 	}
+
+	$effect(() => {
+		addNote = handleAddNote;
+	});
 </script>
 
 <div class="main-component">
 	<div class="content flex h-full flex-col gap-3 p-2">
-		<div class="header flex flex-col gap-3">
-			<div class="buttons flex flex-row gap-3">
-				<div class="save-button-container w-40">
-						<button
-							class="btn btn-accent btn-outline border-base-content h-12 border"
-							onclick={addNote}>Add Note</button
-						>
-				</div>
-			</div>
-		</div>
 		<div class="editor h-full">
 			<Excalidraw
 				theme="dark"
@@ -105,20 +100,6 @@
 
 <style>
 	.main-component {
-		height: calc(100vh - 140px);
-	}
-	/* Button styling */
-	.btn {
-		padding: 10px 20px;
-		font-size: 1rem;
-		font-weight: 600;
-		border-radius: 8px;
-		cursor: pointer;
-		transition: all 0.3s ease-in-out;
-	}
-
-	.btn:active {
-		transform: translateY(0);
-		box-shadow: none;
+		height: calc(100vh - 80px);
 	}
 </style>

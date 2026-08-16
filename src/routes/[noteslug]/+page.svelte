@@ -217,7 +217,7 @@
 					<div class="drawer-content flex h-full flex-col">
 						<div class="editor flex min-h-0 flex-1 overflow-y-auto">
 							{#if EditorNoteData.value.type == 'text'}
-								<Tiptap content={EditorNoteData.value.content} editable={true} />
+								<Tiptap content={EditorNoteData.value.content} editable={true} dataStore={EditorNoteData} />
 							{:else if EditorNoteData.value.type == 'diagram'}
 								{#key excalidrawKey}
 									<Excalidraw

@@ -8,6 +8,7 @@
 	import { newNoteData } from '$lib/stores/store.svelte';
 	// Variables
 	let option = $state('text');
+	let addNote = $state<() => Promise<void>>(async () => {});
 	let isK_12: string = $state('true');
 	let sidebarOpen = $state(false);
 </script>
@@ -16,6 +17,31 @@
 	<div class="page-layout">
 		<aside class="metadata-sidebar bg-base-200" class:open={sidebarOpen}>
 			<div class="flex flex-col gap-4 p-2">
+				<div class="type-selector">
+					<label class="form-control">
+						<div class="label">
+							<span class="label-text">Note Type:</span>
+						</div>
+						<div class="flex flex-row items-center gap-2">
+							<select
+								bind:value={option}
+								onchange={() => {
+									newNoteData.value.content = '';
+								}}
+								class="select select-bordered w-full min-w-0 grow"
+							>
+								<option value="text">Text</option>
+								<option value="diagram">Diagram</option>
+							</select>
+							<button
+								class="btn btn-accent btn-outline border-base-content h-12 border"
+								onclick={() => addNote()}
+							>
+								Add Note
+							</button>
+						</div>
+					</label>
+				</div>
 				<div class="top-bar flex flex-row gap-2">
 					<h2 class="font-bold">Enter Metadata for your Note Here:</h2>
 				</div>
@@ -100,43 +126,15 @@
 						<Icon icon="meteor-icons:sidebar" width="22" height="22" />
 					</button>
 				</div>
-
-				<div class="type-selector p-2">
-					<div class="dropdown">
-						<select
-							bind:value={option}
-							onchange={()=>{
-								newNoteData.value.content = ""
-							}}
-							class="menu bg-base-200 border-base-content z-1 w-52 rounded border p-2 shadow-xl"
-						>
-							<option value="text">Text</option>
-							<option value="diagram">Diagram</option>
-						</select>
-					</div>
-					<div class="dropdown dropdown-end">
-						<div tabindex="0" role="button" class="btn btn-ghost info-text">
-							<Icon icon="material-symbols:info" width="22" height="22" />
-						</div>
-						<div
-							class="compact dropdown-content card rounded-box bg-base-100 z-100 h-auto w-64 shadow"
-						>
-							<div class="card-body p-2">
-								<p class="card-title">component state is not held!!!</p>
-								<p class="card-body p-0">Save your work before switching</p>
-							</div>
-						</div>
-					</div>
-				</div>
 			</div>
 			<div class="editors">
 				{#if option === 'text'}
 					<div class="text">
-						<AddTextNote />
+						<AddTextNote bind:addNote />
 					</div>
 				{:else if option === 'diagram'}
 					<div class="diagram mt-1 p-2">
-						<Diagram />
+						<Diagram bind:addNote />
 					</div>
 				{/if}
 			</div>
@@ -197,6 +195,9 @@
 	.form-control select {
 		width: 300px;
 	}
+	.type-selector select {
+		width: 100%;
+	}
 	.form-control input:focus {
 		outline: none;
 		box-shadow: 0 0 8px rgba(107, 136, 190, 0.4);
@@ -230,9 +231,6 @@
 	@media (max-width: 1023px) {
 		.sidebar-toggle {
 			display: block;
-		}
-		.type-selector {
-			padding: 0.25rem;
 		}
 
 		.metadata-sidebar {

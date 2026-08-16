@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
+	import type { note } from '../types';
 	import { EditorNoteData, editorState, theme, userData } from '$lib/stores/store.svelte';
 	import { Editor, isActive, mergeAttributes } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
@@ -20,7 +21,8 @@
 	import TextAlign from '@tiptap/extension-text-align';
 
 	let element: any = $state();
-	let { content, editable } = $props();
+	let { content, editable, dataStore }: { content: string; editable: boolean; dataStore?: { value: note } } =
+		$props();
 	let isTableActive = $state(false);
 	let isParagraphActive = $state(false);
 	let isUnderlineActive = $state(false);
@@ -129,7 +131,9 @@
 				heading3Active = editor.isActive('heading', { level: 3 });
 			},
 			onUpdate() {
-				EditorNoteData.value.content = editorState.editor.getHTML();
+				if (dataStore) {
+					dataStore.value.content = editorState.editor.getHTML();
+				}
 			},
 			editorProps: {
 				attributes: {
@@ -168,7 +172,7 @@
 	});
 
 	$effect(() => {
-		const noteContent = EditorNoteData.value.content;
+		const noteContent = dataStore?.value.content;
 		if (editorState.editor && noteContent) {
 			if (editorState.editor.getHTML() !== noteContent) {
 				editorState.editor.commands.setContent(noteContent, { emitUpdate: false });

@@ -79,7 +79,7 @@
 			</div>
 		</div>
 		<div class="editor flex-1 min-h-0">
-			<Tiptap content={newNoteData.value.content} editable={true} />
+			<Tiptap content={newNoteData.value.content} editable={true} dataStore={newNoteData} />
 		</div>
 	</div>
 </div>

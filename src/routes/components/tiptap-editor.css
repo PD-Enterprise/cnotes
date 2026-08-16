@@ -2,6 +2,7 @@
 .ProseMirror {
 	outline: none;
 	color: var(--color-base-content);
+	height: 100%;
 }
 
 /* ========== Prose ========== */
@@ -11,8 +12,8 @@
 	line-height: 1.75;
 }
 
-.tiptap > *:first-child,
-.ProseMirror > *:first-child {
+.tiptap>*:first-child,
+.ProseMirror>*:first-child {
 	margin-top: 0;
 }
 
@@ -202,14 +203,14 @@
 	gap: 0.5em;
 }
 
-.tiptap ul[data-type='taskList'] li > label,
-.ProseMirror ul[data-type='taskList'] li > label {
+.tiptap ul[data-type='taskList'] li>label,
+.ProseMirror ul[data-type='taskList'] li>label {
 	flex-shrink: 0;
 	margin-top: 0.3em;
 }
 
-.tiptap ul[data-type='taskList'] li > label input[type='checkbox'],
-.ProseMirror ul[data-type='taskList'] li > label input[type='checkbox'] {
+.tiptap ul[data-type='taskList'] li>label input[type='checkbox'],
+.ProseMirror ul[data-type='taskList'] li>label input[type='checkbox'] {
 	cursor: pointer;
 	width: 1.1em;
 	height: 1.1em;
@@ -286,10 +287,10 @@
 	vertical-align: top;
 }
 
-.tiptap table td > *,
-.tiptap table th > *,
-.ProseMirror table td > *,
-.ProseMirror table th > * {
+.tiptap table td>*,
+.tiptap table th>*,
+.ProseMirror table td>*,
+.ProseMirror table th>* {
 	margin-bottom: 0;
 }
 

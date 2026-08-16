@@ -133,7 +133,7 @@
 						<AddTextNote bind:addNote />
 					</div>
 				{:else if option === 'diagram'}
-					<div class="diagram mt-1 p-2">
+					<div class="diagram">
 						<Diagram bind:addNote />
 					</div>
 				{/if}

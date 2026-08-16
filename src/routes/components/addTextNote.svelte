@@ -73,7 +73,7 @@
 </script>
 
 <div class="main-component">
-	<div class="content flex h-full flex-col gap-3 p-2 pl-3">
+	<div class="content flex h-full flex-col gap-3">
 		<div class="editor min-h-0 flex-1">
 			<Tiptap content={newNoteData.value.content} editable={true} dataStore={newNoteData} />
 		</div>
@@ -82,7 +82,6 @@
 
 <style>
 	.main-component {
-		min-height: calc(100vh - 65px);
-		height: 100%;
+		min-height: calc(100vh - 70px);
 	}
 </style>

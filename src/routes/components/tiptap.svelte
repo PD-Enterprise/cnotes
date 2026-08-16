@@ -39,8 +39,11 @@
 	import TextAlign from '@tiptap/extension-text-align';
 
 	let element: any = $state();
-	let { content, editable, dataStore }: { content: string; editable: boolean; dataStore?: { value: note } } =
-		$props();
+	let {
+		content,
+		editable,
+		dataStore
+	}: { content: string; editable: boolean; dataStore?: { value: note } } = $props();
 	let isTableActive = $state(false);
 	let isParagraphActive = $state(false);
 	let isUnderlineActive = $state(false);
@@ -202,7 +205,11 @@
 	});
 </script>
 
-<div class="editor-container flex w-full flex-col p-0" id="editor" style="height: calc(100vh - 65px - 1rem); min-height: 400px;">
+<div
+	class="editor-container flex w-full flex-col p-0"
+	id="editor"
+	style="height: calc(100vh - 65px); min-height: 400px;"
+>
 	{#if editable}
 		<div class="tipex-controller control-group flex flex-row">
 			<div class="tipex-basic-controller-wrapper flex flex-row flex-wrap rounded-md">

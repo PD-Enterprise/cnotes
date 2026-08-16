@@ -87,8 +87,8 @@
 </script>
 
 <div class="main-component">
-	<div class="content flex h-full flex-col gap-3 p-2">
-		<div class="editor h-full">
+	<div class="content flex h-full flex-col gap-3">
+		<div class="editor min-h-0 flex-1">
 			<Excalidraw
 				theme="dark"
 				excalidrawAPI={(api) => (excalidrawAPI = api)}
@@ -100,6 +100,6 @@
 
 <style>
 	.main-component {
-		height: calc(100vh - 80px);
+		height: calc(100vh - 65px);
 	}
 </style>

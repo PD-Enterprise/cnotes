@@ -119,22 +119,7 @@
 			</div>
 		</div>
 		<div class="note-meta card-actions">
-			<div class="badge badge-outline bg-base-200 border-base-content border p-2">
-				{#if Number(notes.note.academicLevel)}
-					{notes.note.academicLevel}th grade
-				{:else}
-					{notes.note.academicLevel}
-				{/if}
-			</div>
-			<div class="badge badge-outline bg-base-200 border-base-content p-2">
-				{notes.note.topic}
-			</div>
-
-			<div class="badge badge-outline bg-base-200 border-base-content p-2">
-				{notes.note.visibility[0].toUpperCase() + notes.note.visibility.slice(1)}
-			</div>
-
-			<div class="badge badge-outline bg-base-200 border-base-content p-2">
+			<div class="badge bg-base-200 p-2">
 				{(() => {
 					const d = new Date(notes.note.dateCreated);
 					const day = String(d.getDate()).padStart(2, '0');
@@ -143,6 +128,21 @@
 					return `${month}/${day}/${year}`;
 				})()}
 			</div>
+			<div class="badge bg-base-200 border p-2">
+				{#if Number(notes.note.academicLevel)}
+					{notes.note.academicLevel}th grade
+				{:else}
+					{notes.note.academicLevel}
+				{/if}
+			</div>
+			<div class="badge bg-base-200 p-2.5">
+				{notes.note.topic}
+			</div>
+
+			<div class="badge bg-base-200 p-2">
+				{notes.note.visibility[0].toUpperCase() + notes.note.visibility.slice(1)}
+			</div>
+
 			{#if notes.note.type == 'diagram'}
 				<div class="badge badge-outline border-base-content bg-base-300 p-2">Diagram</div>
 			{/if}

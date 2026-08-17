@@ -26,6 +26,7 @@
 	import IconDeleteTable from '~icons/material-symbols/delete';
 	import IconYoutube from '~icons/material-symbols/smart-display';
 	import IconImage from '~icons/material-symbols/image';
+	import IconOcr from '~icons/material-symbols/document-scanner';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import Heading from '@tiptap/extension-heading';
 	import Underline from '@tiptap/extension-underline';
@@ -37,6 +38,7 @@
 	import Image from '@tiptap/extension-image';
 	import ImageUploadModal from './ImageUploadModal.svelte';
 	import TextAlign from '@tiptap/extension-text-align';
+	import OcrModal from './ocrModal.svelte';
 
 	let element: any = $state();
 	let {
@@ -79,6 +81,10 @@
 			return;
 		}
 		const dialog = document.getElementById('image_upload_modal') as HTMLDialogElement | null;
+		dialog?.showModal();
+	}
+	async function handleOcr() {
+		const dialog = document.getElementById('ocr_modal') as HTMLDialogElement | null;
 		dialog?.showModal();
 	}
 
@@ -473,11 +479,17 @@
 				>
 					<IconImage />
 				</button> -->
+				<!-- OCR Image Button -->
+				<button aria-label="OCR" title="OCR" class="editor-button" onclick={handleOcr}>
+					<IconOcr />
+				</button>
 			</div>
 		</div>
 	{/if}
 	<div bind:this={element} class="editor" id="editor"></div>
 </div>
+
+<OcrModal />
 
 <ImageUploadModal
 	onInsert={(url) => editorState.editor?.chain().focus().setImage({ src: url }).run()}

@@ -81,11 +81,6 @@
 			setImage();
 		}
 	}
-
-	onMount(() => {
-		ocrModal = document.getElementById('ocr_modal') as HTMLDialogElement | null;
-		ocrModal.showModal();
-	});
 </script>
 
 <dialog class="modal" id="ocr_modal">

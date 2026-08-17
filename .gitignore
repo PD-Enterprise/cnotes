@@ -22,7 +22,7 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # lock-file
-pnpm-lock.yaml
+bun.lock
 
 # IDE
 /.vscode

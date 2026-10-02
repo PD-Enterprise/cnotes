@@ -30,7 +30,7 @@
 	}
 
 	function closeModal() {
-		(ocrModal ?? document.getElementById('ocr_modal') as HTMLDialogElement | null)?.close();
+		(ocrModal ?? (document.getElementById('ocr_modal') as HTMLDialogElement | null))?.close();
 	}
 
 	async function extractText(file: File) {
@@ -120,12 +120,14 @@
 <dialog bind:this={ocrModal} class="modal" id="ocr_modal" onclose={resetState}>
 	<div class="modal-box">
 		<form method="dialog">
-			<button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2" onclick={resetState}>✕</button>
+			<button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2" onclick={resetState}
+				>✕</button
+			>
 		</form>
 
 		<div class="flex flex-col items-center justify-center gap-2 p-4">
 			<label
-				class="group border-base-content hover:bg-base-300 bg-base-200 relative flex aspect-[4/3] w-full max-w-md cursor-pointer justify-center overflow-hidden rounded-3xl border-4 border-dashed p-6 text-center shadow-lg transition duration-300 hover:shadow-2xl sm:p-8"
+				class="group border-base-content hover:bg-base-300 bg-base-200 relative flex aspect-4/3 w-full max-w-md cursor-pointer justify-center overflow-hidden rounded-3xl border-4 border-dashed p-6 text-center shadow-lg transition duration-300 hover:shadow-2xl sm:p-8"
 				ondragover={handleDragOver}
 				ondragleave={handleDragLeave}
 				ondrop={handleDrop}

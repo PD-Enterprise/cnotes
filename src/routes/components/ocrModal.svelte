@@ -104,6 +104,7 @@
 					onchange={setImage}
 					multiple={false}
 					accept="image/jpeg, image/png, image/webp"
+					capture="environment"
 				/>
 
 				{#if image && imageUrl}

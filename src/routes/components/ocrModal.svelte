@@ -2,7 +2,7 @@
 	import { getOcr } from '$lib/api/get-ocr';
 	import { EditorNoteData, editorState } from '$lib/stores/store.svelte';
 	import { compressImage } from '$lib/utils/compressImage';
-	import { onMount } from 'svelte';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
 	import IconUpload from '~icons/material-symbols/upload';
 
 	const MAX_FILE_SIZE = 20 * 1024 * 1024;
@@ -16,10 +16,29 @@
 	let image: File | undefined = $state(undefined);
 	let imageUrl = $derived(image ? URL.createObjectURL(image) : undefined);
 
+	function resetState() {
+		if (imageUrl) {
+			URL.revokeObjectURL(imageUrl);
+		}
+		image = undefined;
+		if (input) {
+			input.value = '';
+		}
+		error = '';
+		loading = '';
+		isOver = false;
+	}
+
+	function closeModal() {
+		(ocrModal ?? document.getElementById('ocr_modal') as HTMLDialogElement | null)?.close();
+	}
+
 	async function extractText(file: File) {
 		loading = 'Extracting text...';
+		error = '';
+		let hasError = false;
 		try {
-			await getOcr(image, (chunk) => {
+			await getOcr(file, (chunk) => {
 				if (chunk.type === 'delta' && chunk.delta) {
 					console.log(chunk.delta);
 					EditorNoteData.value.content += chunk.delta.replaceAll('\n', '<br>');
@@ -27,27 +46,40 @@
 						emitUpdate: false
 					});
 				} else if (chunk.type === 'error') {
-					error = 'Error extracting text. Please try again.';
+					hasError = true;
+					error = chunk.message || 'Error extracting text. Please try again.';
+					showToast(error, 'error');
 				} else if (chunk.type === 'done') {
-					ocrModal.close();
+					if (!hasError) {
+						showToast('Text extracted successfully', 'success');
+						closeModal();
+					}
 				}
 			});
 		} catch (e) {
-			error = 'Error extracting text. Please try again.';
+			error = e instanceof Error ? e.message : 'Error extracting text. Please try again.';
+			showToast(error, 'error');
 		} finally {
 			loading = '';
 		}
 	}
 	async function setImage() {
 		loading = 'Uploading image...';
-		if (!input || !input.files) {
+		error = '';
+		if (!input || !input.files || !input.files[0]) {
 			error = 'No file selected';
+			showToast(error, 'error');
+			loading = '';
 			return;
 		}
 		image = input.files[0];
 
 		if (!ALLOWED_TYPES.includes(image.type)) {
 			error = 'Only JPEG, PNG, and WebP files are accepted';
+			showToast(error, 'error');
+			loading = '';
+			image = undefined;
+			if (input) input.value = '';
 			return;
 		}
 		if (image.size >= MAX_FILE_SIZE) {
@@ -55,6 +87,8 @@
 			const compressedFile = await compressImage(image);
 			if (!compressedFile) {
 				error = 'Error compressing image. Please try again.';
+				showToast(error, 'error');
+				loading = '';
 				return;
 			}
 			image = compressedFile;
@@ -83,10 +117,10 @@
 	}
 </script>
 
-<dialog class="modal" id="ocr_modal">
+<dialog bind:this={ocrModal} class="modal" id="ocr_modal" onclose={resetState}>
 	<div class="modal-box">
 		<form method="dialog">
-			<button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2">✕</button>
+			<button class="btn btn-sm btn-circle btn-ghost absolute top-2 right-2" onclick={resetState}>✕</button>
 		</form>
 
 		<div class="flex flex-col items-center justify-center gap-2 p-4">
@@ -144,6 +178,6 @@
 		</div>
 	</div>
 	<form method="dialog" class="modal-backdrop">
-		<button onclick={close}>close</button>
+		<button onclick={resetState}>close</button>
 	</form>
 </dialog>

@@ -59,7 +59,6 @@
 			} else {
 				isHome = false;
 				isNotePage =
-					$page.url.pathname.split('/')[1] !== 'new-note' &&
 					$page.url.pathname.split('/')[1] !== 'login' &&
 					$page.url.pathname.split('/')[1] !== 'logout' &&
 					!$page.url.pathname.endsWith('/sharing');

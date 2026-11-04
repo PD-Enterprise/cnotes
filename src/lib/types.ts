@@ -1,8 +1,12 @@
+export type OCRStage = 'extracting' | 'processing';
+
 export type OCRStreamChunk =
-	| { type: 'delta'; delta: string }
+	| { type: 'stage'; stage: OCRStage }
+	| { type: 'delta'; stage?: OCRStage; delta: string }
 	| {
 			type: 'usage';
+			stage?: OCRStage;
 			usage: { promptTokens: number; completionTokens: number; totalTokens: number };
 	  }
 	| { type: 'done' }
-	| { type: 'error'; message: string };
+	| { type: 'error'; stage?: OCRStage; message: string };

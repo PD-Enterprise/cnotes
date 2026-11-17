@@ -120,11 +120,11 @@
 <SvelteToast />
 
 <div class="navbar bg-base-200 z-1 shadow-sm" class:fixed-navbar={isSharingPage}>
-	<div class="navbar-start">
+	<div class="flex w-screen items-center gap-1">
 		{#if isHome}
 			<div class="dropdown">
 				<button
-					class="btn btn-ghost"
+					class="btn btn-ghost p-3"
 					onclick={() => {
 						const menuElement = document.getElementById('menu') as HTMLDivElement;
 						menuElement.classList.toggle('hidden');
@@ -201,18 +201,15 @@
 			class="btn btn-ghost flex justify-start text-2xl"
 			class:sharing-title={isSharingPage}
 			id="note-title"
-			href="/"
-			>{toTitleCase(title)}</a
+			href="/">{toTitleCase(title)}</a
 		>
-	</div>
-	<div class="navbar-end">
 		{#if isNotePage && !sidebarOpen.value}
 			<button onclick={openSidebar} class="btn btn-ghost btn-sm">
 				<IconSidebar width="22" height="22" />
 			</button>
 		{/if}
 		{#if isSharingPage}
-			<div class="flex items-center gap-2">
+			<div class="flex grow items-center justify-end gap-1">
 				<a
 					class="btn btn-primary btn-sm"
 					href={`/${$page.url.pathname.split('/sharing')[0].split('/')[1]}`}>Edit</a
@@ -236,12 +233,12 @@
 			</div>
 		{/if}
 		{#if isHome}
-			<div class="header bg-base-200 flex grow gap-3 p-2">
-				<div class="search-bar bg-base-100 grow rounded-md p-1">
+			<div class="header flex grow gap-3 p-2">
+				<div class="search-bar bg-base-100 grow rounded-md">
 					<div class="flex items-center gap-2 rounded-md p-1">
 						<input
 							type="text"
-							class="search-input grow focus:border-none focus:outline-none"
+							class="search-input grow p-1 focus:border-none focus:outline-none"
 							placeholder="Search for a note"
 							bind:value={searchQuery.value}
 							onkeydown={(e) => {
@@ -257,7 +254,7 @@
 						<div class="filter-dropdown">
 							<button
 								title="Filter Notes"
-								class="filter-notes btn btn-circle border-base-content bg-base-100 hover:bg-base-300 border"
+								class="filter-notes btn btn-circle bg-base-100 hover:bg-base-300 border"
 								onclick={() => {
 									shouldShowFilterMenu = !shouldShowFilterMenu;
 								}}
@@ -357,9 +354,8 @@
 				</div>
 				{#if data.session}
 					<div class="add-note">
-						<a
-							class="addNoteButton btn border-base-content bg-accent text-accent-content border"
-							href="/new-note">Create <IconEdit width="24" height="24" /></a
+						<a class="addNoteButton btn bg-accent text-accent-content border" href="/new-note"
+							>Create <IconEdit width="24" height="24" /></a
 						>
 					</div>
 				{:else}
@@ -391,21 +387,11 @@
 		justify-content: space-between;
 		align-items: center;
 	}
-	#note-title {
-		white-space: nowrap;
-		overflow-x: scroll;
-		display: flex;
-		justify-content: start;
-		width: calc(100vw - 55px);
-		scrollbar-width: none;
-		-ms-overflow-style: none;
-	}
 
 	.sharing-title {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		width: calc(100vw - 180px);
 	}
 
 	.search-bar {
@@ -472,9 +458,5 @@
 	}
 	.addNoteButton:hover {
 		transform: translateY(-1px) scale(1.025);
-	}
-	.header {
-		justify-content: space-between;
-		align-items: center;
 	}
 </style>

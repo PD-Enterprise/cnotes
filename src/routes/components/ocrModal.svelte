@@ -15,6 +15,8 @@
 	let isOver = $state(false);
 	let image: File | undefined = $state(undefined);
 	let imageUrl = $derived(image ? URL.createObjectURL(image) : undefined);
+	let stage = $state<'extracting' | 'processing'>('extracting');
+	let rawText = $state('');
 
 	function resetState() {
 		if (imageUrl) {
@@ -27,6 +29,8 @@
 		error = '';
 		loading = '';
 		isOver = false;
+		stage = 'extracting';
+		rawText = '';
 	}
 
 	function closeModal() {
@@ -39,16 +43,25 @@
 		let hasError = false;
 		try {
 			await getOcr(file, (chunk) => {
-				if (chunk.type === 'delta' && chunk.delta) {
-					console.log(chunk.delta);
-					EditorNoteData.value.content += chunk.delta.replaceAll('\n', '<br>');
-					editorState.editor?.commands.setContent(EditorNoteData.value.content, {
-						emitUpdate: false
-					});
+				if (chunk.type === 'stage') {
+					stage = chunk.stage;
+				} else if (chunk.type === 'delta' && chunk.delta) {
+					if (stage === 'processing') {
+						EditorNoteData.value.content += chunk.delta.replaceAll('\n', '<br>');
+						editorState.editor?.commands.setContent(EditorNoteData.value.content, {
+							emitUpdate: false
+						});
+					} else {
+						rawText += chunk.delta.replaceAll('\n', '<br>');
+					}
 				} else if (chunk.type === 'error') {
 					hasError = true;
-					error = chunk.message || 'Error extracting text. Please try again.';
-					showToast(error, 'error');
+					if (stage === 'processing') {
+						error = chunk.message || 'Formatting failed — showing the raw extracted text.';
+					} else {
+						error = chunk.message || 'There was an error, please try again.';
+						showToast(error, 'error');
+					}
 				} else if (chunk.type === 'done') {
 					if (!hasError) {
 						showToast('Text extracted successfully', 'success');
@@ -159,6 +172,16 @@
 								<span class="mt-1 block text-xs sm:text-sm">
 									{loading}
 								</span>
+							</div>
+						{/if}
+						{#if stage === 'extracting' && rawText}
+							<div
+								role="alert"
+								class="bg-base-100/50 text-base-content/60 mt-2 rounded-2xl px-4 py-3 font-mono text-xs opacity-100"
+							>
+								<i class="icon mdi mdi-alert-circle-outline mr-2"></i>
+								Raw transcription:
+								<span class="break-all">{@html rawText}</span>
 							</div>
 						{/if}
 					{:else}

@@ -4,36 +4,28 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
-	import IconShare from '~icons/material-symbols/share-outline';
-	import IconEdit from '~icons/material-symbols/edit';
 	import IconEyeOff from '~icons/material-symbols/visibility-off';
 	import IconEye from '~icons/material-symbols/visibility';
 	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 
-	// Variables
 	let errorMessage: string = $state('');
-	let noteData = $state<note>({
-		title: '',
-		dateCreated: '',
-		academicLevel: '',
-		topic: '',
-		content: '',
-		type: '',
-		visibility: '',
-		year: '',
-		language: '',
-		keywords: '',
-		dateUpdated: ''
-	});
+	let noteData = $state<note | null>(null);
 	let localNote = null;
 	let hasLocalNote = false;
-	let slug: string = $state();
+	let slug: string = $state('');
 	let shouldShowMetadata: boolean = $state(false);
+	let isLoading: boolean = $state(true);
 
 	// Functions
+	function formatDate(value: string): string {
+		if (!value) return '';
+		const d = new Date(value);
+		if (isNaN(d.getTime())) return value;
+		return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+	}
+
 	async function getNoteFromServer() {
-		const slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
 		const request = await fetch(`/${slug}`, {
 			method: 'GET',
 			headers: { 'Content-Type': 'application/json' }
@@ -44,20 +36,23 @@
 			getNoteFromLocalStorage(slug);
 			switch (result.status) {
 				case 401:
-					errorMessage = 'You must be logged in to view this note.'; // Message for unauthenticated users
-					return;
+					errorMessage = 'You must be logged in to view this note.';
+					break;
 				case 403:
 					errorMessage =
-						"You aren't the owner of this note. You do not have permission to view it."; // Message for non-owning authenticated users
-					return;
+						"You aren't the owner of this note. You do not have permission to view it.";
+					break;
 				default:
 					errorMessage = 'Note not found or an unexpected error occurred.';
-					return;
+					break;
 			}
+			isLoading = false;
+			return;
 		}
 
 		const serverNote = result.data[0];
 		noteData = { ...serverNote };
+		isLoading = false;
 	}
 	async function getNoteFromLocalStorage(slug: string) {
 		const storedNote = localStorage.getItem(`note:${slug}`);
@@ -67,6 +62,8 @@
 				localNote = JSON.parse(storedNote);
 			} catch (e) {
 				errorMessage = 'Failed to load note from local storage.';
+				isLoading = false;
+				return;
 			}
 			noteData = { ...localNote };
 		}
@@ -79,93 +76,265 @@
 	});
 </script>
 
-<div class="main" style="view-transition-name: note-card-{slug}">
-	{#if noteData}
-		<div class="content flex h-full flex-col">
-			<div class="metadata-box bg-base-200 flex flex-col gap-1 p-2">
+{#if isLoading}
+	<div class="reader" style="view-transition-name: note-card-{slug}">
+		<div class="skeleton" style="width: 40%; height: 2rem; margin-bottom: 1rem;"></div>
+		<div class="skeleton" style="width: 60%; height: 1rem; margin-bottom: 0.5rem;"></div>
+		<div class="skeleton" style="width: 100%; height: 1rem; margin-bottom: 0.5rem;"></div>
+		<div class="skeleton" style="width: 90%; height: 1rem; margin-bottom: 0.5rem;"></div>
+		<div class="skeleton" style="width: 95%; height: 1rem; margin-bottom: 1.5rem;"></div>
+		<div class="skeleton" style="width: 100%; height: 8rem;"></div>
+	</div>
+{:else if errorMessage && !noteData}
+	<div class="reader error-state">
+		<p class="error-message">{errorMessage}</p>
+		<a class="btn btn-primary btn-sm" href="/">Go home</a>
+	</div>
+{:else if noteData}
+	<div class="reader" style="view-transition-name: note-card-{slug}">
+		<div class="reader-actions">
+			<button class="btn btn-ghost btn-sm" aria-label="Back" onclick={() => history.back()}>
+				← Back
+			</button>
+			<a class="btn btn-primary btn-sm" href={`/${noteData.slug}`}>Edit</a>
+			<button
+				class="btn btn-ghost btn-sm"
+				aria-label="Share"
+				onclick={() => {
+					const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
+					share_modal?.showModal();
+				}}
+			>
+				Share
+			</button>
+			<button
+				class="btn btn-ghost btn-sm"
+				aria-label="Toggle metadata"
+				onclick={() => {
+					shouldShowMetadata = !shouldShowMetadata;
+				}}
+			>
 				{#if shouldShowMetadata}
-					<h1 class="w-full p-1 text-2xl font-bold" style="view-transition-name: note-title-{slug}">
-						{noteData.title}
-					</h1>
-					<div class="meta-data flex flex-col flex-wrap items-center justify-center">
-						{#each Object.keys(noteData) as noteDataKey}
-							{#if ['dateCreated', 'academicLevel', 'topic', 'visibility', 'language'].includes(noteDataKey)}
-								<div class="mx-auto">
-									<div class="label text-center">
-										<span class="label-text">
-											{toTitleCase(noteDataKey)}:
-										</span>
-									</div>
-									{#if noteDataKey == 'academicLevel'}
-										{#if Number(noteData[noteDataKey])}
-											<p class="label-body text-center">{noteData[noteDataKey]}th grade</p>
-										{:else}
-											<p class="label-body text-center">{noteData[noteDataKey]}</p>
-										{/if}
-									{:else}
-										<p class="label-body text-center">{noteData[noteDataKey]}</p>
-									{/if}
-								</div>
-							{/if}
-						{/each}
-					</div>
+					<IconEyeOff width="18" height="18" />
+				{:else}
+					<IconEye width="18" height="18" />
 				{/if}
-				<div class="buttons flex flex-row gap-2">
-					<button
-						class="share-btn btn btn-success p-2"
-						onclick={() => {
-							const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-							share_modal.showModal();
-						}}
-					>
-						Share
-						<IconShare width="24" height="24" />
-					</button>
-					<a class="edit-btn btn btn-accent p-2" href={`/${noteData.slug}`}
-						>Edit<IconEdit width="24" height="24" /></a
-					>
-					<button
-						class="metadata-btn btn btn-ghost p-2"
-						onclick={() => {
-							shouldShowMetadata = !shouldShowMetadata;
-						}}
-					>
-						{#if shouldShowMetadata}
-							<IconEyeOff width="24" height="24" />
-						{:else}
-							<IconEye width="24" height="24" />
-						{/if}
-					</button>
-				</div>
-			</div>
-			{#if noteData.type == 'text'}
-				<Tiptap content={noteData.content} editable={false} />
-			{:else if noteData.type == 'diagram'}
-				<Excalidraw theme="dark" content={noteData.content} viewModeEnabled={true} />
+			</button>
+		</div>
+		<h1 style="view-transition-name: note-title-{slug}">{noteData.title}</h1>
+		<div class="meta">
+			{#if noteData.academicLevel}
+				<span class="tag accent">
+					{!isNaN(Number(noteData.academicLevel)) && noteData.academicLevel.trim() !== ''
+						? `${noteData.academicLevel}th grade`
+						: noteData.academicLevel}
+				</span>
+			{/if}
+			{#if noteData.topic}
+				<span class="tag muted">{noteData.topic}</span>
+			{/if}
+			<span class="tag {noteData.visibility === 'public' ? 'info' : 'muted'}">
+				{noteData.visibility
+					? noteData.visibility.charAt(0).toUpperCase() + noteData.visibility.slice(1)
+					: ''}
+			</span>
+			{#if noteData.dateUpdated}
+				<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
 			{/if}
 		</div>
-		<ShareModel slug={noteData.slug} />
-	{:else if errorMessage}
-		<p class="errorMessage">{errorMessage}</p>
-	{:else}
-		<p class="loadingNotes">Loading Note</p>
-	{/if}
-</div>
+		{#if shouldShowMetadata}
+			<details open class="extended-meta">
+				<summary>Metadata</summary>
+				<div class="meta-chips">
+					{#if noteData.dateCreated}
+						<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
+					{/if}
+					{#if noteData.language}
+						<span class="tag muted">{toTitleCase('language')}: {noteData.language}</span>
+					{/if}
+					{#if noteData.keywords}
+						<span class="tag muted">Keywords: {noteData.keywords}</span>
+					{/if}
+					{#if noteData.year}
+						<span class="tag muted">Year: {noteData.year}</span>
+					{/if}
+				</div>
+			</details>
+		{/if}
+		<div class="body">
+			{#if noteData.type === 'text'}
+				<Tiptap content={noteData.content} editable={false} />
+			{:else if noteData.type === 'diagram'}
+				<div class="diagram-wrap">
+					<Excalidraw theme="dark" content={noteData.content} viewModeEnabled={true} />
+				</div>
+			{/if}
+		</div>
+	</div>
+	<ShareModel slug={noteData.slug} />
+{:else}
+	<div class="reader">
+		<p class="loading-note">Loading Note</p>
+	</div>
+{/if}
 
 <style>
-	.main {
+	.reader {
+		--muted: color-mix(in srgb, var(--color-base-content) 60%, transparent);
+		width: 100%;
+		max-width: 100%;
+		margin: 0;
+		padding: 40px 24px 60px;
+		height: calc(100vh - 65px);
+		overflow-y: auto;
+	}
+	.reader h1 {
+		font-size: 2.4rem;
+		margin: 0 0 8px;
+		letter-spacing: -0.01em;
+		font-weight: 700;
+	}
+	.reader .meta {
+		color: var(--muted);
+		font-size: 0.85rem;
+		margin-bottom: 20px;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.reader .body {
+		font-size: 1.1rem;
+		line-height: 1.85;
+	}
+	.reader .body :global(img) {
+		max-width: 100%;
+		height: auto;
+	}
+	.reader-actions {
+		display: flex;
+		gap: 8px;
+		margin-bottom: 24px;
+		flex-wrap: wrap;
+	}
+	.tag {
+		font-size: 0.7rem;
+		padding: 2px 8px;
+		border-radius: 4px;
+		background: var(--color-base-200);
+		color: var(--color-base-content);
+		border: 1px solid var(--color-base-300);
+	}
+	.tag.accent {
+		background: color-mix(in srgb, var(--color-primary) 15%, transparent);
+		color: var(--color-primary);
+		border-color: color-mix(in srgb, var(--color-primary) 30%, transparent);
+	}
+	.tag.muted {
+		background: var(--color-base-200);
+		color: var(--muted);
+		border-color: var(--color-base-300);
+	}
+	.tag.info {
+		background: color-mix(in srgb, var(--color-secondary) 15%, transparent);
+		color: var(--color-secondary);
+		border-color: color-mix(in srgb, var(--color-secondary) 30%, transparent);
+	}
+	.skeleton {
+		background: linear-gradient(
+			90deg,
+			var(--color-base-200),
+			var(--color-base-300),
+			var(--color-base-200)
+		);
+		background-size: 200% 100%;
+		animation: shimmer 1.4s infinite;
+		border-radius: 4px;
+	}
+	@keyframes shimmer {
+		0% {
+			background-position: 200% 0;
+		}
+		100% {
+			background-position: -200% 0;
+		}
+	}
+	.error-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+		text-align: center;
+		min-height: 40vh;
+	}
+	.error-message {
+		color: var(--color-base-content);
+	}
+	.loading-note {
+		text-align: center;
+		color: var(--muted);
+	}
+	.diagram-wrap {
+		min-height: 400px;
 		height: calc(100vh - 65px);
 	}
-	.share-btn {
-		font-size: 16px;
+	.diagram-wrap :global(.root) {
+		min-height: 400px;
 	}
-	.metadata-box {
-		border-bottom: 1px solid var(--color-gray-500);
+	.extended-meta {
+		margin-bottom: 20px;
 	}
-	.meta-data {
+	.extended-meta summary {
+		cursor: pointer;
+		color: var(--muted);
+		font-size: 0.85rem;
+	}
+	.meta-chips {
 		display: flex;
-		flex-direction: row;
-		gap: 10px;
 		flex-wrap: wrap;
+		gap: 6px;
+		margin-top: 8px;
+	}
+	.reader :global(.tiptap) {
+		font-size: 1.1rem;
+		line-height: 1.85;
+	}
+	.reader :global(.tiptap p) {
+		margin: 0 0 14px;
+	}
+	.reader :global(.tiptap img) {
+		max-width: 100%;
+		height: auto;
+	}
+	button:focus-visible,
+	a:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 2px;
+	}
+	@media (max-width: 900px) {
+		.reader {
+			padding: 32px 20px 48px;
+		}
+		.reader h1 {
+			font-size: 2rem;
+		}
+	}
+	@media (max-width: 600px) {
+		.reader {
+			padding: 24px 16px 48px;
+		}
+		.reader h1 {
+			font-size: 1.7rem;
+		}
+		.reader .body {
+			font-size: 1rem;
+		}
+		.reader-actions {
+			flex-wrap: wrap;
+		}
+		.diagram-wrap {
+			height: calc(100vh - 65px);
+			min-height: 300px;
+		}
 	}
 </style>

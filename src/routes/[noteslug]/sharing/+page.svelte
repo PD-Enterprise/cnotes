@@ -90,7 +90,7 @@
 {:else if noteData}
 	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
 		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content h-full">
+		<div class="drawer-content h-full overflow-y-auto">
 			<div class="reader" style="view-transition-name: note-card-{slug}">
 				<div class="body">
 					{#if noteData.type === 'text'}

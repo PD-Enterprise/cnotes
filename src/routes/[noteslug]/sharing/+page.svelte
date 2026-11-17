@@ -70,8 +70,13 @@
 	let scrollEl = $state<HTMLElement>();
 
 	onMount(() => {
-		const handleScroll = () => {
-			if (!scrollEl) return;
+		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
+		getNoteFromLocalStorage(slug);
+		getNoteFromServer();
+	});
+	$effect(() => {
+		if (!scrollEl) return;
+		const handler = () => {
 			const st = scrollEl.scrollTop;
 			if (st <= 0) {
 				document.body.classList.remove('navbar-hidden');
@@ -82,10 +87,8 @@
 			}
 			lastScrollTop = st;
 		};
-		scrollEl?.addEventListener('scroll', handleScroll);
-		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
-		getNoteFromLocalStorage(slug);
-		getNoteFromServer();
+		scrollEl.addEventListener('scroll', handler);
+		return () => scrollEl.removeEventListener('scroll', handler);
 	});
 	onDestroy(() => {
 		if (typeof document !== 'undefined') document.body.classList.remove('navbar-hidden');
@@ -109,8 +112,12 @@
 {:else if noteData}
 	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
 		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content h-full overflow-y-auto" bind:this={scrollEl}>
-			<div class="reader" style="view-transition-name: note-card-{slug}">
+		<div class="drawer-content h-full">
+			<div
+				class="reader h-full overflow-y-auto"
+				bind:this={scrollEl}
+				style="view-transition-name: note-card-{slug}"
+			>
 				<div class="body">
 					{#if noteData.type === 'text'}
 						<Tiptap content={noteData.content} editable={false} />
@@ -175,7 +182,7 @@
 		max-width: 100%;
 		margin: 0;
 		padding: 0;
-		height: 100%;
+		height: calc(100vh - 65px);
 		overflow-y: auto;
 	}
 	.reader .body {
@@ -253,10 +260,14 @@
 	}
 	.reader :global(.editor-container) {
 		box-shadow: none;
+		height: auto;
+		min-height: 0;
 	}
 	.reader :global(.editor) {
 		border: none;
 		padding: 0.5rem;
+		overflow: visible;
+		height: auto;
 	}
 	.reader :global(.tiptap) {
 		font-size: 1.1rem;

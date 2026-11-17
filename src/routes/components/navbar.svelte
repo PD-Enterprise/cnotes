@@ -219,6 +219,15 @@
 					share_modal?.showModal();
 				}}>Share</button
 			>
+			<button
+				class="btn btn-ghost btn-sm"
+				onclick={() => {
+					const drawer = document.getElementById('reader-drawer') as HTMLInputElement;
+					if (drawer) drawer.checked = !drawer.checked;
+				}}
+			>
+				<IconSidebar width="22" height="22" />
+			</button>
 		{/if}
 		{#if isHome}
 			<div class="header bg-base-200 flex grow gap-3 p-2">

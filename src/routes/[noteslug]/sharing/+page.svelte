@@ -91,67 +91,68 @@
 		<a class="btn btn-primary btn-sm" href="/">Go home</a>
 	</div>
 {:else if noteData}
-	<div class="reader" style="view-transition-name: note-card-{slug}">
-		<div class="meta">
-			{#if noteData.academicLevel}
-				<span class="tag accent">
-					{!isNaN(Number(noteData.academicLevel)) && noteData.academicLevel.trim() !== ''
-						? `${noteData.academicLevel}th grade`
-						: noteData.academicLevel}
-				</span>
-			{/if}
-			{#if noteData.topic}
-				<span class="tag muted">{noteData.topic}</span>
-			{/if}
-			<span class="tag {noteData.visibility === 'public' ? 'info' : 'muted'}">
-				{noteData.visibility
-					? noteData.visibility.charAt(0).toUpperCase() + noteData.visibility.slice(1)
-					: ''}
-			</span>
-			{#if noteData.dateUpdated}
-				<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
-			{/if}
-			<button
-				class="btn btn-ghost btn-xs"
-				aria-label="Toggle metadata"
-				onclick={() => {
-					shouldShowMetadata = !shouldShowMetadata;
-				}}
-			>
-				{#if shouldShowMetadata}
-					<IconEyeOff width="16" height="16" />
-				{:else}
-					<IconEye width="16" height="16" />
-				{/if}
-			</button>
+	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
+		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
+		<div class="drawer-content h-full">
+			<div class="reader" style="view-transition-name: note-card-{slug}">
+				<div class="body">
+					{#if noteData.type === 'text'}
+						<Tiptap content={noteData.content} editable={false} />
+					{:else if noteData.type === 'diagram'}
+						<div class="diagram-wrap">
+							<Excalidraw theme="dark" content={noteData.content} viewModeEnabled={true} />
+						</div>
+					{/if}
+				</div>
+			</div>
 		</div>
-		{#if shouldShowMetadata}
-			<details open class="extended-meta">
-				<summary>Metadata</summary>
-				<div class="meta-chips">
-					{#if noteData.dateCreated}
-						<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
+		<div class="drawer-side z-50">
+			<label for="reader-drawer" class="drawer-overlay"></label>
+			<div class="bg-base-200 flex min-h-full w-80 flex-col gap-3 p-4">
+				<h2 class="text-lg font-bold">Metadata</h2>
+				<div class="flex flex-wrap gap-2">
+					{#if noteData.academicLevel}
+						<span class="tag accent">
+							{!isNaN(Number(noteData.academicLevel)) && noteData.academicLevel.trim() !== ''
+								? `${noteData.academicLevel}th grade`
+								: noteData.academicLevel}
+						</span>
 					{/if}
-					{#if noteData.language}
-						<span class="tag muted">{toTitleCase('language')}: {noteData.language}</span>
+					{#if noteData.topic}
+						<span class="tag muted">{noteData.topic}</span>
 					{/if}
-					{#if noteData.keywords}
-						<span class="tag muted">Keywords: {noteData.keywords}</span>
-					{/if}
-					{#if noteData.year}
-						<span class="tag muted">Year: {noteData.year}</span>
+					<span class="tag {noteData.visibility === 'public' ? 'info' : 'muted'}">
+						{noteData.visibility
+							? noteData.visibility.charAt(0).toUpperCase() + noteData.visibility.slice(1)
+							: ''}
+					</span>
+					{#if noteData.dateUpdated}
+						<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
 					{/if}
 				</div>
-			</details>
-		{/if}
-		<div class="body">
-			{#if noteData.type === 'text'}
-				<Tiptap content={noteData.content} editable={false} />
-			{:else if noteData.type === 'diagram'}
-				<div class="diagram-wrap">
-					<Excalidraw theme="dark" content={noteData.content} viewModeEnabled={true} />
-				</div>
-			{/if}
+				<button
+					class="btn btn-outline btn-sm w-fit"
+					onclick={() => (shouldShowMetadata = !shouldShowMetadata)}
+				>
+					{shouldShowMetadata ? 'Show less' : 'Show more'}
+				</button>
+				{#if shouldShowMetadata}
+					<div class="flex flex-wrap gap-2">
+						{#if noteData.dateCreated}
+							<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
+						{/if}
+						{#if noteData.language}
+							<span class="tag muted">{toTitleCase('language')}: {noteData.language}</span>
+						{/if}
+						{#if noteData.keywords}
+							<span class="tag muted">Keywords: {noteData.keywords}</span>
+						{/if}
+						{#if noteData.year}
+							<span class="tag muted">Year: {noteData.year}</span>
+						{/if}
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 	<ShareModel slug={noteData.slug} />
@@ -168,16 +169,8 @@
 		max-width: 100%;
 		margin: 0;
 		padding: 8px 12px 8px;
-		height: calc(100vh - 65px);
+		height: 100%;
 		overflow-y: auto;
-	}
-	.reader .meta {
-		color: var(--muted);
-		font-size: 0.85rem;
-		margin-bottom: 20px;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
 	}
 	.reader .body {
 		font-size: 1.1rem;
@@ -251,20 +244,6 @@
 	}
 	.diagram-wrap :global(.root) {
 		min-height: 400px;
-	}
-	.extended-meta {
-		margin-bottom: 20px;
-	}
-	.extended-meta summary {
-		cursor: pointer;
-		color: var(--muted);
-		font-size: 0.85rem;
-	}
-	.meta-chips {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-		margin-top: 8px;
 	}
 	.reader :global(.editor-container) {
 		box-shadow: none;

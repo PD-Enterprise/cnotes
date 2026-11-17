@@ -208,26 +208,28 @@
 			</button>
 		{/if}
 		{#if isSharingPage}
-			<a
-				class="btn btn-primary btn-sm"
-				href={`/${$page.url.pathname.split('/sharing')[0].split('/')[1]}`}>Edit</a
-			>
-			<button
-				class="btn btn-ghost btn-sm"
-				onclick={() => {
-					const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-					share_modal?.showModal();
-				}}>Share</button
-			>
-			<button
-				class="btn btn-ghost btn-sm"
-				onclick={() => {
-					const drawer = document.getElementById('reader-drawer') as HTMLInputElement;
-					if (drawer) drawer.checked = !drawer.checked;
-				}}
-			>
-				<IconSidebar width="22" height="22" />
-			</button>
+			<div class="flex items-center gap-2">
+				<a
+					class="btn btn-primary btn-sm"
+					href={`/${$page.url.pathname.split('/sharing')[0].split('/')[1]}`}>Edit</a
+				>
+				<button
+					class="btn btn-ghost btn-sm"
+					onclick={() => {
+						const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
+						share_modal?.showModal();
+					}}>Share</button
+				>
+				<button
+					class="btn btn-ghost btn-sm"
+					onclick={() => {
+						const drawer = document.getElementById('reader-drawer') as HTMLInputElement;
+						if (drawer) drawer.checked = !drawer.checked;
+					}}
+				>
+					<IconSidebar width="22" height="22" />
+				</button>
+			</div>
 		{/if}
 		{#if isHome}
 			<div class="header bg-base-200 flex grow gap-3 p-2">
@@ -384,7 +386,9 @@
 		text-overflow: ellipsis;
 		display: flex;
 		justify-content: start;
-		max-width: 50vw;
+		flex: 1;
+		min-width: 0;
+		max-width: none;
 	}
 
 	.search-bar {

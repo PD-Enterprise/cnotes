@@ -239,6 +239,7 @@
 	}
 	.reader :global(.editor) {
 		border: none;
+		padding: 0.5rem;
 	}
 	.reader :global(.tiptap) {
 		font-size: 1.1rem;
@@ -257,12 +258,12 @@
 	}
 	@media (max-width: 900px) {
 		.reader {
-			padding: 8px 12px;
+			padding: 4px 8px;
 		}
 	}
 	@media (max-width: 600px) {
 		.reader {
-			padding: 8px 12px;
+			padding: 4px 8px;
 		}
 		.reader .body {
 			font-size: 1rem;

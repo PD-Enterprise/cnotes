@@ -12,6 +12,8 @@
 	import IconEdit from '~icons/material-symbols/edit';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import UserComponent from './user-component.svelte';
+import { showToast } from '$lib/utils/svelteToastsUtil';
+import urlConfig from '$lib/utils/urlConfig';
 	import {
 		notesStore,
 		searchQuery,
@@ -28,6 +30,7 @@
 	let title = $state('Home');
 	let shouldShowSearchResults: boolean = $state(false);
 	let shouldShowFilterMenu: boolean = $state(false);
+	let copyShareLink: ((slug: string) => void) | null = $state(null);
 
 	function openSidebar() {
 		sidebarOpen.value = true;
@@ -36,6 +39,12 @@
 	}
 
 	onMount(() => {
+		copyShareLink = (slug: string) => {
+			navigator.clipboard
+				.writeText(`${urlConfig.shareUrl}${slug}/sharing`)
+				.then(() => showToast('Link copied to clipboard!', 'success'))
+				.catch(() => showToast('Failed to copy link', 'error'));
+		};
 		const localTheme = localStorage.getItem('theme');
 		if (localTheme === 'light') {
 			theme.value = true;
@@ -217,8 +226,8 @@
 				<button
 					class="btn btn-ghost btn-sm"
 					onclick={() => {
-						const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-						share_modal?.showModal();
+						const slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
+						copyShareLink?.(slug);
 					}}>Share</button
 				>
 				<button

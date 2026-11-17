@@ -4,7 +4,6 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
-	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 
 	let errorMessage: string = $state('');
@@ -180,7 +179,6 @@
 			</div>
 		</div>
 	</div>
-	<ShareModel slug={noteData.slug} />
 {:else}
 	<div class="reader">
 		<p class="loading-note">Loading Note</p>

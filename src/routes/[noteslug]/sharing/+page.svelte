@@ -110,7 +110,7 @@
 		<a class="btn btn-primary btn-sm" href="/">Go home</a>
 	</div>
 {:else if noteData}
-	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
+	<div class="drawer drawer-end h-full">
 		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
 		<div class="drawer-content h-full">
 			<div
@@ -176,14 +176,23 @@
 {/if}
 
 <style>
+	.drawer {
+		height: calc(100vh - 65px);
+	}
+	:global(body.navbar-hidden) .drawer {
+		height: 100vh;
+	}
 	.reader {
 		--muted: color-mix(in srgb, var(--color-base-content) 60%, transparent);
 		width: 100%;
 		max-width: 100%;
 		margin: 0;
-		padding: 0;
+		padding: 4px 8px;
 		height: calc(100vh - 65px);
 		overflow-y: auto;
+	}
+	:global(body.navbar-hidden) .reader {
+		height: 100vh;
 	}
 	.reader .body {
 		font-size: 1.1rem;

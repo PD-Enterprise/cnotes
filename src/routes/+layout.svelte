@@ -65,9 +65,7 @@
 			<NotLoggedIn />
 		{/if}
 	{/if}
-	<div class="navbar">
-		<Navbar {data} />
-	</div>
+	<Navbar {data} />
 	<div class="content">
 		{@render children()}
 	</div>

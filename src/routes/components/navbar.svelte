@@ -119,7 +119,7 @@
 
 <SvelteToast />
 
-<div class="navbar bg-base-200 z-1 shadow-sm">
+<div class="navbar bg-base-200 z-1 shadow-sm" class:fixed-navbar={isSharingPage}>
 	<div class="navbar-start">
 		{#if isHome}
 			<div class="dropdown">
@@ -378,10 +378,13 @@
 <style>
 	.navbar {
 		cursor: default;
+		position: static;
+	}
+	.fixed-navbar {
 		position: fixed;
 		transition: transform 0.3s ease;
 	}
-	:global(body.navbar-hidden) .navbar {
+	:global(body.navbar-hidden) .fixed-navbar {
 		transform: translateY(-100%);
 	}
 	.header {

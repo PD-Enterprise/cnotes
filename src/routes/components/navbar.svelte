@@ -379,6 +379,10 @@
 	.navbar {
 		cursor: default;
 		position: fixed;
+		transition: transform 0.3s ease;
+	}
+	:global(body.navbar-hidden) .navbar {
+		transform: translateY(-100%);
 	}
 	.header {
 		justify-content: space-between;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import type { note } from '../../types';
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
@@ -66,10 +66,27 @@
 		}
 	}
 
+	let lastScrollTop = 0;
+	function handleScroll(event: Event) {
+		const el = event.currentTarget as HTMLElement;
+		const st = el.scrollTop;
+		if (st <= 0) {
+			document.body.classList.remove('navbar-hidden');
+		} else if (st > lastScrollTop + 10) {
+			document.body.classList.add('navbar-hidden');
+		} else if (st < lastScrollTop - 10) {
+			document.body.classList.remove('navbar-hidden');
+		}
+		lastScrollTop = st;
+	}
+
 	onMount(() => {
 		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
 		getNoteFromLocalStorage(slug);
 		getNoteFromServer();
+	});
+	onDestroy(() => {
+		document.body.classList.remove('navbar-hidden');
 	});
 </script>
 
@@ -90,7 +107,7 @@
 {:else if noteData}
 	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
 		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content h-full overflow-y-auto">
+		<div class="drawer-content h-full overflow-y-auto" onscroll={handleScroll}>
 			<div class="reader" style="view-transition-name: note-card-{slug}">
 				<div class="body">
 					{#if noteData.type === 'text'}

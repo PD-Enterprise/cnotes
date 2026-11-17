@@ -12,8 +12,8 @@
 	import IconEdit from '~icons/material-symbols/edit';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 	import UserComponent from './user-component.svelte';
-import { showToast } from '$lib/utils/svelteToastsUtil';
-import urlConfig from '$lib/utils/urlConfig';
+	import { showToast } from '$lib/utils/svelteToastsUtil';
+	import urlConfig from '$lib/utils/urlConfig';
 	import {
 		notesStore,
 		searchQuery,

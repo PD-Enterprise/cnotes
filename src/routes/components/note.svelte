@@ -1,9 +1,6 @@
 <script lang="ts">
 	import type { note } from '../types';
 	import { showToast } from '$lib/utils/svelteToastsUtil';
-	import SvelteToast from './svelteToast.svelte';
-	import { onMount } from 'svelte';
-	import config from '$lib/utils/apiConfig';
 	import { notesStore } from '$lib/stores/store.svelte';
 	import IconMore from '~icons/material-symbols/more-vert';
 	import IconEdit from '~icons/material-symbols/edit';

@@ -107,7 +107,7 @@
 			<label for="reader-drawer" class="drawer-overlay"></label>
 			<div class="bg-base-200 flex min-h-full w-80 flex-col gap-3 p-4">
 				<h2 class="text-lg font-bold">Metadata</h2>
-				<div class="flex flex-wrap gap-2">
+				<div class="grid grid-cols-2 gap-2">
 					{#if noteData.academicLevel}
 						<span class="tag accent">
 							{!isNaN(Number(noteData.academicLevel)) && noteData.academicLevel.trim() !== ''
@@ -126,8 +126,6 @@
 					{#if noteData.dateUpdated}
 						<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
 					{/if}
-				</div>
-				<div class="flex flex-wrap gap-2">
 					{#if noteData.dateCreated}
 						<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
 					{/if}

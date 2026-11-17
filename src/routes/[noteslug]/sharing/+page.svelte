@@ -93,9 +93,6 @@
 {:else if noteData}
 	<div class="reader" style="view-transition-name: note-card-{slug}">
 		<div class="reader-actions">
-			<button class="btn btn-ghost btn-sm" aria-label="Back" onclick={() => history.back()}>
-				← Back
-			</button>
 			<a class="btn btn-primary btn-sm" href={`/${noteData.slug}`}>Edit</a>
 			<button
 				class="btn btn-ghost btn-sm"
@@ -121,7 +118,6 @@
 				{/if}
 			</button>
 		</div>
-		<h1 style="view-transition-name: note-title-{slug}">{noteData.title}</h1>
 		<div class="meta">
 			{#if noteData.academicLevel}
 				<span class="tag accent">
@@ -187,12 +183,6 @@
 		padding: 40px 24px 60px;
 		height: calc(100vh - 65px);
 		overflow-y: auto;
-	}
-	.reader h1 {
-		font-size: 2.4rem;
-		margin: 0 0 8px;
-		letter-spacing: -0.01em;
-		font-weight: 700;
 	}
 	.reader .meta {
 		color: var(--muted);
@@ -295,6 +285,9 @@
 		gap: 6px;
 		margin-top: 8px;
 	}
+	.reader :global(.editor) {
+		border: none;
+	}
 	.reader :global(.tiptap) {
 		font-size: 1.1rem;
 		line-height: 1.85;
@@ -315,16 +308,10 @@
 		.reader {
 			padding: 32px 20px 48px;
 		}
-		.reader h1 {
-			font-size: 2rem;
-		}
 	}
 	@media (max-width: 600px) {
 		.reader {
 			padding: 24px 16px 48px;
-		}
-		.reader h1 {
-			font-size: 1.7rem;
 		}
 		.reader .body {
 			font-size: 1rem;

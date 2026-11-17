@@ -67,26 +67,28 @@
 	}
 
 	let lastScrollTop = 0;
-	function handleScroll(event: Event) {
-		const el = event.currentTarget as HTMLElement;
-		const st = el.scrollTop;
-		if (st <= 0) {
-			document.body.classList.remove('navbar-hidden');
-		} else if (st > lastScrollTop + 10) {
-			document.body.classList.add('navbar-hidden');
-		} else if (st < lastScrollTop - 10) {
-			document.body.classList.remove('navbar-hidden');
-		}
-		lastScrollTop = st;
-	}
+	let scrollEl = $state<HTMLElement>();
 
 	onMount(() => {
+		const handleScroll = () => {
+			if (!scrollEl) return;
+			const st = scrollEl.scrollTop;
+			if (st <= 0) {
+				document.body.classList.remove('navbar-hidden');
+			} else if (st > lastScrollTop + 10) {
+				document.body.classList.add('navbar-hidden');
+			} else if (st < lastScrollTop - 10) {
+				document.body.classList.remove('navbar-hidden');
+			}
+			lastScrollTop = st;
+		};
+		scrollEl?.addEventListener('scroll', handleScroll);
 		slug = $page.url.pathname.split('/sharing')[0].split('/')[1];
 		getNoteFromLocalStorage(slug);
 		getNoteFromServer();
 	});
 	onDestroy(() => {
-		document.body.classList.remove('navbar-hidden');
+		if (typeof document !== 'undefined') document.body.classList.remove('navbar-hidden');
 	});
 </script>
 
@@ -107,7 +109,7 @@
 {:else if noteData}
 	<div class="drawer drawer-end h-full" style="height: calc(100vh - 65px);">
 		<input id="reader-drawer" type="checkbox" class="drawer-toggle" />
-		<div class="drawer-content h-full overflow-y-auto" onscroll={handleScroll}>
+		<div class="drawer-content h-full overflow-y-auto" bind:this={scrollEl}>
 			<div class="reader" style="view-transition-name: note-card-{slug}">
 				<div class="body">
 					{#if noteData.type === 'text'}

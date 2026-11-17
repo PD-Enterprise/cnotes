@@ -80,10 +80,19 @@
 			const st = scrollEl.scrollTop;
 			if (st <= 0) {
 				document.body.classList.remove('navbar-hidden');
+				scrollEl.style.height = 'calc(100vh - 65px)';
+				const drawer = scrollEl.closest('.drawer') as HTMLElement | null;
+				if (drawer) drawer.style.height = 'calc(100vh - 65px)';
 			} else if (st > lastScrollTop + 10) {
 				document.body.classList.add('navbar-hidden');
+				scrollEl.style.height = '100vh';
+				const drawer = scrollEl.closest('.drawer') as HTMLElement | null;
+				if (drawer) drawer.style.height = '100vh';
 			} else if (st < lastScrollTop - 10) {
 				document.body.classList.remove('navbar-hidden');
+				scrollEl.style.height = 'calc(100vh - 65px)';
+				const drawer = scrollEl.closest('.drawer') as HTMLElement | null;
+				if (drawer) drawer.style.height = 'calc(100vh - 65px)';
 			}
 			lastScrollTop = st;
 		};

@@ -92,32 +92,6 @@
 	</div>
 {:else if noteData}
 	<div class="reader" style="view-transition-name: note-card-{slug}">
-		<div class="reader-actions">
-			<a class="btn btn-primary btn-sm" href={`/${noteData.slug}`}>Edit</a>
-			<button
-				class="btn btn-ghost btn-sm"
-				aria-label="Share"
-				onclick={() => {
-					const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
-					share_modal?.showModal();
-				}}
-			>
-				Share
-			</button>
-			<button
-				class="btn btn-ghost btn-sm"
-				aria-label="Toggle metadata"
-				onclick={() => {
-					shouldShowMetadata = !shouldShowMetadata;
-				}}
-			>
-				{#if shouldShowMetadata}
-					<IconEyeOff width="18" height="18" />
-				{:else}
-					<IconEye width="18" height="18" />
-				{/if}
-			</button>
-		</div>
 		<div class="meta">
 			{#if noteData.academicLevel}
 				<span class="tag accent">
@@ -137,6 +111,19 @@
 			{#if noteData.dateUpdated}
 				<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
 			{/if}
+			<button
+				class="btn btn-ghost btn-xs"
+				aria-label="Toggle metadata"
+				onclick={() => {
+					shouldShowMetadata = !shouldShowMetadata;
+				}}
+			>
+				{#if shouldShowMetadata}
+					<IconEyeOff width="16" height="16" />
+				{:else}
+					<IconEye width="16" height="16" />
+				{/if}
+			</button>
 		</div>
 		{#if shouldShowMetadata}
 			<details open class="extended-meta">
@@ -180,7 +167,7 @@
 		width: 100%;
 		max-width: 100%;
 		margin: 0;
-		padding: 40px 24px 60px;
+		padding: 8px 12px 8px;
 		height: calc(100vh - 65px);
 		overflow-y: auto;
 	}
@@ -199,12 +186,6 @@
 	.reader .body :global(img) {
 		max-width: 100%;
 		height: auto;
-	}
-	.reader-actions {
-		display: flex;
-		gap: 8px;
-		margin-bottom: 24px;
-		flex-wrap: wrap;
 	}
 	.tag {
 		font-size: 0.7rem;
@@ -285,6 +266,9 @@
 		gap: 6px;
 		margin-top: 8px;
 	}
+	.reader :global(.editor-container) {
+		box-shadow: none;
+	}
 	.reader :global(.editor) {
 		border: none;
 	}
@@ -306,18 +290,15 @@
 	}
 	@media (max-width: 900px) {
 		.reader {
-			padding: 32px 20px 48px;
+			padding: 8px 12px;
 		}
 	}
 	@media (max-width: 600px) {
 		.reader {
-			padding: 24px 16px 48px;
+			padding: 8px 12px;
 		}
 		.reader .body {
 			font-size: 1rem;
-		}
-		.reader-actions {
-			flex-wrap: wrap;
 		}
 		.diagram-wrap {
 			height: calc(100vh - 65px);

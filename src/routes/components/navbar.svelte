@@ -24,6 +24,7 @@
 	let { data }: { data: PageData } = $props();
 	let isHome = $state(true);
 	let isNotePage = $state(false);
+	let isSharingPage = $state(false);
 	let title = $state('Home');
 	let shouldShowSearchResults: boolean = $state(false);
 	let shouldShowFilterMenu: boolean = $state(false);
@@ -55,6 +56,7 @@
 			if ($page.url.pathname == '/') {
 				isHome = true;
 				isNotePage = false;
+				isSharingPage = false;
 				title = 'Home';
 			} else {
 				isHome = false;
@@ -62,6 +64,7 @@
 					$page.url.pathname.split('/')[1] !== 'login' &&
 					$page.url.pathname.split('/')[1] !== 'logout' &&
 					!$page.url.pathname.endsWith('/sharing');
+				isSharingPage = $page.url.pathname.endsWith('/sharing');
 				// console.log($page.url.pathname);
 				if (
 					$page.url.pathname.split('/')[1] == 'new-note' ||
@@ -203,6 +206,19 @@
 			<button onclick={openSidebar} class="btn btn-ghost btn-sm">
 				<IconSidebar width="22" height="22" />
 			</button>
+		{/if}
+		{#if isSharingPage}
+			<a
+				class="btn btn-primary btn-sm"
+				href={`/${$page.url.pathname.split('/sharing')[0].split('/')[1]}`}>Edit</a
+			>
+			<button
+				class="btn btn-ghost btn-sm"
+				onclick={() => {
+					const share_modal = document.getElementById('share_modal') as HTMLDialogElement;
+					share_modal?.showModal();
+				}}>Share</button
+			>
 		{/if}
 		{#if isHome}
 			<div class="header bg-base-200 flex grow gap-3 p-2">

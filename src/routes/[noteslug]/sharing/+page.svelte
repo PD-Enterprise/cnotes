@@ -4,8 +4,6 @@
 	import { page } from '$app/stores';
 	import Tiptap from '../../components/tiptap.svelte';
 	import Excalidraw from '../../components/Excalidraw.svelte';
-	import IconEyeOff from '~icons/material-symbols/visibility-off';
-	import IconEye from '~icons/material-symbols/visibility';
 	import ShareModel from '../../components/shareModel.svelte';
 	import { toTitleCase } from '$lib/utils/toTitleCase';
 
@@ -14,7 +12,6 @@
 	let localNote = null;
 	let hasLocalNote = false;
 	let slug: string = $state('');
-	let shouldShowMetadata: boolean = $state(false);
 	let isLoading: boolean = $state(true);
 
 	// Functions
@@ -130,28 +127,20 @@
 						<span class="tag muted">Updated {formatDate(noteData.dateUpdated)}</span>
 					{/if}
 				</div>
-				<button
-					class="btn btn-outline btn-sm w-fit"
-					onclick={() => (shouldShowMetadata = !shouldShowMetadata)}
-				>
-					{shouldShowMetadata ? 'Show less' : 'Show more'}
-				</button>
-				{#if shouldShowMetadata}
-					<div class="flex flex-wrap gap-2">
-						{#if noteData.dateCreated}
-							<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
-						{/if}
-						{#if noteData.language}
-							<span class="tag muted">{toTitleCase('language')}: {noteData.language}</span>
-						{/if}
-						{#if noteData.keywords}
-							<span class="tag muted">Keywords: {noteData.keywords}</span>
-						{/if}
-						{#if noteData.year}
-							<span class="tag muted">Year: {noteData.year}</span>
-						{/if}
-					</div>
-				{/if}
+				<div class="flex flex-wrap gap-2">
+					{#if noteData.dateCreated}
+						<span class="tag muted">Created {formatDate(noteData.dateCreated)}</span>
+					{/if}
+					{#if noteData.language}
+						<span class="tag muted">{toTitleCase('language')}: {noteData.language}</span>
+					{/if}
+					{#if noteData.keywords}
+						<span class="tag muted">Keywords: {noteData.keywords}</span>
+					{/if}
+					{#if noteData.year}
+						<span class="tag muted">Year: {noteData.year}</span>
+					{/if}
+				</div>
 			</div>
 		</div>
 	</div>
@@ -168,7 +157,7 @@
 		width: 100%;
 		max-width: 100%;
 		margin: 0;
-		padding: 8px 12px 8px;
+		padding: 0;
 		height: 100%;
 		overflow-y: auto;
 	}
@@ -262,7 +251,6 @@
 		max-width: 100%;
 		height: auto;
 	}
-	button:focus-visible,
 	a:focus-visible {
 		outline: 2px solid var(--color-primary);
 		outline-offset: 2px;

@@ -380,12 +380,11 @@
 	}
 	#note-title {
 		white-space: nowrap;
-		overflow-x: scroll;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		display: flex;
 		justify-content: start;
-		width: calc(100vw - 55px);
-		scrollbar-width: none;
-		-ms-overflow-style: none;
+		max-width: 50vw;
 	}
 
 	.search-bar {

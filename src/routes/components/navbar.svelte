@@ -197,7 +197,11 @@
 				<IconBack class="h-5 w-5" />
 			</button>
 		{/if}
-		<a class="btn btn-ghost flex justify-start text-2xl" id="note-title" href="/"
+		<a
+			class="btn btn-ghost flex justify-start text-2xl"
+			class:sharing-title={isSharingPage}
+			id="note-title"
+			href="/"
 			>{toTitleCase(title)}</a
 		>
 	</div>
@@ -382,13 +386,19 @@
 	}
 	#note-title {
 		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		overflow-x: scroll;
 		display: flex;
 		justify-content: start;
-		flex: 1;
-		min-width: 0;
-		max-width: none;
+		width: calc(100vw - 55px);
+		scrollbar-width: none;
+		-ms-overflow-style: none;
+	}
+
+	.sharing-title {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: calc(100vw - 180px);
 	}
 
 	.search-bar {
